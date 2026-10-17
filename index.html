@@ -12,6 +12,7 @@
         * {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
         }
 
         .mono {
@@ -32,8 +33,8 @@
             inset: 0;
             background-size: 32px 32px;
             background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+                linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
             mask-image: radial-gradient(ellipse at 50% 20%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);
             -webkit-mask-image: radial-gradient(ellipse at 50% 20%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);
             pointer-events: none;
@@ -44,35 +45,35 @@
             position: fixed;
             inset: 0;
             background: 
-                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08) 0%, transparent 55%),
+                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.07) 0%, transparent 55%),
                 radial-gradient(circle at 50% 100%, rgba(15, 23, 42, 0.4) 0%, transparent 60%);
             pointer-events: none;
             z-index: 0;
         }
 
         .surface-card {
-            background: rgba(13, 15, 22, 0.75);
+            background: rgba(13, 15, 22, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .surface-card:hover {
-            border-color: rgba(255, 255, 255, 0.18);
-            background: rgba(18, 21, 30, 0.85);
+            border-color: rgba(255, 255, 255, 0.16);
+            background: rgba(18, 21, 30, 0.9);
         }
 
         .surface-input {
-            background: rgba(16, 18, 26, 0.85);
+            background: rgba(16, 18, 26, 0.9);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             transition: all 0.2s ease;
         }
 
         .surface-input:hover, .surface-input:focus-within {
-            border-color: rgba(255, 255, 255, 0.22);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .btn-glow {
@@ -84,13 +85,13 @@
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(8px);
             transition: all 0.2s ease;
         }
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.09);
             border-color: rgba(255, 255, 255, 0.22);
             color: #ffffff;
         }
@@ -141,21 +142,21 @@
     <div class="cyber-grid"></div>
     <div class="ambient-depth"></div>
 
-    <!-- Toast уведомление -->
+    <!-- Toast уведомление (строго 3 секунды) -->
     <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 ease-out opacity-0 -translate-y-2 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#11131c]/95 backdrop-blur-xl border border-white/10 text-xs text-zinc-100 shadow-2xl">
         <span id="toast-icon" class="text-zinc-400 font-bold">✓</span>
         <span id="toast-text"></span>
     </div>
 
-    <!-- Модальное окно продления (Prolong Modal) -->
-    <div id="modal-prolong" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
+    <!-- Модальное окно продления -->
+    <div id="modal-prolong" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
         <div class="modal-sheet w-full max-w-md bg-[#0f111a] border border-white/10 rounded-t-3xl sm:rounded-2xl p-5 space-y-4 shadow-2xl transform translate-y-full sm:translate-y-0">
             <div class="flex justify-between items-start">
-                <div>
+                <div class="pr-2">
                     <h3 class="text-base font-semibold text-zinc-100">Продление прокси</h3>
-                    <p class="text-xs text-zinc-400 mono mt-0.5" id="prolong-proxy-str">—</p>
+                    <p class="text-xs text-zinc-400 mono mt-0.5 break-all" id="prolong-proxy-str">—</p>
                 </div>
-                <button onclick="closeProlongModal()" class="text-zinc-400 hover:text-white p-1">✕</button>
+                <button onclick="closeProlongModal()" class="text-zinc-400 hover:text-white p-1 text-sm">✕</button>
             </div>
 
             <div class="space-y-1.5">
@@ -169,17 +170,31 @@
             </div>
 
             <div class="surface-card rounded-xl p-3 flex justify-between items-center">
-                <span class="text-xs text-zinc-400">Стоимость продления:</span>
+                <span class="text-xs text-zinc-400">К списанию:</span>
                 <span class="text-sm font-semibold mono text-zinc-100" id="prolong-price-display">0 ₽</span>
             </div>
 
-            <button onclick="executeProlong()" class="w-full py-3.5 rounded-xl bg-zinc-100 text-zinc-950 font-semibold text-xs btn-glow active:scale-[0.99] transition">
+            <button id="btn-confirm-prolong" onclick="executeProlong()" class="w-full py-3.5 rounded-xl bg-zinc-100 text-zinc-950 font-semibold text-xs btn-glow active:scale-[0.99] transition">
                 Подтвердить продление
             </button>
         </div>
     </div>
 
-    <!-- Основной контент -->
+    <!-- Резервное модальное окно просмотра .TXT (для браузера) -->
+    <div id="modal-txt-view" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="w-full max-w-md bg-[#0f111a] border border-white/10 rounded-2xl p-5 space-y-3 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-semibold text-zinc-100" id="txt-modal-title">Экспорт прокси</h3>
+                <button onclick="closeTxtModal()" class="text-zinc-400 hover:text-white text-sm">✕</button>
+            </div>
+            <textarea id="txt-modal-content" readonly class="w-full h-40 p-3 rounded-xl bg-zinc-950 border border-white/10 font-mono text-[11px] text-zinc-300 focus:outline-none resize-none"></textarea>
+            <button onclick="copyModalTxt()" class="w-full py-3 rounded-xl bg-zinc-100 text-zinc-950 font-semibold text-xs active:scale-95 transition">
+                Скопировать весь список
+            </button>
+        </div>
+    </div>
+
+    <!-- Основной контейнер страниц -->
     <main class="w-full max-w-md mx-auto p-4 flex-1 relative z-10">
 
         <!-- ================= ЭКРАН 1: ВЫБОР ПУЛА ================= -->
@@ -330,7 +345,7 @@
                     <span class="text-xs text-zinc-400">Итого к списанию:</span>
                     <span class="text-base font-semibold mono text-zinc-100" id="cart-total-amount">0 ₽</span>
                 </div>
-                <button onclick="checkoutCart()" class="w-full py-3.5 rounded-xl bg-zinc-100 text-zinc-950 font-semibold text-xs btn-glow active:scale-[0.99] transition">
+                <button id="btn-checkout" onclick="checkoutCart()" class="w-full py-3.5 rounded-xl bg-zinc-100 text-zinc-950 font-semibold text-xs btn-glow active:scale-[0.99] transition">
                     Оплатить заказ
                 </button>
             </div>
@@ -360,7 +375,7 @@
                     </div>
                 </div>
 
-                <!-- Строка быстрого поиска по прокси/заказам -->
+                <!-- Строка быстрого поиска -->
                 <div class="relative">
                     <input id="orders-search-input" oninput="handleSearch(this.value)" type="text" placeholder="Поиск по IP, порту, логину или номеру..." class="w-full pl-9 pr-8 py-2.5 rounded-xl surface-input text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none mono">
                     <svg class="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -463,26 +478,46 @@
     </nav>
 
     <script>
+        // Инициализация Telegram Web App
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.ready();
             tg.expand();
+            try {
+                tg.setHeaderColor('#07080b');
+                tg.setBackgroundColor('#07080b');
+            } catch(e) {}
         }
 
         function triggerHaptic() {
             if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Загрузка состояния из LocalStorage
-        const STORAGE_KEY = "proxy_terminal_state_v1";
-        
+        // ================= АРХИТЕКТУРНЫЙ API-СЛОЙ =================
+        // Когда бэкенд будет готов, просто переключите флаг на false:
+        const IS_OFFLINE_MOCK = true;
+        const API_BASE_URL = "http://127.0.0.1:8000/api";
+
+        const API = {
+            async request(endpoint, options = {}) {
+                if (IS_OFFLINE_MOCK) return null;
+                const headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": `tma ${tg?.initData || ""}`
+                };
+                const res = await fetch(`${API_BASE_URL}${endpoint}`, { ...options, headers });
+                if (!res.ok) throw new Error(await res.text());
+                return await res.json();
+            }
+        };
+
+        // Локальное хранилище состояния
+        const STORAGE_KEY = "proxy_terminal_state_v2";
         function loadSavedState() {
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
                 if (raw) return JSON.parse(raw);
-            } catch (e) {
-                console.error("Storage error:", e);
-            }
+            } catch (e) {}
             return null;
         }
 
@@ -518,9 +553,7 @@
                     openOrderIds: Array.from(state.openOrderIds)
                 });
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
-            } catch (e) {
-                console.error("Save error:", e);
-            }
+            } catch (e) {}
         }
 
         function resetStorage() {
@@ -552,7 +585,6 @@
         // Инициализация профиля
         document.getElementById('prof-username').innerText = state.user.name;
         document.getElementById('prof-user-id').innerText = `ID: ${state.user.id}`;
-        
         const avatarBox = document.getElementById('prof-avatar-container');
         if (state.user.photoUrl) {
             avatarBox.innerHTML = `<img src="${state.user.photoUrl}" class="w-full h-full object-cover" alt="Avatar">`;
@@ -788,6 +820,7 @@
 
         function checkoutCart() {
             triggerHaptic();
+            const btn = document.getElementById('btn-checkout');
             const overallTotal = state.cart.reduce((sum, item) => sum + item.total, 0);
 
             if (state.balance < overallTotal) {
@@ -795,48 +828,57 @@
                 return;
             }
 
-            state.balance -= overallTotal;
-            state.spent += overallTotal;
+            // Индикация загрузки
+            btn.disabled = true;
+            btn.innerText = "Оформление...";
 
-            const allProxies = [];
-            state.cart.forEach(item => {
-                for (let i = 0; i < item.count; i++) {
-                    const ip = `${Math.floor(Math.random() * 120 + 60)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 240 + 10)}`;
-                    const port = Math.floor(Math.random() * 8000 + 1000);
-                    const user = "u" + Math.random().toString(36).substring(2, 6);
-                    const pass = "p" + Math.random().toString(36).substring(2, 6);
+            setTimeout(() => {
+                state.balance -= overallTotal;
+                state.spent += overallTotal;
 
-                    allProxies.push({
-                        id: Math.floor(Math.random() * 89999 + 10000),
-                        ip: ip,
-                        port: port,
-                        user: user,
-                        pass: pass,
-                        country: item.country,
-                        tariffTitle: item.tariffTitle,
-                        basePrice: item.basePrice || 40,
-                        daysLeft: item.periodDays,
-                        full: `${ip}:${port}:${user}:${pass}`
-                    });
-                }
-            });
+                const allProxies = [];
+                state.cart.forEach(item => {
+                    for (let i = 0; i < item.count; i++) {
+                        const ip = `${Math.floor(Math.random() * 120 + 60)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 240 + 10)}`;
+                        const port = Math.floor(Math.random() * 8000 + 1000);
+                        const user = "u" + Math.random().toString(36).substring(2, 6);
+                        const pass = "p" + Math.random().toString(36).substring(2, 6);
 
-            const newOrder = {
-                id: Math.floor(Math.random() * 89999 + 10000),
-                total: overallTotal,
-                count: allProxies.length,
-                createdAt: new Date(),
-                proxies: allProxies
-            };
+                        allProxies.push({
+                            id: Math.floor(Math.random() * 89999 + 10000),
+                            ip: ip,
+                            port: port,
+                            user: user,
+                            pass: pass,
+                            country: item.country,
+                            tariffTitle: item.tariffTitle,
+                            basePrice: item.basePrice || 40,
+                            daysLeft: item.periodDays,
+                            full: `${ip}:${port}:${user}:${pass}`
+                        });
+                    }
+                });
 
-            state.orders.unshift(newOrder);
-            state.cart = [];
-            updateCartBadge();
-            refreshProfileDisplay();
-            saveState();
+                const newOrder = {
+                    id: Math.floor(Math.random() * 89999 + 10000),
+                    total: overallTotal,
+                    count: allProxies.length,
+                    createdAt: new Date(),
+                    proxies: allProxies
+                };
 
-            showToast(`Заказ #${newOrder.id} оплачен (${newOrder.count} адресов)`);
-            navigate('orders');
+                state.orders.unshift(newOrder);
+                state.cart = [];
+                updateCartBadge();
+                refreshProfileDisplay();
+                saveState();
+
+                btn.disabled = false;
+                btn.innerText = "Оплатить заказ";
+
+                showToast(`Заказ #${newOrder.id} оплачен (${newOrder.count} адресов)`);
+                navigate('orders');
+            }, 300);
         }
 
         // ================= ЗАКАЗЫ + ПОИСК =================
@@ -866,7 +908,6 @@
                 return;
             }
 
-            // Фильтрация заказов по поисковому запросу
             const query = state.searchQuery;
             let filteredOrders = state.orders.map(order => {
                 const matchesOrderId = order.id.toString().includes(query);
@@ -877,9 +918,9 @@
                 );
 
                 if (query === "" || matchesOrderId) {
-                    return { order, proxies: order.proxies, isMatch: true };
+                    return { order, proxies: order.proxies };
                 } else if (matchingProxies.length > 0) {
-                    return { order, proxies: matchingProxies, isMatch: true };
+                    return { order, proxies: matchingProxies };
                 }
                 return null;
             }).filter(Boolean);
@@ -893,21 +934,17 @@
                 return;
             }
 
-            // Сортировка
             filteredOrders.sort((a, b) => {
-                const oA = a.order;
-                const oB = b.order;
-                const dateA = new Date(oA.createdAt);
-                const dateB = new Date(oB.createdAt);
+                const dateA = new Date(a.order.createdAt);
+                const dateB = new Date(b.order.createdAt);
                 if (state.ordersSort === 'date_desc') return dateB - dateA;
                 if (state.ordersSort === 'date_asc') return dateA - dateB;
-                if (state.ordersSort === 'price_desc') return oB.total - oA.total;
-                if (state.ordersSort === 'price_asc') return oA.total - oB.total;
+                if (state.ordersSort === 'price_desc') return b.order.total - a.order.total;
+                if (state.ordersSort === 'price_asc') return a.order.total - b.order.total;
                 return 0;
             });
 
             container.innerHTML = filteredOrders.map(({ order, proxies }) => {
-                // Если есть активный поиск — раскрываем заказы автоматически
                 const isOpen = query !== "" ? true : state.openOrderIds.has(order.id);
                 const dateStr = new Date(order.createdAt).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 
@@ -919,7 +956,8 @@
 
                 return `
                     <div class="surface-card rounded-2xl overflow-hidden transition">
-                        <div onclick="toggleOrder(${order.id})" class="p-3 cursor-pointer hover:bg-white/[0.04] flex items-center justify-between select-none">
+                        <!-- Шапка заказа -->
+                        <div onclick="toggleOrder(${order.id})" class="p-3.5 cursor-pointer hover:bg-white/[0.04] flex items-center justify-between select-none">
                             <div class="space-y-0.5">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-semibold text-zinc-100">#${order.id}</span>
@@ -935,18 +973,21 @@
                             </div>
                         </div>
 
+                        <!-- Содержимое заказа -->
                         <div class="accordion-grid ${isOpen ? 'open' : ''}">
                             <div class="accordion-inner">
                                 <div class="p-3 pt-2.5 border-t border-white/[0.06] space-y-2 bg-[#090b11]">
                                     
-                                    <div class="flex justify-between items-center text-[10px] text-zinc-400 pb-1">
+                                    <!-- Панель действий внутри заказа -->
+                                    <div class="flex flex-wrap items-center justify-between gap-2 pb-1 text-[11px] text-zinc-400">
                                         <div class="flex items-center gap-1.5">
-                                            <span>Сортировка:</span>
+                                            <span class="text-[10px]">Сорт:</span>
                                             <div class="relative">
-                                                <button onclick="toggleDropdown(event, 'inner-sort-${order.id}')" class="px-2 py-0.5 rounded-lg surface-input text-zinc-300 text-[10px]">
-                                                    ${innerSort === 'time_desc' ? 'Срок (макс)' : innerSort === 'time_asc' ? 'Срок (мин)' : innerSort === 'country' ? 'По стране' : 'По умолчанию'} ▼
+                                                <button onclick="toggleDropdown(event, 'inner-sort-${order.id}')" class="px-2 py-1 rounded-lg surface-input text-zinc-300 text-[10px] flex items-center gap-1">
+                                                    ${innerSort === 'time_desc' ? 'Срок (макс)' : innerSort === 'time_asc' ? 'Срок (мин)' : innerSort === 'country' ? 'По стране' : 'По умолчанию'} 
+                                                    <span class="text-[8px]">▼</span>
                                                 </button>
-                                                <div id="inner-sort-${order.id}" class="dropdown-menu absolute left-0 top-6 z-30 w-32 p-1 bg-[#12141e] border border-white/10 rounded-xl shadow-2xl space-y-0.5 backdrop-blur-2xl">
+                                                <div id="inner-sort-${order.id}" class="dropdown-menu absolute left-0 top-7 z-30 w-32 p-1 bg-[#12141e] border border-white/10 rounded-xl shadow-2xl space-y-0.5 backdrop-blur-2xl">
                                                     <div onclick="setInnerSort(${order.id}, 'time_desc')" class="p-1.5 rounded-lg hover:bg-white/[0.06] text-[10px] cursor-pointer">Срок (макс)</div>
                                                     <div onclick="setInnerSort(${order.id}, 'time_asc')" class="p-1.5 rounded-lg hover:bg-white/[0.06] text-[10px] cursor-pointer">Срок (мин)</div>
                                                     <div onclick="setInnerSort(${order.id}, 'country')" class="p-1.5 rounded-lg hover:bg-white/[0.06] text-[10px] cursor-pointer">По стране</div>
@@ -954,45 +995,49 @@
                                             </div>
                                         </div>
 
-                                        <!-- Экспорт в TXT и буфер -->
-                                        <div class="flex items-center gap-3">
-                                            <button onclick="downloadTxt(${order.id})" class="text-zinc-300 hover:text-white flex items-center gap-1">
-                                                <span>📥 Скачать .txt</span>
+                                        <!-- Действия: Получить .txt через бота и копирование -->
+                                        <div class="flex items-center gap-2">
+                                            <button onclick="requestOrderTxt(${order.id})" class="px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 text-[10px] font-semibold active:scale-95 transition flex items-center gap-1">
+                                                <span>📄 .txt в чат</span>
                                             </button>
-                                            <button onclick="copyAllInOrder(${order.id})" class="text-zinc-300 hover:text-white underline">
+                                            <button onclick="copyAllInOrder(${order.id})" class="text-[10px] text-zinc-300 hover:text-white underline">
                                                 Копия (${order.proxies.length})
                                             </button>
                                         </div>
                                     </div>
 
-                                    <div class="space-y-1.5">
+                                    <!-- ИСПРАВЛЕННЫЙ СПИСОК ПРОКСИ: 2-уровневая сетка, ничего не съезжает -->
+                                    <div class="space-y-2">
                                         ${proxiesList.map(p => `
-                                            <div class="p-2 rounded-xl bg-zinc-900/90 border border-white/[0.05] flex items-center justify-between text-xs hover:border-white/15 transition">
-                                                <div class="space-y-0.5">
-                                                    <div class="flex items-center gap-2">
-                                                        <img src="https://flagcdn.com/24x18/${p.country}.png" class="w-3.5 h-2.5 object-cover rounded-sm shadow-sm" alt="Flag">
-                                                        <span class="mono text-[11px] text-zinc-200 select-all">${p.full}</span>
-                                                    </div>
-                                                    <div class="flex items-center gap-2 text-[10px] text-zinc-400">
-                                                        <span>Тариф: ${p.tariffTitle}</span>
-                                                        <span>•</span>
-                                                        <span class="text-emerald-400 font-medium">Осталось: ${p.daysLeft} дн.</span>
-                                                    </div>
-                                                </div>
+                                            <div class="p-3 rounded-xl bg-zinc-900/90 border border-white/[0.06] space-y-2 hover:border-white/15 transition">
                                                 
-                                                <div class="flex items-center gap-1.5">
-                                                    <!-- Кнопка продления -->
-                                                    <button onclick="openProlongModal(${p.id},${order.id})" class="px-2 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold active:scale-95 transition">
-                                                        Продлить
-                                                    </button>
-                                                    <!-- Копирование -->
-                                                    <button onclick="copyString('${p.full}', 'Строка скопирована')" class="px-2 py-1.5 rounded-lg btn-secondary text-[10px] font-semibold text-zinc-200 active:scale-95 transition">
-                                                        Копия
-                                                    </button>
+                                                <!-- Строка 1: Флаг и полный адрес подключения -->
+                                                <div class="flex items-center gap-2 cursor-pointer active:opacity-70" onclick="copyString('${p.full}', 'Строка скопирована')">
+                                                    <img src="https://flagcdn.com/24x18/${p.country}.png" class="w-4 h-3 object-cover rounded-sm shadow-sm shrink-0" alt="Flag">
+                                                    <span class="mono text-xs font-medium text-zinc-200 break-all select-all">${p.full}</span>
                                                 </div>
+
+                                                <!-- Строка 2: Бейджи и кнопки действий -->
+                                                <div class="flex items-center justify-between pt-1 border-t border-white/[0.04]">
+                                                    <div class="flex items-center gap-2 text-[10px] text-zinc-400">
+                                                        <span class="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">${p.tariffTitle}</span>
+                                                        <span class="text-emerald-400 font-semibold">${p.daysLeft} дн.</span>
+                                                    </div>
+
+                                                    <div class="flex items-center gap-1.5 shrink-0">
+                                                        <button onclick="openProlongModal(${p.id},${order.id})" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold active:scale-95 transition">
+                                                            Продлить
+                                                        </button>
+                                                        <button onclick="copyString('${p.full}', 'Строка скопирована')" class="px-2.5 py-1 rounded-lg btn-secondary text-[10px] font-semibold text-zinc-200 active:scale-95 transition">
+                                                            Копия
+                                                        </button>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         `).join('')}
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -1021,7 +1066,50 @@
             renderOrders();
         }
 
-        // ================= ФУНКЦИЯ ПРОДЛЕНИЯ (PROLONG) =================
+        // ================= ОТПРАВКА .TXT ЧЕРЕЗ БОТА =================
+
+        function requestOrderTxt(orderId) {
+            triggerHaptic();
+            const order = state.orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            // Если открыто внутри Telegram: отправляем событие боту
+            if (tg && tg.initData) {
+                const payload = {
+                    action: "send_order_txt",
+                    order_id: order.id
+                };
+                
+                // Метод отправляет данные в чат бота
+                tg.sendData(JSON.stringify(payload));
+                showToast("Запрос отправлен! Бот пришлет файл в чат.");
+            } else {
+                // Если тест в браузере (без Telegram): открываем модалку со списком
+                const text = order.proxies.map(p => p.full).join('\n');
+                document.getElementById('txt-modal-title').innerText = `Прокси заказа #${order.id} (${order.proxies.length} шт.)`;
+                document.getElementById('txt-modal-content').value = text;
+                
+                const modal = document.getElementById('modal-txt-view');
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function closeTxtModal() {
+            const modal = document.getElementById('modal-txt-view');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function copyModalTxt() {
+            triggerHaptic();
+            const textarea = document.getElementById('txt-modal-content');
+            textarea.select();
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                showToast("Весь список скопирован!");
+                closeTxtModal();
+            });
+        }
+
+        // ================= ПРОДЛЕНИЕ (PROLONG) =================
 
         let activeProlongTarget = null;
         let selectedProlongDays = 30;
@@ -1075,6 +1163,7 @@
             triggerHaptic();
             if (!activeProlongTarget) return;
 
+            const btn = document.getElementById('btn-confirm-prolong');
             const baseMonthly = activeProlongTarget.proxy.basePrice || 40;
             const cost = Math.round(baseMonthly * (selectedProlongDays / 30));
 
@@ -1083,39 +1172,27 @@
                 return;
             }
 
-            state.balance -= cost;
-            state.spent += cost;
-            activeProlongTarget.proxy.daysLeft += selectedProlongDays;
+            btn.disabled = true;
+            btn.innerText = "Продление...";
 
-            saveState();
-            refreshProfileDisplay();
-            renderOrders();
+            setTimeout(() => {
+                state.balance -= cost;
+                state.spent += cost;
+                activeProlongTarget.proxy.daysLeft += selectedProlongDays;
 
-            showToast(`Прокси продлен на +${selectedProlongDays} дн.`);
-            closeProlongModal();
+                saveState();
+                refreshProfileDisplay();
+                renderOrders();
+
+                btn.disabled = false;
+                btn.innerText = "Подтвердить продление";
+
+                showToast(`Прокси продлен на +${selectedProlongDays} дн.`);
+                closeProlongModal();
+            }, 300);
         }
 
-        // ================= СКАЧИВАНИЕ В .TXT ФАЙЛ =================
-
-        function downloadTxt(orderId) {
-            triggerHaptic();
-            const order = state.orders.find(o => o.id === orderId);
-            if (!order) return;
-
-            const textContent = order.proxies.map(p => p.full).join('\r\n');
-            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `proxies_order_${order.id}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
-            showToast(`Файл proxies_order_${order.id}.txt скачан`);
-        }
+        // ================= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =================
 
         function copyString(str, msg = "Скопировано в буфер") {
             triggerHaptic();
