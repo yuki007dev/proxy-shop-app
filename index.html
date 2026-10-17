@@ -18,7 +18,6 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Компьютерное пространство и сетка */
         body {
             background-color: #07080b;
             color: #f1f5f9;
@@ -27,7 +26,7 @@
             overflow-x: hidden;
         }
 
-        /* Слой геометрической белой сетки с затуханием */
+        /* Объемная сетка кибер-пространства */
         .cyber-grid {
             position: fixed;
             inset: 0;
@@ -41,7 +40,6 @@
             z-index: 0;
         }
 
-        /* Объемный свет в центре пространства */
         .ambient-depth {
             position: fixed;
             inset: 0;
@@ -52,7 +50,6 @@
             z-index: 0;
         }
 
-        /* Полупрозрачные карточки с мягкой рамкой */
         .surface-card {
             background: rgba(13, 15, 22, 0.75);
             backdrop-filter: blur(16px);
@@ -65,7 +62,6 @@
         .surface-card:hover {
             border-color: rgba(255, 255, 255, 0.18);
             background: rgba(18, 21, 30, 0.85);
-            box-shadow: 0 6px 24px -2px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .surface-input {
@@ -75,11 +71,10 @@
             transition: all 0.2s ease;
         }
 
-        .surface-input:hover {
-            border-color: rgba(255, 255, 255, 0.2);
+        .surface-input:hover, .surface-input:focus-within {
+            border-color: rgba(255, 255, 255, 0.22);
         }
 
-        /* Кнопки */
         .btn-glow {
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -100,7 +95,6 @@
             color: #ffffff;
         }
 
-        /* Плавные аккордеоны */
         .accordion-grid {
             display: grid;
             grid-template-rows: 0fr;
@@ -113,7 +107,6 @@
             overflow: hidden;
         }
 
-        /* Кастомный дропдаун */
         .dropdown-menu {
             opacity: 0;
             transform: scale(0.96) translateY(-4px);
@@ -125,6 +118,10 @@
             opacity: 1;
             transform: scale(1) translateY(0);
             pointer-events: auto;
+        }
+
+        .modal-sheet {
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
         }
 
         .fade-in {
@@ -141,17 +138,48 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between select-none pb-24" onclick="closeAllDropdowns(event)">
 
-    <!-- Декоративные слои кибер-пространства -->
     <div class="cyber-grid"></div>
     <div class="ambient-depth"></div>
 
-    <!-- Toast уведомление (ровно 3 секунды) -->
+    <!-- Toast уведомление -->
     <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 ease-out opacity-0 -translate-y-2 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#11131c]/95 backdrop-blur-xl border border-white/10 text-xs text-zinc-100 shadow-2xl">
         <span id="toast-icon" class="text-zinc-400 font-bold">✓</span>
         <span id="toast-text"></span>
     </div>
 
-    <!-- Контент страниц -->
+    <!-- Модальное окно продления (Prolong Modal) -->
+    <div id="modal-prolong" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="modal-sheet w-full max-w-md bg-[#0f111a] border border-white/10 rounded-t-3xl sm:rounded-2xl p-5 space-y-4 shadow-2xl transform translate-y-full sm:translate-y-0">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-base font-semibold text-zinc-100">Продление прокси</h3>
+                    <p class="text-xs text-zinc-400 mono mt-0.5" id="prolong-proxy-str">—</p>
+                </div>
+                <button onclick="closeProlongModal()" class="text-zinc-400 hover:text-white p-1">✕</button>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Период продления</label>
+                <div class="grid grid-cols-4 gap-1.5">
+                    <button onclick="selectProlongDays(3)" id="btn-prolong-3" class="py-2.5 rounded-xl border border-white/10 surface-input text-xs font-semibold mono">3 дн.</button>
+                    <button onclick="selectProlongDays(7)" id="btn-prolong-7" class="py-2.5 rounded-xl border border-white/10 surface-input text-xs font-semibold mono">7 дн.</button>
+                    <button onclick="selectProlongDays(30)" id="btn-prolong-30" class="py-2.5 rounded-xl border border-zinc-400 bg-white/10 text-xs font-semibold mono">30 дн.</button>
+                    <button onclick="selectProlongDays(90)" id="btn-prolong-90" class="py-2.5 rounded-xl border border-white/10 surface-input text-xs font-semibold mono">90 дн.</button>
+                </div>
+            </div>
+
+            <div class="surface-card rounded-xl p-3 flex justify-between items-center">
+                <span class="text-xs text-zinc-400">Стоимость продления:</span>
+                <span class="text-sm font-semibold mono text-zinc-100" id="prolong-price-display">0 ₽</span>
+            </div>
+
+            <button onclick="executeProlong()" class="w-full py-3.5 rounded-xl bg-zinc-100 text-zinc-950 font-semibold text-xs btn-glow active:scale-[0.99] transition">
+                Подтвердить продление
+            </button>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
     <main class="w-full max-w-md mx-auto p-4 flex-1 relative z-10">
 
         <!-- ================= ЭКРАН 1: ВЫБОР ПУЛА ================= -->
@@ -161,7 +189,6 @@
                 <p class="text-xs text-zinc-400">Выберите подходящую серверную подсеть</p>
             </header>
 
-            <!-- Пул 1 -->
             <div onclick="selectProvider('pool1')" class="surface-card rounded-2xl p-4 cursor-pointer active:scale-[0.99] relative overflow-hidden group">
                 <div class="flex items-center justify-between">
                     <div>
@@ -180,7 +207,6 @@
                 </div>
             </div>
 
-            <!-- Пул 2 -->
             <div onclick="selectProvider('pool2')" class="surface-card rounded-2xl p-4 cursor-pointer active:scale-[0.99] relative overflow-hidden group">
                 <div class="flex items-center justify-between">
                     <div>
@@ -211,15 +237,11 @@
                 <p class="text-xs text-zinc-400" id="conf-pool-desc">Параметры подключения</p>
             </header>
 
-            <!-- Тип адреса -->
             <div class="space-y-1.5">
                 <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Тип адреса</label>
-                <div class="grid grid-cols-1 gap-1.5" id="conf-tariff-list">
-                    <!-- Заполняется JS -->
-                </div>
+                <div class="grid grid-cols-1 gap-1.5" id="conf-tariff-list"></div>
             </div>
 
-            <!-- Локация -->
             <div class="space-y-1.5 relative">
                 <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Локация</label>
                 <div onclick="toggleDropdown(event, 'dropdown-country')" class="w-full p-2.5 rounded-xl surface-input text-xs text-zinc-200 flex items-center justify-between cursor-pointer active:scale-[0.99] transition">
@@ -250,7 +272,6 @@
                 </div>
             </div>
 
-            <!-- Период и Количество -->
             <div class="grid grid-cols-2 gap-2.5">
                 <div class="space-y-1.5 relative">
                     <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Период</label>
@@ -277,7 +298,6 @@
                 </div>
             </div>
 
-            <!-- Итоговая строка позиции -->
             <div class="surface-card rounded-2xl p-3.5 flex items-center justify-between">
                 <span class="text-xs text-zinc-400">Стоимость позиции:</span>
                 <span class="text-base font-semibold mono text-zinc-100" id="conf-total-display">0 ₽</span>
@@ -303,9 +323,7 @@
                 <button onclick="clearCart()" class="text-[11px] text-zinc-400 hover:text-rose-400 transition p-1">Очистить всё</button>
             </header>
 
-            <div id="cart-list" class="space-y-2">
-                <!-- Карточки корзины -->
-            </div>
+            <div id="cart-list" class="space-y-2"></div>
 
             <div id="cart-footer" class="space-y-3 pt-2">
                 <div class="surface-card rounded-2xl p-3.5 flex items-center justify-between">
@@ -318,41 +336,47 @@
             </div>
         </section>
 
-        <!-- ================= ЭКРАН 4: ЗАКАЗЫ ================= -->
+        <!-- ================= ЭКРАН 4: ЗАКАЗЫ + ПОИСК ================= -->
         <section id="view-orders" class="hidden space-y-3">
-            <header class="pt-2 flex justify-between items-center relative">
-                <div>
-                    <h2 class="text-xl font-semibold tracking-tight text-zinc-100">Заказы</h2>
-                    <p class="text-xs text-zinc-400" id="orders-summary-label">0 пакетов</p>
+            <header class="pt-2 space-y-2.5">
+                <div class="flex justify-between items-center relative">
+                    <div>
+                        <h2 class="text-xl font-semibold tracking-tight text-zinc-100">Заказы</h2>
+                        <p class="text-xs text-zinc-400" id="orders-summary-label">0 пакетов</p>
+                    </div>
+
+                    <div class="relative">
+                        <div onclick="toggleDropdown(event, 'dropdown-orders-sort')" class="px-2.5 py-1.5 rounded-xl surface-input text-[11px] text-zinc-300 flex items-center gap-1.5 cursor-pointer hover:border-zinc-500">
+                            <span id="selected-orders-sort-label">Сначала новые</span>
+                            <span class="text-[9px] text-zinc-400">▼</span>
+                        </div>
+
+                        <div id="dropdown-orders-sort" class="dropdown-menu absolute right-0 top-9 z-30 w-40 p-1 bg-[#12141e] border border-white/10 rounded-xl shadow-2xl space-y-0.5 backdrop-blur-2xl">
+                            <div onclick="setOrdersSort('date_desc', 'Сначала новые')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">Сначала новые</div>
+                            <div onclick="setOrdersSort('date_asc', 'Сначала старые')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">Сначала старые</div>
+                            <div onclick="setOrdersSort('price_desc', 'По сумме (макс)')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">По сумме (макс)</div>
+                            <div onclick="setOrdersSort('price_asc', 'По сумме (мин)')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">По сумме (мин)</div>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Строка быстрого поиска по прокси/заказам -->
                 <div class="relative">
-                    <div onclick="toggleDropdown(event, 'dropdown-orders-sort')" class="px-2.5 py-1.5 rounded-xl surface-input text-[11px] text-zinc-300 flex items-center gap-1.5 cursor-pointer hover:border-zinc-500">
-                        <span id="selected-orders-sort-label">Сначала новые</span>
-                        <span class="text-[9px] text-zinc-400">▼</span>
-                    </div>
-
-                    <div id="dropdown-orders-sort" class="dropdown-menu absolute right-0 top-9 z-30 w-40 p-1 bg-[#12141e] border border-white/10 rounded-xl shadow-2xl space-y-0.5 backdrop-blur-2xl">
-                        <div onclick="setOrdersSort('date_desc', 'Сначала новые')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">Сначала новые</div>
-                        <div onclick="setOrdersSort('date_asc', 'Сначала старые')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">Сначала старые</div>
-                        <div onclick="setOrdersSort('price_desc', 'По сумме (макс)')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">По сумме (макс)</div>
-                        <div onclick="setOrdersSort('price_asc', 'По сумме (мин)')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">По сумме (мин)</div>
-                    </div>
+                    <input id="orders-search-input" oninput="handleSearch(this.value)" type="text" placeholder="Поиск по IP, порту, логину или номеру..." class="w-full pl-9 pr-8 py-2.5 rounded-xl surface-input text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none mono">
+                    <svg class="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <button onclick="clearSearch()" id="search-clear-btn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 text-xs">✕</button>
                 </div>
             </header>
 
-            <div id="orders-list-container" class="space-y-2.5">
-                <!-- Карточки заказов -->
-            </div>
+            <div id="orders-list-container" class="space-y-2.5"></div>
         </section>
 
-        <!-- ================= ЭКРАН 5: ЧИСТЫЙ ПРОФИЛЬ ================= -->
+        <!-- ================= ЭКРАН 5: ПРОФИЛЬ ================= -->
         <section id="view-profile" class="hidden space-y-4">
             <header class="pt-2">
                 <h2 class="text-xl font-semibold tracking-tight text-zinc-100">Учетная запись</h2>
             </header>
 
-            <!-- Карточка пользователя -->
             <div class="surface-card rounded-2xl p-4 space-y-4">
                 <div class="flex items-center gap-3">
                     <div id="prof-avatar-container" class="w-12 h-12 rounded-2xl bg-zinc-800/80 border border-white/10 overflow-hidden flex items-center justify-center text-sm font-semibold text-zinc-100 shadow-inner">
@@ -378,7 +402,6 @@
                 </div>
             </div>
 
-            <!-- Аналитика (4 плитки) -->
             <div class="grid grid-cols-2 gap-2 text-xs">
                 <div class="surface-card rounded-2xl p-3">
                     <span class="text-zinc-400 text-[11px] font-medium">Всего заказов</span>
@@ -401,11 +424,17 @@
                     <span class="text-[10px] text-zinc-400 mt-0.5 block" id="prof-stat-cart-sum">на 0 ₽</span>
                 </div>
             </div>
+
+            <div class="pt-2">
+                <button onclick="resetStorage()" class="w-full py-2.5 rounded-xl border border-rose-500/20 text-rose-400 hover:bg-rose-500/10 text-xs font-medium transition active:scale-[0.99]">
+                    Сбросить тестовые данные (LocalStorage)
+                </button>
+            </div>
         </section>
 
     </main>
 
-    <!-- ================= НАВИГАЦИОННАЯ ПАНЕЛЬ ================= -->
+    <!-- Навигация -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#07080b]/90 backdrop-blur-xl border-t border-white/[0.08]">
         <div class="max-w-md mx-auto grid grid-cols-4 p-1">
             <button onclick="navigate('providers')" id="nav-btn-providers" class="flex flex-col items-center gap-1 py-1.5 text-zinc-100 text-[11px] font-medium transition hover:text-white">
@@ -444,7 +473,20 @@
             if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        const state = {
+        // Загрузка состояния из LocalStorage
+        const STORAGE_KEY = "proxy_terminal_state_v1";
+        
+        function loadSavedState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) return JSON.parse(raw);
+            } catch (e) {
+                console.error("Storage error:", e);
+            }
+            return null;
+        }
+
+        const defaultState = {
             balance: 2000.00,
             spent: 0.00,
             user: {
@@ -460,11 +502,32 @@
             selectedPeriodName: '30 дней',
             count: 1,
             cart: [],
+            searchQuery: "",
             ordersSort: 'date_desc',
-            openOrderIds: new Set(),
+            openOrderIds: [],
             orderItemSorts: {},
             orders: []
         };
+
+        const state = Object.assign({}, defaultState, loadSavedState() || {});
+        state.openOrderIds = new Set(state.openOrderIds || []);
+
+        function saveState() {
+            try {
+                const toSave = Object.assign({}, state, {
+                    openOrderIds: Array.from(state.openOrderIds)
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+            } catch (e) {
+                console.error("Save error:", e);
+            }
+        }
+
+        function resetStorage() {
+            triggerHaptic();
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
 
         const pools = {
             pool1: {
@@ -486,7 +549,7 @@
             }
         };
 
-        // Инициализация
+        // Инициализация профиля
         document.getElementById('prof-username').innerText = state.user.name;
         document.getElementById('prof-user-id').innerText = `ID: ${state.user.id}`;
         
@@ -519,6 +582,7 @@
             document.getElementById('selected-country-name').innerText = name;
             document.getElementById('selected-country-flag').src = `https://flagcdn.com/24x18/${code}.png`;
             closeAllDropdowns();
+            saveState();
         }
 
         function selectPeriod(days, name) {
@@ -528,6 +592,7 @@
             document.getElementById('selected-period-name').innerText = name;
             calcTotal();
             closeAllDropdowns();
+            saveState();
         }
 
         function setOrdersSort(sortType, label) {
@@ -536,6 +601,7 @@
             document.getElementById('selected-orders-sort-label').innerText = label;
             closeAllDropdowns();
             renderOrders();
+            saveState();
         }
 
         function navigate(view) {
@@ -573,6 +639,7 @@
             renderTariffs();
             calcTotal();
             navigate('config');
+            saveState();
         }
 
         function renderTariffs() {
@@ -596,6 +663,7 @@
             state.tariffIndex = idx;
             renderTariffs();
             calcTotal();
+            saveState();
         }
 
         function changeCount(delta) {
@@ -606,6 +674,7 @@
             state.count = c;
             document.getElementById('conf-count').value = c;
             calcTotal();
+            saveState();
         }
 
         function calcTotal() {
@@ -627,6 +696,7 @@
                 poolId: state.currentPool,
                 poolName: pools[state.currentPool].name,
                 tariffTitle: tariff.label,
+                basePrice: tariff.price,
                 country: state.selectedCountry,
                 periodDays: state.selectedPeriod,
                 count: state.count,
@@ -635,6 +705,7 @@
 
             updateCartBadge();
             refreshProfileDisplay();
+            saveState();
             showToast(`Добавлено: ${tariff.label} (${state.count} шт.)`);
         }
 
@@ -703,6 +774,7 @@
             updateCartBadge();
             refreshProfileDisplay();
             renderCart();
+            saveState();
         }
 
         function clearCart() {
@@ -711,6 +783,7 @@
             updateCartBadge();
             refreshProfileDisplay();
             renderCart();
+            saveState();
         }
 
         function checkoutCart() {
@@ -741,6 +814,7 @@
                         pass: pass,
                         country: item.country,
                         tariffTitle: item.tariffTitle,
+                        basePrice: item.basePrice || 40,
                         daysLeft: item.periodDays,
                         full: `${ip}:${port}:${user}:${pass}`
                     });
@@ -759,12 +833,24 @@
             state.cart = [];
             updateCartBadge();
             refreshProfileDisplay();
+            saveState();
 
             showToast(`Заказ #${newOrder.id} оплачен (${newOrder.count} адресов)`);
             navigate('orders');
         }
 
-        // ================= ЗАКАЗЫ =================
+        // ================= ЗАКАЗЫ + ПОИСК =================
+
+        function handleSearch(val) {
+            state.searchQuery = val.trim().toLowerCase();
+            document.getElementById('search-clear-btn').classList.toggle('hidden', state.searchQuery === '');
+            renderOrders();
+        }
+
+        function clearSearch() {
+            document.getElementById('orders-search-input').value = "";
+            handleSearch("");
+        }
 
         function renderOrders() {
             const container = document.getElementById('orders-list-container');
@@ -780,20 +866,53 @@
                 return;
             }
 
-            const sortedOrders = [...state.orders].sort((a, b) => {
-                if (state.ordersSort === 'date_desc') return b.createdAt - a.createdAt;
-                if (state.ordersSort === 'date_asc') return a.createdAt - b.createdAt;
-                if (state.ordersSort === 'price_desc') return b.total - a.total;
-                if (state.ordersSort === 'price_asc') return a.total - b.total;
+            // Фильтрация заказов по поисковому запросу
+            const query = state.searchQuery;
+            let filteredOrders = state.orders.map(order => {
+                const matchesOrderId = order.id.toString().includes(query);
+                const matchingProxies = order.proxies.filter(p => 
+                    p.full.toLowerCase().includes(query) || 
+                    p.country.toLowerCase().includes(query) ||
+                    p.tariffTitle.toLowerCase().includes(query)
+                );
+
+                if (query === "" || matchesOrderId) {
+                    return { order, proxies: order.proxies, isMatch: true };
+                } else if (matchingProxies.length > 0) {
+                    return { order, proxies: matchingProxies, isMatch: true };
+                }
+                return null;
+            }).filter(Boolean);
+
+            if (filteredOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="surface-card rounded-2xl p-8 text-center text-zinc-400">
+                        <p class="text-xs">Ничего не найдено по запросу «${query}»</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Сортировка
+            filteredOrders.sort((a, b) => {
+                const oA = a.order;
+                const oB = b.order;
+                const dateA = new Date(oA.createdAt);
+                const dateB = new Date(oB.createdAt);
+                if (state.ordersSort === 'date_desc') return dateB - dateA;
+                if (state.ordersSort === 'date_asc') return dateA - dateB;
+                if (state.ordersSort === 'price_desc') return oB.total - oA.total;
+                if (state.ordersSort === 'price_asc') return oA.total - oB.total;
                 return 0;
             });
 
-            container.innerHTML = sortedOrders.map(order => {
-                const isOpen = state.openOrderIds.has(order.id);
-                const dateStr = order.createdAt.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+            container.innerHTML = filteredOrders.map(({ order, proxies }) => {
+                // Если есть активный поиск — раскрываем заказы автоматически
+                const isOpen = query !== "" ? true : state.openOrderIds.has(order.id);
+                const dateStr = new Date(order.createdAt).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 
                 const innerSort = state.orderItemSorts[order.id] || 'default';
-                let proxiesList = [...order.proxies];
+                let proxiesList = [...proxies];
                 if (innerSort === 'time_desc') proxiesList.sort((a, b) => b.daysLeft - a.daysLeft);
                 if (innerSort === 'time_asc') proxiesList.sort((a, b) => a.daysLeft - b.daysLeft);
                 if (innerSort === 'country') proxiesList.sort((a, b) => a.country.localeCompare(b.country));
@@ -807,7 +926,7 @@
                                     <span class="text-[10px] text-zinc-400 mono">${dateStr}</span>
                                 </div>
                                 <div class="text-[11px] text-zinc-400">
-                                    <span>Пакет из ${order.count} адресов</span>
+                                    <span>Пакет: ${order.count} адресов ${query !== '' ? `(найдено ${proxiesList.length})` : ''}</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3">
@@ -834,9 +953,16 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <button onclick="copyAllInOrder(${order.id})" class="text-zinc-300 hover:text-white underline">
-                                            Копировать всё (${order.proxies.length})
-                                        </button>
+
+                                        <!-- Экспорт в TXT и буфер -->
+                                        <div class="flex items-center gap-3">
+                                            <button onclick="downloadTxt(${order.id})" class="text-zinc-300 hover:text-white flex items-center gap-1">
+                                                <span>📥 Скачать .txt</span>
+                                            </button>
+                                            <button onclick="copyAllInOrder(${order.id})" class="text-zinc-300 hover:text-white underline">
+                                                Копия (${order.proxies.length})
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div class="space-y-1.5">
@@ -850,12 +976,20 @@
                                                     <div class="flex items-center gap-2 text-[10px] text-zinc-400">
                                                         <span>Тариф: ${p.tariffTitle}</span>
                                                         <span>•</span>
-                                                        <span class="text-emerald-400 font-medium">Осталось: ${p.daysLeft} дн. 00 ч.</span>
+                                                        <span class="text-emerald-400 font-medium">Осталось: ${p.daysLeft} дн.</span>
                                                     </div>
                                                 </div>
-                                                <button onclick="copyString('${p.full}', 'Строка прокси скопирована')" class="px-2.5 py-1.5 rounded-lg btn-secondary text-[10px] font-semibold text-zinc-200 active:scale-95 transition">
-                                                    Копия
-                                                </button>
+                                                
+                                                <div class="flex items-center gap-1.5">
+                                                    <!-- Кнопка продления -->
+                                                    <button onclick="openProlongModal(${p.id},${order.id})" class="px-2 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold active:scale-95 transition">
+                                                        Продлить
+                                                    </button>
+                                                    <!-- Копирование -->
+                                                    <button onclick="copyString('${p.full}', 'Строка скопирована')" class="px-2 py-1.5 rounded-lg btn-secondary text-[10px] font-semibold text-zinc-200 active:scale-95 transition">
+                                                        Копия
+                                                    </button>
+                                                </div>
                                             </div>
                                         `).join('')}
                                     </div>
@@ -875,6 +1009,7 @@
             } else {
                 state.openOrderIds.add(id);
             }
+            saveState();
             renderOrders();
         }
 
@@ -882,7 +1017,104 @@
             triggerHaptic();
             state.orderItemSorts[orderId] = sortType;
             closeAllDropdowns();
+            saveState();
             renderOrders();
+        }
+
+        // ================= ФУНКЦИЯ ПРОДЛЕНИЯ (PROLONG) =================
+
+        let activeProlongTarget = null;
+        let selectedProlongDays = 30;
+
+        function openProlongModal(proxyId, orderId) {
+            triggerHaptic();
+            const order = state.orders.find(o => o.id === orderId);
+            if (!order) return;
+            const proxy = order.proxies.find(p => p.id === proxyId);
+            if (!proxy) return;
+
+            activeProlongTarget = { proxy, order };
+            selectedProlongDays = 30;
+
+            document.getElementById('prolong-proxy-str').innerText = proxy.full;
+            selectProlongDays(30);
+
+            const modal = document.getElementById('modal-prolong');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-sheet').classList.remove('translate-y-full');
+        }
+
+        function closeProlongModal() {
+            triggerHaptic();
+            const modal = document.getElementById('modal-prolong');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-sheet').classList.add('translate-y-full');
+            activeProlongTarget = null;
+        }
+
+        function selectProlongDays(days) {
+            triggerHaptic();
+            selectedProlongDays = days;
+            [3, 7, 30, 90].forEach(d => {
+                const btn = document.getElementById(`btn-prolong-${d}`);
+                if (btn) {
+                    btn.className = d === days 
+                        ? 'py-2.5 rounded-xl border border-zinc-400 bg-white/10 text-xs font-semibold mono' 
+                        : 'py-2.5 rounded-xl border border-white/10 surface-input text-xs font-semibold mono';
+                }
+            });
+
+            if (activeProlongTarget) {
+                const baseMonthly = activeProlongTarget.proxy.basePrice || 40;
+                const cost = Math.round(baseMonthly * (days / 30));
+                document.getElementById('prolong-price-display').innerText = `${cost} ₽`;
+            }
+        }
+
+        function executeProlong() {
+            triggerHaptic();
+            if (!activeProlongTarget) return;
+
+            const baseMonthly = activeProlongTarget.proxy.basePrice || 40;
+            const cost = Math.round(baseMonthly * (selectedProlongDays / 30));
+
+            if (state.balance < cost) {
+                showToast("Недостаточно средств для продления", true);
+                return;
+            }
+
+            state.balance -= cost;
+            state.spent += cost;
+            activeProlongTarget.proxy.daysLeft += selectedProlongDays;
+
+            saveState();
+            refreshProfileDisplay();
+            renderOrders();
+
+            showToast(`Прокси продлен на +${selectedProlongDays} дн.`);
+            closeProlongModal();
+        }
+
+        // ================= СКАЧИВАНИЕ В .TXT ФАЙЛ =================
+
+        function downloadTxt(orderId) {
+            triggerHaptic();
+            const order = state.orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            const textContent = order.proxies.map(p => p.full).join('\r\n');
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `proxies_order_${order.id}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast(`Файл proxies_order_${order.id}.txt скачан`);
         }
 
         function copyString(str, msg = "Скопировано в буфер") {
@@ -906,6 +1138,7 @@
             triggerHaptic();
             state.balance += amount;
             refreshProfileDisplay();
+            saveState();
             showToast(`Баланс пополнен на +${amount} ₽`);
         }
 
