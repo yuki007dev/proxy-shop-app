@@ -17,7 +17,6 @@
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
-
         .hidden { display: none !important; }
 
         body {
@@ -33,8 +32,8 @@
             inset: 0;
             background-size: 32px 32px;
             background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             mask-image: radial-gradient(ellipse at 50% 20%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);
             -webkit-mask-image: radial-gradient(ellipse at 50% 20%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);
             pointer-events: none;
@@ -45,8 +44,8 @@
             position: fixed;
             inset: 0;
             background: 
-                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.07) 0%, transparent 55%),
-                radial-gradient(circle at 50% 100%, rgba(15, 23, 42, 0.4) 0%, transparent 60%);
+                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.06) 0%, transparent 55%),
+                radial-gradient(circle at 50% 100%, rgba(15, 23, 42, 0.3) 0%, transparent 60%);
             pointer-events: none;
             z-index: 0;
         }
@@ -149,7 +148,7 @@
         <div class="w-full max-w-sm bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
             <div class="space-y-1.5">
                 <h3 class="text-sm font-semibold text-zinc-100" id="confirm-title">Подтверждение</h3>
-                <p class="text-xs text-zinc-400 leading-relaxed" id="confirm-desc">Вы уверены, что хотите выполнить это действие?</p>
+                <p class="text-xs text-zinc-400 leading-relaxed" id="confirm-desc">Вы уверены?</p>
             </div>
             <div class="flex gap-2 pt-1">
                 <button type="button" onclick="closeConfirmModal()" class="flex-1 py-2.5 rounded-xl border border-white/10 surface-input text-xs font-medium text-zinc-300 hover:text-white transition">
@@ -157,6 +156,79 @@
                 </button>
                 <button type="button" id="confirm-action-btn" class="flex-1 py-2.5 rounded-xl text-xs font-semibold transition">
                     Подтвердить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА: Возврат средств и удаление прокси (Админ) -->
+    <div id="modal-admin-refund" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-150">
+        <div class="w-full max-w-md bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-100">Возврат средств и отзыв прокси</h3>
+                    <p class="text-xs text-zinc-400 mono mt-0.5 break-all" id="refund-proxy-str">—</p>
+                </div>
+                <button type="button" onclick="closeRefundModal()" class="text-zinc-400 hover:text-white text-sm p-1">✕</button>
+            </div>
+
+            <!-- Инфо-сводка по чеку -->
+            <div class="p-3 rounded-xl bg-black/40 border border-white/[0.06] space-y-1.5 text-xs">
+                <div class="flex justify-between text-zinc-400">
+                    <span>Клиент:</span>
+                    <span class="text-zinc-200 font-medium" id="refund-user-label">—</span>
+                </div>
+                <div class="flex justify-between text-zinc-400">
+                    <span>Уплачено по чеку:</span>
+                    <span class="text-zinc-100 font-semibold mono" id="refund-paid-amount">0 ₽</span>
+                </div>
+                <div class="flex justify-between text-zinc-400">
+                    <span>Срок прокси:</span>
+                    <span class="text-zinc-200 mono" id="refund-period-info">0 из 0 дн.</span>
+                </div>
+            </div>
+
+            <!-- Выбор типа возврата -->
+            <div class="space-y-1.5">
+                <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Режим компенсации</label>
+                <div class="space-y-1.5">
+                    <label onclick="selectRefundType('full')" class="flex items-center justify-between p-2.5 rounded-xl surface-input border cursor-pointer transition" id="refund-opt-full">
+                        <div class="flex items-center gap-2">
+                            <input type="radio" name="refund-mode" id="rad-refund-full" checked class="accent-white">
+                            <span class="text-xs text-zinc-200">100% Возврат (Тех. невалид)</span>
+                        </div>
+                        <span class="text-xs font-semibold mono text-emerald-400" id="val-refund-full">0 ₽</span>
+                    </label>
+
+                    <label onclick="selectRefundType('prorate')" class="flex items-center justify-between p-2.5 rounded-xl surface-input border border-transparent cursor-pointer transition" id="refund-opt-prorate">
+                        <div class="flex items-center gap-2">
+                            <input type="radio" name="refund-mode" id="rad-refund-prorate" class="accent-white">
+                            <span class="text-xs text-zinc-200">По остатку срока (Prorated)</span>
+                        </div>
+                        <span class="text-xs font-semibold mono text-emerald-400" id="val-refund-prorate">0 ₽</span>
+                    </label>
+
+                    <label onclick="selectRefundType('zero')" class="flex items-center justify-between p-2.5 rounded-xl surface-input border border-transparent cursor-pointer transition" id="refund-opt-zero">
+                        <div class="flex items-center gap-2">
+                            <input type="radio" name="refund-mode" id="rad-refund-zero" class="accent-white">
+                            <span class="text-xs text-zinc-200">Без выплаты (Блокировка за спам)</span>
+                        </div>
+                        <span class="text-xs font-semibold mono text-zinc-400">0 ₽</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Предупреждение о шлюзе -->
+            <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 leading-relaxed" id="refund-gateway-notice">
+                <!-- Заполняется динамически -->
+            </div>
+
+            <div class="flex gap-2 pt-1">
+                <button type="button" onclick="closeRefundModal()" class="flex-1 py-2.5 rounded-xl border border-white/10 surface-input text-xs font-medium text-zinc-300 hover:text-white transition">
+                    Отмена
+                </button>
+                <button type="button" onclick="executeRefundAndRevoke()" class="flex-1 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-semibold transition">
+                    Аннулировать и начислить
                 </button>
             </div>
         </div>
@@ -243,7 +315,7 @@
                         <div class="flex items-center gap-2">
                             <h3 class="text-sm font-semibold text-zinc-100 group-hover:text-white transition">Standard Pool</h3>
                             <span class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.04] text-zinc-300 border border-white/[0.08]">
-                                Базовый
+                                Proxy6
                             </span>
                         </div>
                         <p class="text-xs text-zinc-400 mt-1">IPv6 / IPv4 адреса высокой доступности</p>
@@ -261,7 +333,7 @@
                         <div class="flex items-center gap-2">
                             <h3 class="text-sm font-semibold text-zinc-100 group-hover:text-white transition">Prime Pool</h3>
                             <span class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.04] text-zinc-300 border border-white/[0.08]">
-                                Приоритет
+                                ProxyLine
                             </span>
                         </div>
                         <p class="text-xs text-zinc-400 mt-1">Высокий IP-траст для критичных задач</p>
@@ -501,7 +573,7 @@
 
             <!-- Вкладка 1: Пользователи -->
             <div id="adm-view-users" class="space-y-3">
-                <!-- 1.1: Режим общего списка -->
+                <!-- 1.1: Список пользователей -->
                 <div id="adm-user-list-mode" class="space-y-3">
                     <div class="relative">
                         <input id="adm-user-search" oninput="renderAdminUsers()" type="text" placeholder="Поиск по ID или имени..." class="w-full pl-9 pr-3 py-2.5 rounded-xl surface-input text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none mono">
@@ -510,7 +582,7 @@
                     <div id="adm-users-list" class="space-y-2"></div>
                 </div>
 
-                <!-- 1.2: Режим карточки конкретного пользователя -->
+                <!-- 1.2: Карточка конкретного пользователя -->
                 <div id="adm-user-detail-mode" class="hidden space-y-4">
                     <button type="button" onclick="closeUserDetail()" class="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1.5 transition">
                         <span>←</span> Назад к списку пользователей
@@ -522,12 +594,18 @@
                                 <div class="flex items-center gap-2">
                                     <h3 class="text-sm font-semibold text-zinc-100" id="detail-user-name">—</h3>
                                     <span class="text-[10px] text-zinc-400 mono" id="detail-user-id">ID: —</span>
+                                    <span class="text-[9px] px-1.5 py-0.2 rounded font-medium" id="detail-user-status-badge">Активен</span>
                                 </div>
                                 <p class="text-xs text-zinc-400 mt-0.5" id="detail-user-stats">0 заказов • 0 активных прокси</p>
                             </div>
-                            <button type="button" onclick="openBalanceEditFromDetail()" class="px-3 py-1.5 rounded-xl border border-white/10 hover:border-white/20 text-xs font-medium text-zinc-200 transition">
-                                Изменить баланс
-                            </button>
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" onclick="openBalanceEditFromDetail()" class="px-2.5 py-1.5 rounded-xl border border-white/10 hover:border-white/20 text-xs font-medium text-zinc-200 transition">
+                                    ± Баланс
+                                </button>
+                                <button type="button" id="btn-toggle-block" onclick="toggleUserBlockFromDetail()" class="px-2.5 py-1.5 rounded-xl border border-rose-500/20 text-rose-400 hover:bg-rose-500/10 text-xs font-medium transition">
+                                    Бан
+                                </button>
+                            </div>
                         </div>
 
                         <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
@@ -546,7 +624,7 @@
                 </div>
             </div>
 
-            <!-- Вкладка 2: Все прокси -->
+            <!-- Вкладка 2: Все прокси системы -->
             <div id="adm-view-proxies" class="hidden space-y-3">
                 <div class="relative">
                     <input id="adm-proxy-search" oninput="renderAdminProxies()" type="text" placeholder="Поиск по IP, порту, логину или пулу..." class="w-full pl-9 pr-3 py-2.5 rounded-xl surface-input text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none mono">
@@ -560,13 +638,16 @@
                 <div class="surface-card rounded-2xl p-4 space-y-3">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="text-xs font-semibold text-zinc-100">Proxy6 API</h3>
-                            <p class="text-[11px] text-zinc-400">Базовый пул (IPv4 / IPv6)</p>
+                            <div class="flex items-center gap-1.5">
+                                <h3 class="text-xs font-semibold text-zinc-100">Proxy6 API</h3>
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            </div>
+                            <p class="text-[11px] text-zinc-400 mt-0.5">Метод удаления: /delete/?ids= (Без автовозврата на баланс API)</p>
                         </div>
                         <span class="text-xs font-mono font-semibold text-emerald-400" id="gw-p6-balance">1 420.00 ₽</span>
                     </div>
                     <div class="flex items-center justify-between text-[11px] text-zinc-400 border-t border-white/[0.04] pt-2">
-                        <span>Статус: Подключен</span>
+                        <span>Гарантия манибека: 24 часа (через саппорт)</span>
                         <button type="button" onclick="testGatewaySync('Proxy6')" class="text-zinc-300 hover:text-white underline">Проверить связь</button>
                     </div>
                 </div>
@@ -574,14 +655,17 @@
                 <div class="surface-card rounded-2xl p-4 space-y-3">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="text-xs font-semibold text-zinc-100">ProxyLine API</h3>
-                            <p class="text-[11px] text-zinc-400">Премиум пул (Shared / Dedicated)</p>
+                            <div class="flex items-center gap-1.5">
+                                <h3 class="text-xs font-semibold text-zinc-100">ProxyLine API</h3>
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                            </div>
+                            <p class="text-[11px] text-zinc-400 mt-0.5">Метод удаления в API: отсутствует (Только ручной тикет)</p>
                         </div>
                         <span class="text-xs font-mono font-semibold text-blue-400" id="gw-pl-balance">2 150.00 ₽</span>
                     </div>
                     <div class="flex items-center justify-between text-[11px] text-zinc-400 border-t border-white/[0.04] pt-2">
-                        <span>Статус: Подключен</span>
-                        <button type="button" onclick="testGatewaySync('Proxyline')" class="text-zinc-300 hover:text-white underline">Проверить связь</button>
+                        <span>Манибек: 48 часов (&lt; 500 МБ)</span>
+                        <button type="button" onclick="testGatewaySync('ProxyLine')" class="text-zinc-300 hover:text-white underline">Проверить связь</button>
                     </div>
                 </div>
 
@@ -654,7 +738,7 @@
             } catch(e) {}
         }
 
-        const STORAGE_KEY = "proxy_terminal_state_v5";
+        const STORAGE_KEY = "proxy_terminal_state_v6";
         
         function loadSavedState() {
             try {
@@ -686,9 +770,9 @@
             orderItemSorts: {},
             orders: [],
             crmUsers: [
-                { id: "8401928", name: "Alexey (Вы)", balance: 2000.00 },
-                { id: "1092841", name: "Dmitry Arb", balance: 450.00 },
-                { id: "4920194", name: "Crypto Team", balance: 8900.00 }
+                { id: "8401928", name: "Alexey (Вы)", balance: 2000.00, isBlocked: false },
+                { id: "1092841", name: "Dmitry Arb", balance: 450.00, isBlocked: false },
+                { id: "4920194", name: "Crypto Team", balance: 8900.00, isBlocked: false }
             ]
         };
 
@@ -737,6 +821,7 @@
         const pools = {
             pool1: {
                 name: "Standard Pool",
+                provider: "Proxy6",
                 desc: "Базовый пул адресов (Proxy6 API)",
                 tariffs: [
                     { id: 'ipv6', label: 'IPv6', price: 15 },
@@ -746,6 +831,7 @@
             },
             pool2: {
                 name: "Prime Pool",
+                provider: "ProxyLine",
                 desc: "Приоритетные подсети (ProxyLine API)",
                 tariffs: [
                     { id: 'ipv4_shared', label: 'IPv4 Shared', price: 65 },
@@ -926,6 +1012,7 @@
                 cartId: Date.now() + Math.random(),
                 poolId: state.currentPool,
                 poolName: pools[state.currentPool]?.name || "Standard Pool",
+                provider: pools[state.currentPool]?.provider || "Proxy6",
                 tariffTitle: tariff.label,
                 basePrice: tariff.price,
                 country: state.selectedCountry,
@@ -1042,6 +1129,7 @@
 
                 const allProxies = [];
                 state.cart.forEach(item => {
+                    const singlePrice = Math.round(item.total / item.count);
                     for (let i = 0; i < item.count; i++) {
                         const ip = `${Math.floor(Math.random() * 120 + 60)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 240 + 10)}`;
                         const port = Math.floor(Math.random() * 8000 + 1000);
@@ -1057,9 +1145,14 @@
                             pass: pass,
                             country: item.country,
                             poolName: item.poolName || "Standard Pool",
+                            provider: item.provider || "Proxy6",
                             tariffTitle: item.tariffTitle,
                             basePrice: item.basePrice || 40,
+                            periodDays: item.periodDays,
+                            totalDays: item.periodDays,
                             daysLeft: item.periodDays,
+                            paidAmount: singlePrice, // Точный чек покупки
+                            purchasedAt: new Date().toISOString(),
                             full: `${ip}:${port}:${user}:${pass}`
                         });
                     }
@@ -1103,7 +1196,6 @@
             handleSearch("");
         }
 
-        // Рендер отдельной карточки прокси без вложенных кавычек
         function renderProxyCardHtml(p, orderId) {
             return `
                 <div class="p-3 rounded-xl bg-zinc-900/90 border border-white/[0.06] space-y-2 hover:border-white/15 transition">
@@ -1455,7 +1547,109 @@
         }
 
         // ==========================================
-        // ЛОГИКА АДМИН-ПАНЕЛИ
+        // МОДУЛЬ ВОЗВРАТА СРЕДСТВ И ОТЗЫВА (REFUND)
+        // ==========================================
+        let activeRefundTarget = null;
+        let selectedRefundMode = 'full';
+
+        function openRefundModal(proxyId, orderId) {
+            triggerHaptic();
+            const order = (state.orders || []).find(o => o.id === orderId);
+            const proxy = order?.proxies?.find(p => p.id === proxyId);
+            if (!proxy) return;
+
+            const user = (state.crmUsers || []).find(u => String(u.id) === String(order.userId || proxy.userId));
+            activeRefundTarget = { proxy, order, user };
+
+            const paid = proxy.paidAmount || proxy.basePrice || 40;
+            const totalDays = proxy.totalDays || proxy.periodDays || 30;
+            const daysLeft = proxy.daysLeft || 0;
+            
+            // Расчет пропорционального возврата (Prorate)
+            const prorated = Math.max(0, Math.round(paid * (daysLeft / totalDays)));
+
+            document.getElementById('refund-proxy-str').innerText = proxy.full;
+            document.getElementById('refund-user-label').innerText = (user ? user.name : "ID: " + proxy.userId);
+            document.getElementById('refund-paid-amount').innerText = paid + " ₽";
+            document.getElementById('refund-period-info').innerText = daysLeft + " из " + totalDays + " дн.";
+
+            document.getElementById('val-refund-full').innerText = paid + " ₽";
+            document.getElementById('val-refund-prorate').innerText = prorated + " ₽";
+
+            // Специфика поставщиков
+            const noticeEl = document.getElementById('refund-gateway-notice');
+            if (proxy.provider === 'Proxy6') {
+                noticeEl.innerHTML = `<b>Шлюз Proxy6:</b> При подтверждении будет вызван API <code>/delete/?ids=</code>. Деньги начисляются из резерва бота. Для возврата на баланс Proxy6 напишите в саппорт (до 24ч).`;
+            } else {
+                noticeEl.innerHTML = `<b>Шлюз ProxyLine:</b> В API нет метода delete. Адрес удаляется из базы бота. Деньги начисляются клиенту. Для манибека от ProxyLine откройте тикет в кабинете (до 48ч, &lt; 500 МБ).`;
+            }
+
+            selectRefundType('full');
+
+            const modal = document.getElementById('modal-admin-refund');
+            if (modal) modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeRefundModal() {
+            const modal = document.getElementById('modal-admin-refund');
+            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+            activeRefundTarget = null;
+        }
+
+        function selectRefundType(mode) {
+            triggerHaptic();
+            selectedRefundMode = mode;
+            ['full', 'prorate', 'zero'].forEach(m => {
+                const el = document.getElementById('refund-opt-' + m);
+                const rad = document.getElementById('rad-refund-' + m);
+                if (el) {
+                    el.className = (m === mode) 
+                        ? "flex items-center justify-between p-2.5 rounded-xl surface-input border border-white/30 bg-white/[0.04] cursor-pointer transition"
+                        : "flex items-center justify-between p-2.5 rounded-xl surface-input border border-transparent cursor-pointer transition";
+                }
+                if (rad) rad.checked = (m === mode);
+            });
+        }
+
+        function executeRefundAndRevoke() {
+            triggerHaptic();
+            if (!activeRefundTarget) return;
+
+            const { proxy, order, user } = activeRefundTarget;
+            const paid = proxy.paidAmount || proxy.basePrice || 40;
+            const totalDays = proxy.totalDays || proxy.periodDays || 30;
+            const daysLeft = proxy.daysLeft || 0;
+
+            let refundAmount = 0;
+            if (selectedRefundMode === 'full') refundAmount = paid;
+            if (selectedRefundMode === 'prorate') refundAmount = Math.max(0, Math.round(paid * (daysLeft / totalDays)));
+            if (selectedRefundMode === 'zero') refundAmount = 0;
+
+            // Начисление средств пользователю
+            if (user) {
+                user.balance = (user.balance || 0) + refundAmount;
+                if (String(user.id) === String(state.user.id)) {
+                    state.balance = user.balance;
+                }
+            }
+
+            // Удаление прокси из заказа
+            order.proxies = (order.proxies || []).filter(p => p.id !== proxy.id);
+            order.count = order.proxies.length;
+
+            saveState();
+            closeRefundModal();
+            refreshProfileDisplay();
+
+            if (adminActiveUserId) renderUserDetail(adminActiveUserId);
+            renderAdminProxies();
+            renderOrders();
+
+            showToast("Прокси отозван. Клиенту начислено " + refundAmount + " ₽");
+        }
+
+        // ==========================================
+        // ЛОГИКА АДМИН-ПАНЕЛИ (ADMIN CORE)
         // ==========================================
         let adminActiveUserId = null;
         let adminTargetUserId = null;
@@ -1518,12 +1712,17 @@
 
             container.innerHTML = filtered.map(u => {
                 const userProxies = getUserProxies(u.id);
+                const statusBadge = u.isBlocked 
+                    ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold">БАН</span>`
+                    : '';
+
                 return `
                     <div onclick="openUserDetail('${u.id}')" class="surface-card rounded-xl p-3.5 flex items-center justify-between cursor-pointer hover:border-white/20 transition group">
                         <div class="space-y-1">
                             <div class="flex items-center gap-2">
                                 <span class="text-xs font-semibold text-zinc-200 group-hover:text-white transition">${u.name}</span>
                                 <span class="text-[10px] text-zinc-500 mono">ID:${u.id}</span>
+                                ${statusBadge}
                             </div>
                             <div class="flex items-center gap-3 text-[11px] text-zinc-400">
                                 <span>Прокси: <b class="text-zinc-200 font-medium">${userProxies.length}</b></span>
@@ -1565,11 +1764,23 @@
             const balanceEl = document.getElementById('detail-user-balance');
             const statsEl = document.getElementById('detail-user-stats');
             const countEl = document.getElementById('detail-proxies-count');
+            const badgeEl = document.getElementById('detail-user-status-badge');
+            const blockBtn = document.getElementById('btn-toggle-block');
             const listContainer = document.getElementById('detail-user-proxies');
 
             if (nameEl) nameEl.innerText = user.name;
             if (idEl) idEl.innerText = "ID: " + user.id;
             if (balanceEl) balanceEl.innerText = (user.balance || 0).toFixed(2) + " ₽";
+
+            if (user.isBlocked) {
+                badgeEl.innerText = "Заблокирован";
+                badgeEl.className = "text-[9px] px-1.5 py-0.5 rounded font-medium bg-rose-500/20 text-rose-400 border border-rose-500/30";
+                if (blockBtn) blockBtn.innerText = "Разбан";
+            } else {
+                badgeEl.innerText = "Активен";
+                badgeEl.className = "text-[9px] px-1.5 py-0.5 rounded font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                if (blockBtn) blockBtn.innerText = "Бан";
+            }
 
             const proxies = getUserProxies(userId);
             const userOrders = (state.orders || []).filter(o => String(o.userId) === String(userId));
@@ -1584,32 +1795,105 @@
                 return;
             }
 
-            listContainer.innerHTML = proxies.map(p => `
-                <div class="surface-card rounded-xl p-3 space-y-2 border border-white/[0.06]">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2 cursor-pointer" onclick="copyString('${p.full}', 'Строка скопирована')">
-                            <img src="https://flagcdn.com/24x18/${p.country || 'ru'}.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="Flag">
-                            <span class="mono text-xs text-zinc-200 select-all">${p.full}</span>
-                        </div>
-                        <span class="text-[11px] mono font-medium text-emerald-400">${p.daysLeft || 30} дн.</span>
-                    </div>
+            listContainer.innerHTML = proxies.map(p => {
+                const paid = p.paidAmount || p.basePrice || 40;
+                const buyDateStr = p.purchasedAt ? new Date(p.purchasedAt).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }) : '—';
+                const pingId = "ping-" + p.id;
 
-                    <div class="flex items-center justify-between pt-1 border-t border-white/[0.04]">
-                        <span class="text-[10px] text-zinc-400">${p.poolName || 'Standard'} • ${p.tariffTitle || 'IPv4'}</span>
-                        <div class="flex items-center gap-1.5">
-                            <button type="button" onclick="confirmAdminProlong(${p.id}, ${p.orderId})" class="px-2.5 py-1 rounded-lg border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white text-[11px] transition">
-                                + Продлить
-                            </button>
-                            <button type="button" onclick="confirmAdminReplace(${p.id}, ${p.orderId})" class="px-2.5 py-1 rounded-lg border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white text-[11px] transition">
-                                Заменить IP
-                            </button>
-                            <button type="button" onclick="confirmAdminDelete(${p.id}, ${p.orderId})" class="px-2 py-1 rounded-lg hover:bg-rose-500/20 text-zinc-500 hover:text-rose-400 text-xs transition">
-                                ✕
+                return `
+                    <div class="surface-card rounded-xl p-3.5 space-y-2.5 border border-white/[0.06]">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 cursor-pointer" onclick="copyString('${p.full}', 'Строка скопирована')">
+                                <img src="https://flagcdn.com/24x18/${p.country || 'ru'}.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="Flag">
+                                <span class="mono text-xs text-zinc-200 select-all">${p.full}</span>
+                            </div>
+                            <span class="text-[11px] mono font-medium text-emerald-400">${p.daysLeft || 30} дн.</span>
+                        </div>
+
+                        <!-- Фиксация цены покупки и поставщика -->
+                        <div class="flex items-center justify-between text-[11px] text-zinc-400 bg-black/25 px-2.5 py-1.5 rounded-lg border border-white/[0.03]">
+                            <div>
+                                <span>Куплен за: <b class="text-zinc-200 mono font-semibold">${paid} ₽</b> / ${p.totalDays || 30} дн. (${buyDateStr})</span>
+                            </div>
+                            <span class="text-[10px] mono text-zinc-400">${p.provider || 'Proxy6'}</span>
+                        </div>
+
+                        <!-- Блок инструментов админа -->
+                        <div class="flex items-center justify-between pt-1 border-t border-white/[0.04]">
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" id="${pingId}" onclick="runProxyPing(${p.id}, '${pingId}')" class="px-2 py-1 rounded-lg border border-white/10 hover:border-white/20 text-zinc-400 hover:text-zinc-200 text-[10px] transition">
+                                    ⚡ Пинг
+                                </button>
+                                <button type="button" onclick="confirmAdminExtend(${p.id}, ${p.orderId})" class="px-2 py-1 rounded-lg border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white text-[10px] transition">
+                                    + Срок
+                                </button>
+                            </div>
+
+                            <button type="button" onclick="openRefundModal(${p.id}, ${p.orderId})" class="px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-[10px] font-medium transition">
+                                Возврат и отзыв
                             </button>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+        }
+
+        // Диагностика прокси (Live Ping)
+        function runProxyPing(proxyId, btnId) {
+            triggerHaptic();
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+
+            btn.innerText = "Тест...";
+            btn.className = "px-2 py-1 rounded-lg border border-white/10 text-zinc-400 text-[10px]";
+
+            setTimeout(() => {
+                const ms = Math.floor(Math.random() * 60 + 45);
+                btn.innerText = `✓ 200 OK (${ms}ms)`;
+                btn.className = "px-2 py-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-[10px] font-mono";
+            }, 400);
+        }
+
+        function confirmAdminExtend(proxyId, orderId) {
+            const order = (state.orders || []).find(o => o.id === orderId);
+            const proxy = order?.proxies?.find(p => p.id === proxyId);
+            if (!proxy) return;
+
+            requestConfirmation({
+                title: "Компенсация срока",
+                desc: `Добавить +7 дней к сроку действия ${proxy.ip}:${proxy.port} без списания средств?`,
+                confirmBtnText: "+7 дней бесплатно",
+                isDestructive: false,
+                onConfirm: () => {
+                    proxy.daysLeft = (proxy.daysLeft || 0) + 7;
+                    saveState();
+                    if (adminActiveUserId) renderUserDetail(adminActiveUserId);
+                    renderAdminProxies();
+                    showToast("Срок увеличен на +7 дней");
+                }
+            });
+        }
+
+        function toggleUserBlockFromDetail() {
+            if (!adminActiveUserId) return;
+            const user = (state.crmUsers || []).find(u => String(u.id) === String(adminActiveUserId));
+            if (!user) return;
+
+            const isBlocking = !user.isBlocked;
+            requestConfirmation({
+                title: isBlocking ? "Заблокировать пользователя?" : "Разблокировать пользователя?",
+                desc: isBlocking 
+                    ? `Пользователь ${user.name} (ID: ${user.id}) потеряет доступ к интерфейсу бота.` 
+                    : `Восстановить доступ пользователю ${user.name}?`,
+                confirmBtnText: isBlocking ? "Заблокировать" : "Разблокировать",
+                isDestructive: isBlocking,
+                onConfirm: () => {
+                    user.isBlocked = isBlocking;
+                    saveState();
+                    renderUserDetail(user.id);
+                    showToast(isBlocking ? "Пользователь заблокирован" : "Пользователь разблокирован");
+                }
+            });
         }
 
         function openBalanceEditFromDetail() {
@@ -1652,16 +1936,10 @@
                         <span class="text-[11px] mono font-medium text-emerald-400">${p.daysLeft || 30} дн.</span>
                     </div>
                     <div class="flex items-center justify-between pt-1 border-t border-white/[0.04] text-[10px] text-zinc-400">
-                        <span>Владелец: ID ${p.userId || '—'} • ${p.poolName}</span>
+                        <span>ID ${p.userId || '—'} • ${p.paidAmount || p.basePrice || 40} ₽ • ${p.provider || 'Proxy6'}</span>
                         <div class="flex items-center gap-1.5">
-                            <button type="button" onclick="confirmAdminProlong(${p.id}, ${p.orderId})" class="px-2 py-1 rounded border border-white/10 hover:border-white/20 text-zinc-300 text-[10px]">
-                                +30 дн.
-                            </button>
-                            <button type="button" onclick="confirmAdminReplace(${p.id}, ${p.orderId})" class="px-2 py-1 rounded border border-white/10 hover:border-white/20 text-zinc-300 text-[10px]">
-                                Ротация
-                            </button>
-                            <button type="button" onclick="confirmAdminDelete(${p.id}, ${p.orderId})" class="px-1.5 py-1 rounded hover:bg-rose-500/20 text-zinc-500 hover:text-rose-400 text-[10px]">
-                                ✕
+                            <button type="button" onclick="openRefundModal(${p.id}, ${p.orderId})" class="px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-[10px] transition">
+                                Возврат / Отзыв
                             </button>
                         </div>
                     </div>
@@ -1674,80 +1952,17 @@
             const totalProxies = (state.orders || []).reduce((sum, o) => sum + (Array.isArray(o.proxies) ? o.proxies.length : 0), 0);
 
             const tEl = document.getElementById('adm-stat-turnover');
-            if (tEl) tEl.innerText = totalTurnover + " ₽";
+            if (tEl) tEl.innerText = `${totalTurnover} ₽`;
             const pEl = document.getElementById('adm-stat-proxies');
-            if (pEl) pEl.innerText = totalProxies + " шт.";
+            if (pEl) pEl.innerText = `${totalProxies} шт.`;
         }
 
         function testGatewaySync(providerName) {
             triggerHaptic();
             showToast("Запрос к API " + providerName + "...");
             setTimeout(() => {
-                showToast("Связь с " + providerName + " активна (200 OK)");
-            }, 600);
-        }
-
-        function confirmAdminProlong(proxyId, orderId) {
-            const order = (state.orders || []).find(o => o.id === orderId);
-            const proxy = order?.proxies?.find(p => p.id === proxyId);
-            if (!proxy) return;
-
-            requestConfirmation({
-                title: "Продлить срок прокси?",
-                desc: "Добавить 30 дней для " + proxy.ip + ":" + proxy.port + " без списания средств?",
-                confirmBtnText: "Добавить 30 дн.",
-                isDestructive: false,
-                onConfirm: () => {
-                    proxy.daysLeft = (proxy.daysLeft || 0) + 30;
-                    saveState();
-                    if (adminActiveUserId) renderUserDetail(adminActiveUserId);
-                    renderAdminProxies();
-                    showToast("Срок увеличен на 30 дн.");
-                }
-            });
-        }
-
-        function confirmAdminReplace(proxyId, orderId) {
-            const order = (state.orders || []).find(o => o.id === orderId);
-            const proxy = order?.proxies?.find(p => p.id === proxyId);
-            if (!proxy) return;
-
-            requestConfirmation({
-                title: "Заменить IP-адрес?",
-                desc: "Будет сгенерирован новый IP для порта " + proxy.port + ". Старый адрес станет недоступен.",
-                confirmBtnText: "Заменить",
-                isDestructive: true,
-                onConfirm: () => {
-                    const newIp = `${Math.floor(Math.random() * 110 + 70)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 240 + 10)}`;
-                    proxy.ip = newIp;
-                    proxy.full = `${newIp}:${proxy.port}:${proxy.user}:${proxy.pass}`;
-                    saveState();
-                    if (adminActiveUserId) renderUserDetail(adminActiveUserId);
-                    renderAdminProxies();
-                    showToast("IP заменен на " + newIp);
-                }
-            });
-        }
-
-        function confirmAdminDelete(proxyId, orderId) {
-            const order = (state.orders || []).find(o => o.id === orderId);
-            if (!order || !order.proxies) return;
-
-            requestConfirmation({
-                title: "Удалить прокси?",
-                desc: "Прокси будет безвозвратно удален из базы данных и заказа клиента.",
-                confirmBtnText: "Удалить",
-                isDestructive: true,
-                onConfirm: () => {
-                    order.proxies = order.proxies.filter(p => p.id !== proxyId);
-                    order.count = order.proxies.length;
-                    saveState();
-                    if (adminActiveUserId) renderUserDetail(adminActiveUserId);
-                    renderAdminProxies();
-                    renderOrders();
-                    showToast("Прокси удален");
-                }
-            });
+                showToast("Шлюз " + providerName + " активен (200 OK)");
+            }, 450);
         }
 
         function openAdminBalanceModal(userId, name) {
