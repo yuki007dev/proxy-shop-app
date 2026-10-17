@@ -760,12 +760,12 @@
                 if (profUser) profUser.innerText = state.user.name;
 
                 const profId = document.getElementById('prof-user-id');
-                if (profId) profId.innerText = `ID: ${state.user.id}`;
+                if (profId) profId.innerText = "ID: " + state.user.id;
 
                 const avatarBox = document.getElementById('prof-avatar-container');
                 if (avatarBox) {
                     if (state.user.photoUrl) {
-                        avatarBox.innerHTML = `<img src="${state.user.photoUrl}" class="w-full h-full object-cover" alt="Avatar">`;
+                        avatarBox.innerHTML = '<img src="' + state.user.photoUrl + '" class="w-full h-full object-cover" alt="Avatar">';
                     } else {
                         avatarBox.innerText = (state.user.name && state.user.name.length > 0) ? state.user.name.charAt(0).toUpperCase() : "U";
                     }
@@ -798,7 +798,7 @@
             const elName = document.getElementById('selected-country-name');
             if (elName) elName.innerText = name;
             const elFlag = document.getElementById('selected-country-flag');
-            if (elFlag) elFlag.src = `https://flagcdn.com/24x18/${code}.png`;
+            if (elFlag) elFlag.src = "https://flagcdn.com/24x18/" + code + ".png";
             closeAllDropdowns();
             saveState();
         }
@@ -829,21 +829,21 @@
             closeAllDropdowns();
             
             ['providers', 'config', 'cart', 'orders', 'profile', 'admin'].forEach(v => {
-                const el = document.getElementById(`view-${v}`);
+                const el = document.getElementById('view-' + v);
                 if (el) el.classList.add('hidden');
             });
 
-            const target = document.getElementById(`view-${view}`);
+            const target = document.getElementById('view-' + view);
             if (target) {
                 target.classList.remove('hidden');
                 target.classList.add('fade-in');
             }
 
             ['providers', 'cart', 'orders', 'profile', 'admin'].forEach(btn => {
-                const nav = document.getElementById(`nav-btn-${btn}`);
+                const nav = document.getElementById('nav-btn-' + btn);
                 if (!nav) return;
                 const isActive = (btn === view) || (view === 'config' && btn === 'providers');
-                nav.className = `flex flex-col items-center gap-1 py-1.5 text-[10px] font-medium transition ${isActive ? 'text-zinc-100 font-semibold' : 'text-zinc-400 hover:text-white'}`;
+                nav.className = "flex flex-col items-center gap-1 py-1.5 text-[10px] font-medium transition " + (isActive ? "text-zinc-100 font-semibold" : "text-zinc-400 hover:text-white");
             });
 
             if (view === 'cart') renderCart();
@@ -913,7 +913,7 @@
             const count = state.count || 1;
             const total = Math.round(tariff.price * (period / 30) * count);
             const totalEl = document.getElementById('conf-total-display');
-            if (totalEl) totalEl.innerText = `${total} ₽`;
+            if (totalEl) totalEl.innerText = total + " ₽";
             return total;
         }
 
@@ -937,7 +937,7 @@
             updateCartBadge();
             refreshProfileDisplay();
             saveState();
-            showToast(`Добавлено: ${tariff.label} (${state.count} шт.)`);
+            showToast("Добавлено: " + tariff.label + " (" + state.count + " шт.)");
         }
 
         function updateCartBadge() {
@@ -975,7 +975,7 @@
             }
 
             if (footer) footer.classList.remove('hidden');
-            if (summary) summary.innerText = `${state.cart.length} позиций`;
+            if (summary) summary.innerText = state.cart.length + " позиций";
 
             let overallTotal = 0;
             container.innerHTML = state.cart.map(item => {
@@ -1000,7 +1000,7 @@
             }).join('');
 
             const totalEl = document.getElementById('cart-total-amount');
-            if (totalEl) totalEl.innerText = `${overallTotal} ₽`;
+            if (totalEl) totalEl.innerText = overallTotal + " ₽";
         }
 
         function removeCartItem(cartId) {
@@ -1085,7 +1085,7 @@
                     btn.innerText = "Оплатить заказ";
                 }
 
-                showToast(`Заказ #${newOrder.id} оплачен (${newOrder.count} адресов)`);
+                showToast("Заказ #" + newOrder.id + " оплачен (" + newOrder.count + " адресов)");
                 navigate('orders');
             }, 250);
         }
@@ -1103,10 +1103,40 @@
             handleSearch("");
         }
 
+        // Рендер отдельной карточки прокси без вложенных кавычек
+        function renderProxyCardHtml(p, orderId) {
+            return `
+                <div class="p-3 rounded-xl bg-zinc-900/90 border border-white/[0.06] space-y-2 hover:border-white/15 transition">
+                    <div class="flex items-center gap-2 cursor-pointer active:opacity-70" onclick="copyString('${p.full}', 'Строка скопирована')">
+                        <img src="https://flagcdn.com/24x18/${p.country || 'ru'}.png" class="w-4 h-3 object-cover rounded-sm shadow-sm shrink-0" alt="Flag">
+                        <span class="mono text-xs font-medium text-zinc-200 break-all select-all">${p.full}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 border-t border-white/[0.04]">
+                        <div class="flex items-center gap-1.5 text-[10px] text-zinc-400">
+                            <span class="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] text-zinc-300 font-medium">
+                                ${p.poolName || 'Standard Pool'} • ${p.tariffTitle || 'IPv4'}
+                            </span>
+                            <span class="text-emerald-400 font-semibold">${p.daysLeft || 30} дн.</span>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button type="button" onclick="openProlongModal(${p.id}, ${orderId})" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold active:scale-95 transition">
+                                Продлить
+                            </button>
+                            <button type="button" onclick="copyString('${p.full}', 'Строка скопирована')" class="px-2.5 py-1 rounded-lg btn-secondary text-[10px] font-semibold text-zinc-200 active:scale-95 transition">
+                                Копия
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderOrders() {
             const container = document.getElementById('orders-list-container');
             const summaryLabel = document.getElementById('orders-summary-label');
-            if (summaryLabel) summaryLabel.innerText = `${(state.orders || []).length} пакетов`;
+            if (summaryLabel) summaryLabel.innerText = (state.orders || []).length + " пакетов";
             if (!container) return;
 
             if (!state.orders || state.orders.length === 0) {
@@ -1167,6 +1197,10 @@
                 if (innerSort === 'time_asc') proxiesList.sort((a, b) => (a.daysLeft || 0) - (b.daysLeft || 0));
                 if (innerSort === 'country') proxiesList.sort((a, b) => (a.country || "").localeCompare(b.country || ""));
 
+                const foundCountText = query !== '' ? ' (найдено ' + proxiesList.length + ')' : '';
+                const innerSortText = innerSort === 'time_desc' ? 'Срок (макс)' : innerSort === 'time_asc' ? 'Срок (мин)' : innerSort === 'country' ? 'По стране' : 'По умолчанию';
+                const proxiesHtml = proxiesList.map(p => renderProxyCardHtml(p, order.id)).join('');
+
                 return `
                     <div class="surface-card rounded-2xl overflow-hidden transition">
                         <div onclick="toggleOrder(${order.id})" class="p-3.5 cursor-pointer hover:bg-white/[0.04] flex items-center justify-between select-none">
@@ -1176,7 +1210,7 @@
                                     <span class="text-[10px] text-zinc-400 mono">${dateStr}</span>
                                 </div>
                                 <div class="text-[11px] text-zinc-400">
-                                    <span>Пакет: ${order.count || proxiesList.length} адресов ${query !== '' ? `(найдено ${proxiesList.length})` : ''}</span>
+                                    <span>Пакет: ${order.count || proxiesList.length} адресов${foundCountText}</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3">
@@ -1194,7 +1228,7 @@
                                             <span class="text-[10px]">Сорт:</span>
                                             <div class="relative">
                                                 <button type="button" onclick="toggleDropdown(event, 'inner-sort-${order.id}')" class="px-2 py-1 rounded-lg surface-input text-zinc-300 text-[10px] flex items-center gap-1">
-                                                    ${innerSort === 'time_desc' ? 'Срок (макс)' : innerSort === 'time_asc' ? 'Срок (мин)' : innerSort === 'country' ? 'По стране' : 'По умолчанию'} 
+                                                    ${innerSortText} 
                                                     <span class="text-[8px]">▼</span>
                                                 </button>
                                                 <div id="inner-sort-${order.id}" class="dropdown-menu absolute left-0 top-7 z-30 w-32 p-1 bg-[#12141e] border border-white/10 rounded-xl shadow-2xl space-y-0.5 backdrop-blur-2xl">
@@ -1216,32 +1250,7 @@
                                     </div>
 
                                     <div class="space-y-2">
-                                        ${proxiesList.map(p => `
-                                            <div class="p-3 rounded-xl bg-zinc-900/90 border border-white/[0.06] space-y-2 hover:border-white/15 transition">
-                                                <div class="flex items-center gap-2 cursor-pointer active:opacity-70" onclick="copyString('${p.full}', 'Строка скопирована')">
-                                                    <img src="https://flagcdn.com/24x18/${p.country || 'ru'}.png" class="w-4 h-3 object-cover rounded-sm shadow-sm shrink-0" alt="Flag">
-                                                    <span class="mono text-xs font-medium text-zinc-200 break-all select-all">${p.full}</span>
-                                                </div>
-
-                                                <div class="flex items-center justify-between pt-1 border-t border-white/[0.04]">
-                                                    <div class="flex items-center gap-1.5 text-[10px] text-zinc-400">
-                                                        <span class="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] text-zinc-300 font-medium">
-                                                            ${p.poolName \vert{}\vert{} 'Standard Pool'} •${p.tariffTitle || 'IPv4'}
-                                                        </span>
-                                                        <span class="text-emerald-400 font-semibold">${p.daysLeft || 30} дн.</span>
-                                                    </div>
-
-                                                    <div class="flex items-center gap-1.5 shrink-0">
-                                                        <button type="button" onclick="openProlongModal(${p.id},${order.id})" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold active:scale-95 transition">
-                                                            Продлить
-                                                        </button>
-                                                        <button type="button" onclick="copyString('${p.full}', 'Строка скопирована')" class="px-2.5 py-1 rounded-lg btn-secondary text-[10px] font-semibold text-zinc-200 active:scale-95 transition">
-                                                            Копия
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        `).join('')}
+                                        ${proxiesHtml}
                                     </div>
 
                                 </div>
@@ -1287,7 +1296,7 @@
 
             const text = order.proxies.map(p => p.full).join('\n');
             const titleEl = document.getElementById('txt-modal-title');
-            if (titleEl) titleEl.innerText = `Прокси заказа #${order.id} (${order.proxies.length} шт.)`;
+            if (titleEl) titleEl.innerText = "Прокси заказа #" + order.id + " (" + order.proxies.length + " шт.)";
             const contentEl = document.getElementById('txt-modal-content');
             if (contentEl) contentEl.value = text;
             const modal = document.getElementById('modal-txt-view');
@@ -1348,7 +1357,7 @@
             triggerHaptic();
             selectedProlongDays = days;
             [3, 7, 30, 90].forEach(d => {
-                const btn = document.getElementById(`btn-prolong-${d}`);
+                const btn = document.getElementById('btn-prolong-' + d);
                 if (btn) {
                     btn.className = d === days 
                         ? 'py-2.5 rounded-xl border border-zinc-400 bg-white/10 text-xs font-semibold mono' 
@@ -1360,7 +1369,7 @@
                 const baseMonthly = activeProlongTarget.proxy.basePrice || 40;
                 const cost = Math.round(baseMonthly * (days / 30));
                 const priceEl = document.getElementById('prolong-price-display');
-                if (priceEl) priceEl.innerText = `${cost} ₽`;
+                if (priceEl) priceEl.innerText = cost + " ₽";
             }
         }
 
@@ -1396,7 +1405,7 @@
                     btn.innerText = "Подтвердить продление";
                 }
 
-                showToast(`Прокси продлен на +${selectedProlongDays} дн.`);
+                showToast("Прокси продлен на +" + selectedProlongDays + " дн.");
                 closeProlongModal();
             }, 250);
         }
@@ -1454,15 +1463,15 @@
         function switchAdminTab(tabName) {
             triggerHaptic();
             ['users', 'proxies', 'gateways'].forEach(t => {
-                const el = document.getElementById(`adm-view-${t}`);
+                const el = document.getElementById('adm-view-' + t);
                 if (el) el.classList.add('hidden');
-                const btn = document.getElementById(`tab-adm-${t}`);
+                const btn = document.getElementById('tab-adm-' + t);
                 if (btn) btn.className = "py-2 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition";
             });
 
-            const activeView = document.getElementById(`adm-view-${tabName}`);
+            const activeView = document.getElementById('adm-view-' + tabName);
             if (activeView) activeView.classList.remove('hidden');
-            const activeBtn = document.getElementById(`tab-adm-${tabName}`);
+            const activeBtn = document.getElementById('tab-adm-' + tabName);
             if (activeBtn) activeBtn.className = "py-2 rounded-lg text-xs font-medium text-white bg-white/10 transition";
 
             if (tabName === 'users') {
@@ -1559,14 +1568,14 @@
             const listContainer = document.getElementById('detail-user-proxies');
 
             if (nameEl) nameEl.innerText = user.name;
-            if (idEl) idEl.innerText = `ID: ${user.id}`;
-            if (balanceEl) balanceEl.innerText = `${(user.balance || 0).toFixed(2)} ₽`;
+            if (idEl) idEl.innerText = "ID: " + user.id;
+            if (balanceEl) balanceEl.innerText = (user.balance || 0).toFixed(2) + " ₽";
 
             const proxies = getUserProxies(userId);
             const userOrders = (state.orders || []).filter(o => String(o.userId) === String(userId));
 
-            if (statsEl) statsEl.innerText = `${userOrders.length} заказов • ${proxies.length} активных адресов`;
-            if (countEl) countEl.innerText = `${proxies.length} шт.`;
+            if (statsEl) statsEl.innerText = userOrders.length + " заказов • " + proxies.length + " активных адресов";
+            if (countEl) countEl.innerText = proxies.length + " шт.";
 
             if (!listContainer) return;
 
@@ -1665,16 +1674,16 @@
             const totalProxies = (state.orders || []).reduce((sum, o) => sum + (Array.isArray(o.proxies) ? o.proxies.length : 0), 0);
 
             const tEl = document.getElementById('adm-stat-turnover');
-            if (tEl) tEl.innerText = `${totalTurnover} ₽`;
+            if (tEl) tEl.innerText = totalTurnover + " ₽";
             const pEl = document.getElementById('adm-stat-proxies');
-            if (pEl) pEl.innerText = `${totalProxies} шт.`;
+            if (pEl) pEl.innerText = totalProxies + " шт.";
         }
 
         function testGatewaySync(providerName) {
             triggerHaptic();
-            showToast(`Запрос к API ${providerName}...`);
+            showToast("Запрос к API " + providerName + "...");
             setTimeout(() => {
-                showToast(`Связь с ${providerName} активна (200 OK)`);
+                showToast("Связь с " + providerName + " активна (200 OK)");
             }, 600);
         }
 
@@ -1685,7 +1694,7 @@
 
             requestConfirmation({
                 title: "Продлить срок прокси?",
-                desc: `Добавить 30 дней для ${proxy.ip}:${proxy.port} без списания средств?`,
+                desc: "Добавить 30 дней для " + proxy.ip + ":" + proxy.port + " без списания средств?",
                 confirmBtnText: "Добавить 30 дн.",
                 isDestructive: false,
                 onConfirm: () => {
@@ -1693,7 +1702,7 @@
                     saveState();
                     if (adminActiveUserId) renderUserDetail(adminActiveUserId);
                     renderAdminProxies();
-                    showToast(`Срок увеличен на 30 дн.`);
+                    showToast("Срок увеличен на 30 дн.");
                 }
             });
         }
@@ -1705,7 +1714,7 @@
 
             requestConfirmation({
                 title: "Заменить IP-адрес?",
-                desc: `Будет сгенерирован новый IP для порта ${proxy.port}. Старый адрес станет недоступен.`,
+                desc: "Будет сгенерирован новый IP для порта " + proxy.port + ". Старый адрес станет недоступен.",
                 confirmBtnText: "Заменить",
                 isDestructive: true,
                 onConfirm: () => {
@@ -1715,7 +1724,7 @@
                     saveState();
                     if (adminActiveUserId) renderUserDetail(adminActiveUserId);
                     renderAdminProxies();
-                    showToast(`IP заменен на ${newIp}`);
+                    showToast("IP заменен на " + newIp);
                 }
             });
         }
@@ -1745,7 +1754,7 @@
             triggerHaptic();
             adminTargetUserId = userId;
             const titleEl = document.getElementById('admin-balance-title');
-            if (titleEl) titleEl.innerText = `Баланс: ${name}`;
+            if (titleEl) titleEl.innerText = "Баланс: " + name;
             const inputEl = document.getElementById('admin-balance-input');
             if (inputEl) inputEl.value = "";
             const modal = document.getElementById('modal-admin-balance');
@@ -1767,7 +1776,7 @@
 
             requestConfirmation({
                 title: isAdd ? "Начислить баланс?" : "Списать баланс?",
-                desc: `${isAdd ? 'Начислить' : 'Списать'} ${val} ₽ пользователю ${u.name} (ID: ${u.id})?`,
+                desc: (isAdd ? 'Начислить ' : 'Списать ') + val + ' ₽ пользователю ' + u.name + ' (ID: ' + u.id + ')?',
                 confirmBtnText: isAdd ? "Начислить" : "Списать",
                 isDestructive: !isAdd,
                 onConfirm: () => {
@@ -1780,7 +1789,7 @@
                     closeAdminBalanceModal();
                     if (adminActiveUserId) renderUserDetail(adminActiveUserId);
                     renderAdminUsers();
-                    showToast(`Баланс ${u.name}: ${(u.balance).toFixed(2)} ₽`);
+                    showToast("Баланс " + u.name + ": " + (u.balance).toFixed(2) + " ₽");
                 }
             });
         }
@@ -1799,7 +1808,7 @@
             const order = (state.orders || []).find(o => o.id === orderId);
             if (!order || !order.proxies) return;
             const text = order.proxies.map(p => p.full).join('\n');
-            copyString(text, `Скопировано ${order.proxies.length} шт.`);
+            copyString(text, "Скопировано " + order.proxies.length + " шт.");
         }
 
         function topUpBalance(amount) {
@@ -1807,13 +1816,13 @@
             state.balance = (state.balance || 0) + amount;
             refreshProfileDisplay();
             saveState();
-            showToast(`Баланс пополнен на +${amount} ₽`);
+            showToast("Баланс пополнен на +" + amount + " ₽");
         }
 
         function refreshProfileDisplay() {
             try {
                 const bEl = document.getElementById('prof-balance-val');
-                if (bEl) bEl.innerText = `${(state.balance || 0).toFixed(2)} ₽`;
+                if (bEl) bEl.innerText = (state.balance || 0).toFixed(2) + " ₽";
 
                 const oEl = document.getElementById('prof-stat-orders');
                 if (oEl) oEl.innerText = (state.orders || []).length;
@@ -1823,16 +1832,16 @@
                 if (pEl) pEl.innerText = totalProxies;
 
                 const sEl = document.getElementById('prof-stat-spent');
-                if (sEl) sEl.innerText = `${(state.spent || 0).toFixed(0)} ₽`;
+                if (sEl) sEl.innerText = (state.spent || 0).toFixed(0) + " ₽";
 
                 const cartCount = (state.cart || []).reduce((sum, item) => sum + (item.count || 0), 0);
                 const cartSum = (state.cart || []).reduce((sum, item) => sum + (item.total || 0), 0);
 
                 const cEl = document.getElementById('prof-stat-cart');
-                if (cEl) cEl.innerText = `${cartCount} шт.`;
+                if (cEl) cEl.innerText = cartCount + " шт.";
 
                 const csEl = document.getElementById('prof-stat-cart-sum');
-                if (csEl) csEl.innerText = `на ${cartSum} ₽`;
+                if (csEl) csEl.innerText = "на " + cartSum + " ₽";
             } catch(e) {}
         }
 
