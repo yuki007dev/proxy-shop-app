@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Proxy Terminal</title>
+    <link rel="icon" href="data:,">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -17,7 +18,6 @@
 
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* Автономный класс скрытия (не зависит от внешнего CDN) */
         .hidden { display: none !important; }
 
         body {
@@ -144,6 +144,24 @@
         <span id="toast-text"></span>
     </div>
 
+    <!-- МОДАЛКА: Универсальное подтверждение (Confirm Modal) -->
+    <div id="modal-confirm" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-150">
+        <div class="w-full max-w-sm bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="space-y-1.5">
+                <h3 class="text-sm font-semibold text-zinc-100" id="confirm-title">Подтверждение</h3>
+                <p class="text-xs text-zinc-400 leading-relaxed" id="confirm-desc">Вы уверены, что хотите выполнить это действие?</p>
+            </div>
+            <div class="flex gap-2 pt-1">
+                <button type="button" onclick="closeConfirmModal()" class="flex-1 py-2.5 rounded-xl border border-white/10 surface-input text-xs font-medium text-zinc-300 hover:text-white transition">
+                    Отмена
+                </button>
+                <button type="button" id="confirm-action-btn" class="flex-1 py-2.5 rounded-xl text-xs font-semibold transition">
+                    Подтвердить
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- МОДАЛКА: Клиентское продление -->
     <div id="modal-prolong" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
         <div class="modal-sheet w-full max-w-md bg-[#0f111a] border border-white/10 rounded-t-3xl sm:rounded-2xl p-5 space-y-4 shadow-2xl transform translate-y-full sm:translate-y-0">
@@ -173,34 +191,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА: Бесплатное админ-продление -->
-    <div id="modal-admin-prolong" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
-        <div class="modal-sheet w-full max-w-md bg-[#0f111a] border border-emerald-500/30 rounded-t-3xl sm:rounded-2xl p-5 space-y-4 shadow-2xl transform translate-y-full sm:translate-y-0">
-            <div class="flex justify-between items-start">
-                <div class="pr-2">
-                    <div class="flex items-center gap-1.5">
-                        <span class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">ADMIN PROLONG</span>
-                        <h3 class="text-sm font-semibold text-zinc-100">Бесплатное продление</h3>
-                    </div>
-                    <p class="text-xs text-zinc-400 mono mt-1 break-all" id="admin-prolong-proxy-str">—</p>
-                </div>
-                <button type="button" onclick="closeAdminProlongModal()" class="text-zinc-400 hover:text-white p-1 text-sm">✕</button>
-            </div>
-            <div class="space-y-1.5">
-                <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Добавить дней (без списания денег)</label>
-                <div class="grid grid-cols-4 gap-1.5">
-                    <button type="button" onclick="selectAdminProlongDays(7)" id="btn-admin-prolong-7" class="py-2 rounded-xl border border-white/10 surface-input text-xs font-semibold mono">+7 дн.</button>
-                    <button type="button" onclick="selectAdminProlongDays(30)" id="btn-admin-prolong-30" class="py-2 rounded-xl border border-emerald-500/40 bg-emerald-500/20 text-emerald-300 text-xs font-semibold mono">+30 дн.</button>
-                    <button type="button" onclick="selectAdminProlongDays(90)" id="btn-admin-prolong-90" class="py-2 rounded-xl border border-white/10 surface-input text-xs font-semibold mono">+90 дн.</button>
-                    <button type="button" onclick="selectAdminProlongDays(365)" id="btn-admin-prolong-365" class="py-2 rounded-xl border border-white/10 surface-input text-xs font-semibold mono">+365 дн.</button>
-                </div>
-            </div>
-            <button type="button" onclick="executeAdminProlong()" class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs active:scale-[0.99] transition">
-                ⚡ Добавить срок прокси
-            </button>
-        </div>
-    </div>
-
     <!-- МОДАЛКА: Баланс пользователя (Админ) -->
     <div id="modal-admin-balance" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
         <div class="w-full max-w-sm bg-[#0f111a] border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
@@ -213,10 +203,10 @@
                 <input id="admin-balance-input" type="number" placeholder="Например: 500" class="w-full p-2.5 rounded-xl surface-input text-xs text-zinc-100 mono focus:outline-none">
             </div>
             <div class="flex gap-2">
-                <button type="button" onclick="applyAdminBalanceChange(true)" class="flex-1 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold hover:bg-emerald-500/30">
+                <button type="button" onclick="applyAdminBalanceChange(true)" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-100 border border-white/10 text-xs font-semibold transition">
                     + Начислить
                 </button>
-                <button type="button" onclick="applyAdminBalanceChange(false)" class="flex-1 py-2.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold hover:bg-rose-500/30">
+                <button type="button" onclick="applyAdminBalanceChange(false)" class="flex-1 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-semibold transition">
                     - Списать
                 </button>
             </div>
@@ -490,66 +480,124 @@
         </section>
 
         <!-- ================= ЭКРАН 6: АДМИН-ПАНЕЛЬ ================= -->
-        <section id="view-admin" class="hidden space-y-4">
-            <header class="pt-2 flex justify-between items-center">
+        <section id="view-admin" class="hidden space-y-4 pb-4">
+            <header class="pt-2 flex justify-between items-center border-b border-white/[0.06] pb-3">
                 <div>
-                    <div class="flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <h2 class="text-xl font-bold tracking-tight text-zinc-100">Админ-терминал</h2>
-                    </div>
-                    <p class="text-xs text-zinc-400">Полный доступ к базе и складам</p>
+                    <h2 class="text-lg font-semibold tracking-tight text-zinc-100">Панель управления</h2>
+                    <p class="text-xs text-zinc-400">Управление пользователями, складом и шлюзами</p>
                 </div>
-                <span class="px-2 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono font-bold">ROOT</span>
+                <div class="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span class="text-[10px] font-mono text-zinc-300">ADMIN</span>
+                </div>
             </header>
 
-            <div class="grid grid-cols-3 gap-1.5 p-1 rounded-xl surface-input">
-                <button type="button" onclick="switchAdminTab('dash')" id="tab-adm-dash" class="py-2 rounded-lg text-xs font-semibold bg-white/10 text-white transition">Сводка</button>
-                <button type="button" onclick="switchAdminTab('users')" id="tab-adm-users" class="py-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition">Юзеры</button>
-                <button type="button" onclick="switchAdminTab('proxies')" id="tab-adm-proxies" class="py-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition">Все прокси</button>
+            <!-- Навигация по вкладкам админки -->
+            <div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-zinc-900/60 border border-white/[0.06]">
+                <button type="button" onclick="switchAdminTab('users')" id="tab-adm-users" class="py-2 rounded-lg text-xs font-medium text-white bg-white/10 transition">Пользователи</button>
+                <button type="button" onclick="switchAdminTab('proxies')" id="tab-adm-proxies" class="py-2 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition">Все прокси</button>
+                <button type="button" onclick="switchAdminTab('gateways')" id="tab-adm-gateways" class="py-2 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition">Шлюзы API</button>
             </div>
 
-            <!-- Вкладка 1: Сводка -->
-            <div id="adm-view-dash" class="space-y-3">
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="surface-card rounded-2xl p-3.5 space-y-1">
-                        <span class="text-zinc-400 text-[11px] block">Депозит Proxy6 API</span>
-                        <span class="text-base font-bold mono text-emerald-400" id="adm-p6-balance">1 420.00 ₽</span>
-                        <span class="text-[9px] text-zinc-500 block">Пул #1 (Эконом)</span>
+            <!-- Вкладка 1: Пользователи -->
+            <div id="adm-view-users" class="space-y-3">
+                <!-- 1.1: Режим общего списка -->
+                <div id="adm-user-list-mode" class="space-y-3">
+                    <div class="relative">
+                        <input id="adm-user-search" oninput="renderAdminUsers()" type="text" placeholder="Поиск по ID или имени..." class="w-full pl-9 pr-3 py-2.5 rounded-xl surface-input text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none mono">
+                        <svg class="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <div class="surface-card rounded-2xl p-3.5 space-y-1">
-                        <span class="text-zinc-400 text-[11px] block">Депозит ProxyLine API</span>
-                        <span class="text-base font-bold mono text-blue-400" id="adm-pl-balance">2 150.00 ₽</span>
-                        <span class="text-[9px] text-zinc-500 block">Пул #2 (Премиум)</span>
+                    <div id="adm-users-list" class="space-y-2"></div>
+                </div>
+
+                <!-- 1.2: Режим карточки конкретного пользователя -->
+                <div id="adm-user-detail-mode" class="hidden space-y-4">
+                    <button type="button" onclick="closeUserDetail()" class="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1.5 transition">
+                        <span>←</span> Назад к списку пользователей
+                    </button>
+
+                    <div class="surface-card rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-sm font-semibold text-zinc-100" id="detail-user-name">—</h3>
+                                    <span class="text-[10px] text-zinc-400 mono" id="detail-user-id">ID: —</span>
+                                </div>
+                                <p class="text-xs text-zinc-400 mt-0.5" id="detail-user-stats">0 заказов • 0 активных прокси</p>
+                            </div>
+                            <button type="button" onclick="openBalanceEditFromDetail()" class="px-3 py-1.5 rounded-xl border border-white/10 hover:border-white/20 text-xs font-medium text-zinc-200 transition">
+                                Изменить баланс
+                            </button>
+                        </div>
+
+                        <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                            <span class="text-xs text-zinc-400">Баланс аккаунта:</span>
+                            <span class="text-base font-semibold mono text-emerald-400" id="detail-user-balance">0.00 ₽</span>
+                        </div>
                     </div>
-                    <div class="surface-card rounded-2xl p-3.5 space-y-1">
-                        <span class="text-zinc-400 text-[11px] block">Общий оборот</span>
-                        <span class="text-base font-bold mono text-zinc-100" id="adm-total-turnover">0 ₽</span>
-                        <span class="text-[9px] text-zinc-500 block">Всего продано</span>
-                    </div>
-                    <div class="surface-card rounded-2xl p-3.5 space-y-1">
-                        <span class="text-zinc-400 text-[11px] block">Всего прокси в БД</span>
-                        <span class="text-base font-bold mono text-zinc-100" id="adm-total-proxies-count">0 шт.</span>
-                        <span class="text-[9px] text-zinc-500 block">Активных адресов</span>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between px-1">
+                            <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Прокси пользователя</h4>
+                            <span class="text-[11px] text-zinc-400 mono" id="detail-proxies-count">0 шт.</span>
+                        </div>
+                        <div id="detail-user-proxies" class="space-y-2"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Вкладка 2: Юзеры -->
-            <div id="adm-view-users" class="hidden space-y-3">
-                <div class="relative">
-                    <input id="adm-user-search" oninput="renderAdminUsers()" type="text" placeholder="Поиск юзера по ID или имени..." class="w-full pl-9 pr-3 py-2 rounded-xl surface-input text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none mono">
-                    <svg class="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-                <div id="adm-users-list" class="space-y-2"></div>
-            </div>
-
-            <!-- Вкладка 3: Все прокси -->
+            <!-- Вкладка 2: Все прокси -->
             <div id="adm-view-proxies" class="hidden space-y-3">
                 <div class="relative">
-                    <input id="adm-proxy-search" oninput="renderAdminProxies()" type="text" placeholder="Сквозной поиск по IP, порту, логину..." class="w-full pl-9 pr-3 py-2 rounded-xl surface-input text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none mono">
+                    <input id="adm-proxy-search" oninput="renderAdminProxies()" type="text" placeholder="Поиск по IP, порту, логину или пулу..." class="w-full pl-9 pr-3 py-2.5 rounded-xl surface-input text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none mono">
                     <svg class="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
                 <div id="adm-proxies-list" class="space-y-2"></div>
+            </div>
+
+            <!-- Вкладка 3: Шлюзы и API -->
+            <div id="adm-view-gateways" class="hidden space-y-3">
+                <div class="surface-card rounded-2xl p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xs font-semibold text-zinc-100">Proxy6 API</h3>
+                            <p class="text-[11px] text-zinc-400">Базовый пул (IPv4 / IPv6)</p>
+                        </div>
+                        <span class="text-xs font-mono font-semibold text-emerald-400" id="gw-p6-balance">1 420.00 ₽</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[11px] text-zinc-400 border-t border-white/[0.04] pt-2">
+                        <span>Статус: Подключен</span>
+                        <button type="button" onclick="testGatewaySync('Proxy6')" class="text-zinc-300 hover:text-white underline">Проверить связь</button>
+                    </div>
+                </div>
+
+                <div class="surface-card rounded-2xl p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xs font-semibold text-zinc-100">ProxyLine API</h3>
+                            <p class="text-[11px] text-zinc-400">Премиум пул (Shared / Dedicated)</p>
+                        </div>
+                        <span class="text-xs font-mono font-semibold text-blue-400" id="gw-pl-balance">2 150.00 ₽</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[11px] text-zinc-400 border-t border-white/[0.04] pt-2">
+                        <span>Статус: Подключен</span>
+                        <button type="button" onclick="testGatewaySync('Proxyline')" class="text-zinc-300 hover:text-white underline">Проверить связь</button>
+                    </div>
+                </div>
+
+                <div class="surface-card rounded-2xl p-4 space-y-2">
+                    <h4 class="text-xs font-semibold text-zinc-300">Сводные показатели</h4>
+                    <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
+                        <div class="p-2.5 rounded-xl bg-black/30 border border-white/[0.04]">
+                            <span class="text-[10px] text-zinc-400 block">Оборот бота</span>
+                            <span class="text-sm font-semibold mono text-zinc-100" id="adm-stat-turnover">0 ₽</span>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-black/30 border border-white/[0.04]">
+                            <span class="text-[10px] text-zinc-400 block">Всего прокси в базе</span>
+                            <span class="text-sm font-semibold mono text-zinc-100" id="adm-stat-proxies">0 шт.</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -581,7 +629,7 @@
                 Профиль
             </button>
 
-            <button type="button" onclick="navigate('admin')" id="nav-btn-admin" class="flex flex-col items-center gap-1 py-1.5 text-emerald-400/80 text-[10px] font-semibold transition hover:text-emerald-300">
+            <button type="button" onclick="navigate('admin')" id="nav-btn-admin" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[10px] font-medium transition hover:text-white">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                 Админ
             </button>
@@ -589,7 +637,7 @@
     </nav>
 
     <script>
-        // Инициализация Telegram
+        // Инициализация Telegram WebApp
         const tg = window.Telegram?.WebApp;
         if (tg) {
             try {
@@ -606,8 +654,7 @@
             } catch(e) {}
         }
 
-        // Ключ хранилища v4 с защитой от старых форматов
-        const STORAGE_KEY = "proxy_terminal_state_v4";
+        const STORAGE_KEY = "proxy_terminal_state_v5";
         
         function loadSavedState() {
             try {
@@ -645,7 +692,6 @@
             ]
         };
 
-        // Санитизация состояния: исключает любые вылеты при загрузке
         const rawState = Object.assign({}, defaultState, loadSavedState() || {});
         const state = {
             balance: typeof rawState.balance === 'number' ? rawState.balance : 2000.00,
@@ -691,7 +737,7 @@
         const pools = {
             pool1: {
                 name: "Standard Pool",
-                desc: "Базовый пул адресов (Proxy6)",
+                desc: "Базовый пул адресов (Proxy6 API)",
                 tariffs: [
                     { id: 'ipv6', label: 'IPv6', price: 15 },
                     { id: 'ipv4_shared', label: 'IPv4 Shared', price: 40 },
@@ -700,7 +746,7 @@
             },
             pool2: {
                 name: "Prime Pool",
-                desc: "Приоритетные подсети (ProxyLine)",
+                desc: "Приоритетные подсети (ProxyLine API)",
                 tariffs: [
                     { id: 'ipv4_shared', label: 'IPv4 Shared', price: 65 },
                     { id: 'ipv4_custom', label: 'IPv4 Индивидуальный', price: 160 }
@@ -708,7 +754,6 @@
             }
         };
 
-        // Безопасная инициализация DOM
         function initApp() {
             try {
                 const profUser = document.getElementById('prof-username');
@@ -798,11 +843,7 @@
                 const nav = document.getElementById(`nav-btn-${btn}`);
                 if (!nav) return;
                 const isActive = (btn === view) || (view === 'config' && btn === 'providers');
-                if (btn === 'admin') {
-                    nav.className = `flex flex-col items-center gap-1 py-1.5 text-[10px] font-semibold transition ${isActive ? 'text-emerald-400 font-bold' : 'text-emerald-500/60 hover:text-emerald-300'}`;
-                } else {
-                    nav.className = `flex flex-col items-center gap-1 py-1.5 text-[10px] font-medium transition ${isActive ? 'text-zinc-100' : 'text-zinc-400 hover:text-white'}`;
-                }
+                nav.className = `flex flex-col items-center gap-1 py-1.5 text-[10px] font-medium transition ${isActive ? 'text-zinc-100 font-semibold' : 'text-zinc-400 hover:text-white'}`;
             });
 
             if (view === 'cart') renderCart();
@@ -1185,7 +1226,7 @@
                                                 <div class="flex items-center justify-between pt-1 border-t border-white/[0.04]">
                                                     <div class="flex items-center gap-1.5 text-[10px] text-zinc-400">
                                                         <span class="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] text-zinc-300 font-medium">
-ё                                                        ${p.poolName || 'Standard Pool'} • ${p.tariffTitle || 'IPv4'}
+                                                            ${p.poolName \vert{}\vert{} 'Standard Pool'} •${p.tariffTitle || 'IPv4'}
                                                         </span>
                                                         <span class="text-emerald-400 font-semibold">${p.daysLeft || 30} дн.</span>
                                                     </div>
@@ -1360,69 +1401,344 @@
             }, 250);
         }
 
-        // Админ-панель
-        let adminActiveProlong = null;
-        let adminSelectedProlongDays = 30;
+        // ==========================================
+        // МОДУЛЬ ПОДТВЕРЖДЕНИЙ (CONFIRMATION MODAL)
+        // ==========================================
+        let pendingConfirmCallback = null;
+
+        function requestConfirmation({ title, desc, confirmBtnText = "Подтвердить", isDestructive = false, onConfirm }) {
+            triggerHaptic();
+            const modal = document.getElementById('modal-confirm');
+            const titleEl = document.getElementById('confirm-title');
+            const descEl = document.getElementById('confirm-desc');
+            const actionBtn = document.getElementById('confirm-action-btn');
+
+            if (!modal || !titleEl || !descEl || !actionBtn) {
+                if (typeof onConfirm === 'function') onConfirm();
+                return;
+            }
+
+            titleEl.innerText = title;
+            descEl.innerText = desc;
+            actionBtn.innerText = confirmBtnText;
+
+            if (isDestructive) {
+                actionBtn.className = "flex-1 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-semibold transition";
+            } else {
+                actionBtn.className = "flex-1 py-2.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 text-xs font-semibold transition";
+            }
+
+            pendingConfirmCallback = onConfirm;
+
+            actionBtn.onclick = () => {
+                const cb = pendingConfirmCallback;
+                closeConfirmModal();
+                if (typeof cb === 'function') cb();
+            };
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('modal-confirm');
+            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+            pendingConfirmCallback = null;
+        }
+
+        // ==========================================
+        // ЛОГИКА АДМИН-ПАНЕЛИ
+        // ==========================================
+        let adminActiveUserId = null;
         let adminTargetUserId = null;
 
         function switchAdminTab(tabName) {
             triggerHaptic();
-            ['dash', 'users', 'proxies'].forEach(t => {
+            ['users', 'proxies', 'gateways'].forEach(t => {
                 const el = document.getElementById(`adm-view-${t}`);
                 if (el) el.classList.add('hidden');
-                const tabBtn = document.getElementById(`tab-adm-${t}`);
-                if (tabBtn) tabBtn.className = "py-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-white transition";
+                const btn = document.getElementById(`tab-adm-${t}`);
+                if (btn) btn.className = "py-2 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition";
             });
 
             const activeView = document.getElementById(`adm-view-${tabName}`);
             if (activeView) activeView.classList.remove('hidden');
-            const activeTabBtn = document.getElementById(`tab-adm-${tabName}`);
-            if (activeTabBtn) activeTabBtn.className = "py-2 rounded-lg text-xs font-semibold bg-white/10 text-white transition";
+            const activeBtn = document.getElementById(`tab-adm-${tabName}`);
+            if (activeBtn) activeBtn.className = "py-2 rounded-lg text-xs font-medium text-white bg-white/10 transition";
 
-            if (tabName === 'dash') renderAdminDash();
-            if (tabName === 'users') renderAdminUsers();
+            if (tabName === 'users') {
+                if (!adminActiveUserId) {
+                    renderAdminUsers();
+                } else {
+                    renderUserDetail(adminActiveUserId);
+                }
+            }
             if (tabName === 'proxies') renderAdminProxies();
+            if (tabName === 'gateways') renderAdminGateways();
         }
 
         function renderAdminView() {
-            renderAdminDash();
+            switchAdminTab('users');
         }
 
-        function renderAdminDash() {
-            const totalTurnover = (state.orders || []).reduce((sum, o) => sum + (o.total || 0), 0);
-            const totalProxies = (state.orders || []).reduce((sum, o) => sum + (Array.isArray(o.proxies) ? o.proxies.length : 0), 0);
-
-            const tEl = document.getElementById('adm-total-turnover');
-            if (tEl) tEl.innerText = `${totalTurnover} ₽`;
-            const pEl = document.getElementById('adm-total-proxies-count');
-            if (pEl) pEl.innerText = `${totalProxies} шт.`;
+        function getUserProxies(userId) {
+            const list = [];
+            (state.orders || []).forEach(o => {
+                if (String(o.userId) === String(userId) && Array.isArray(o.proxies)) {
+                    o.proxies.forEach(p => list.push({ ...p, orderId: o.id }));
+                }
+            });
+            return list;
         }
 
         function renderAdminUsers() {
             const container = document.getElementById('adm-users-list');
             if (!container) return;
-            const search = (document.getElementById('adm-user-search')?.value || "").trim().toLowerCase();
 
-            const usersArr = Array.isArray(state.crmUsers) ? state.crmUsers : [];
-            const filtered = usersArr.filter(u => 
+            const search = (document.getElementById('adm-user-search')?.value || "").trim().toLowerCase();
+            const users = Array.isArray(state.crmUsers) ? state.crmUsers : [];
+
+            const filtered = users.filter(u => 
                 (u.id && String(u.id).includes(search)) || 
                 (u.name && u.name.toLowerCase().includes(search))
             );
 
-            container.innerHTML = filtered.map(u => `
-                <div class="surface-card rounded-xl p-3 flex items-center justify-between">
-                    <div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-xs font-semibold text-zinc-100">${u.name}</span>
-                            <span class="text-[10px] text-zinc-500 mono">ID:${u.id}</span>
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-xs text-zinc-500 surface-card rounded-xl">Пользователи не найдены</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(u => {
+                const userProxies = getUserProxies(u.id);
+                return `
+                    <div onclick="openUserDetail('${u.id}')" class="surface-card rounded-xl p-3.5 flex items-center justify-between cursor-pointer hover:border-white/20 transition group">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-zinc-200 group-hover:text-white transition">${u.name}</span>
+                                <span class="text-[10px] text-zinc-500 mono">ID:${u.id}</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-[11px] text-zinc-400">
+                                <span>Прокси: <b class="text-zinc-200 font-medium">${userProxies.length}</b></span>
+                                <span>•</span>
+                                <span>Баланс: <b class="mono text-zinc-200 font-medium">${(u.balance || 0).toFixed(0)} ₽</b></span>
+                            </div>
                         </div>
-                        <span class="text-xs font-mono text-emerald-400 font-bold block mt-0.5">Баланс: ${(u.balance || 0).toFixed(2)} ₽</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-zinc-500 group-hover:text-zinc-300 transition">Открыть →</span>
+                        </div>
                     </div>
-                    <button type="button" onclick="openAdminBalanceModal('${u.id}', '${u.name}')" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] font-semibold text-zinc-200">
-                        ± Баланс
-                    </button>
+                `;
+            }).join('');
+        }
+
+        function openUserDetail(userId) {
+            adminActiveUserId = userId;
+            document.getElementById('adm-user-list-mode')?.classList.add('hidden');
+            document.getElementById('adm-user-detail-mode')?.classList.remove('hidden');
+            renderUserDetail(userId);
+        }
+
+        function closeUserDetail() {
+            adminActiveUserId = null;
+            document.getElementById('adm-user-detail-mode')?.classList.add('hidden');
+            document.getElementById('adm-user-list-mode')?.classList.remove('hidden');
+            renderAdminUsers();
+        }
+
+        function renderUserDetail(userId) {
+            const user = (state.crmUsers || []).find(u => String(u.id) === String(userId));
+            if (!user) {
+                closeUserDetail();
+                return;
+            }
+
+            const nameEl = document.getElementById('detail-user-name');
+            const idEl = document.getElementById('detail-user-id');
+            const balanceEl = document.getElementById('detail-user-balance');
+            const statsEl = document.getElementById('detail-user-stats');
+            const countEl = document.getElementById('detail-proxies-count');
+            const listContainer = document.getElementById('detail-user-proxies');
+
+            if (nameEl) nameEl.innerText = user.name;
+            if (idEl) idEl.innerText = `ID: ${user.id}`;
+            if (balanceEl) balanceEl.innerText = `${(user.balance || 0).toFixed(2)} ₽`;
+
+            const proxies = getUserProxies(userId);
+            const userOrders = (state.orders || []).filter(o => String(o.userId) === String(userId));
+
+            if (statsEl) statsEl.innerText = `${userOrders.length} заказов • ${proxies.length} активных адресов`;
+            if (countEl) countEl.innerText = `${proxies.length} шт.`;
+
+            if (!listContainer) return;
+
+            if (proxies.length === 0) {
+                listContainer.innerHTML = `<div class="p-6 text-center text-xs text-zinc-500 surface-card rounded-xl">У пользователя нет активных прокси</div>`;
+                return;
+            }
+
+            listContainer.innerHTML = proxies.map(p => `
+                <div class="surface-card rounded-xl p-3 space-y-2 border border-white/[0.06]">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2 cursor-pointer" onclick="copyString('${p.full}', 'Строка скопирована')">
+                            <img src="https://flagcdn.com/24x18/${p.country || 'ru'}.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="Flag">
+                            <span class="mono text-xs text-zinc-200 select-all">${p.full}</span>
+                        </div>
+                        <span class="text-[11px] mono font-medium text-emerald-400">${p.daysLeft || 30} дн.</span>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 border-t border-white/[0.04]">
+                        <span class="text-[10px] text-zinc-400">${p.poolName || 'Standard'} • ${p.tariffTitle || 'IPv4'}</span>
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" onclick="confirmAdminProlong(${p.id}, ${p.orderId})" class="px-2.5 py-1 rounded-lg border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white text-[11px] transition">
+                                + Продлить
+                            </button>
+                            <button type="button" onclick="confirmAdminReplace(${p.id}, ${p.orderId})" class="px-2.5 py-1 rounded-lg border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white text-[11px] transition">
+                                Заменить IP
+                            </button>
+                            <button type="button" onclick="confirmAdminDelete(${p.id}, ${p.orderId})" class="px-2 py-1 rounded-lg hover:bg-rose-500/20 text-zinc-500 hover:text-rose-400 text-xs transition">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
                 </div>
             `).join('');
+        }
+
+        function openBalanceEditFromDetail() {
+            if (!adminActiveUserId) return;
+            const user = (state.crmUsers || []).find(u => String(u.id) === String(adminActiveUserId));
+            if (user) openAdminBalanceModal(user.id, user.name);
+        }
+
+        function renderAdminProxies() {
+            const container = document.getElementById('adm-proxies-list');
+            if (!container) return;
+
+            const search = (document.getElementById('adm-proxy-search')?.value || "").trim().toLowerCase();
+            const allProxies = [];
+
+            (state.orders || []).forEach(o => {
+                if (Array.isArray(o.proxies)) {
+                    o.proxies.forEach(p => allProxies.push({ ...p, orderId: o.id, userId: o.userId }));
+                }
+            });
+
+            const filtered = allProxies.filter(p => 
+                (p.full && p.full.toLowerCase().includes(search)) ||
+                (p.poolName && p.poolName.toLowerCase().includes(search)) ||
+                (p.country && p.country.toLowerCase().includes(search))
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-xs text-zinc-500 surface-card rounded-xl">Прокси не найдены</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(p => `
+                <div class="surface-card rounded-xl p-3 space-y-2 border border-white/[0.06]">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <img src="https://flagcdn.com/24x18/${p.country || 'ru'}.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="Flag">
+                            <span class="mono text-xs text-zinc-200">${p.full}</span>
+                        </div>
+                        <span class="text-[11px] mono font-medium text-emerald-400">${p.daysLeft || 30} дн.</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-1 border-t border-white/[0.04] text-[10px] text-zinc-400">
+                        <span>Владелец: ID ${p.userId || '—'} • ${p.poolName}</span>
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" onclick="confirmAdminProlong(${p.id}, ${p.orderId})" class="px-2 py-1 rounded border border-white/10 hover:border-white/20 text-zinc-300 text-[10px]">
+                                +30 дн.
+                            </button>
+                            <button type="button" onclick="confirmAdminReplace(${p.id}, ${p.orderId})" class="px-2 py-1 rounded border border-white/10 hover:border-white/20 text-zinc-300 text-[10px]">
+                                Ротация
+                            </button>
+                            <button type="button" onclick="confirmAdminDelete(${p.id}, ${p.orderId})" class="px-1.5 py-1 rounded hover:bg-rose-500/20 text-zinc-500 hover:text-rose-400 text-[10px]">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminGateways() {
+            const totalTurnover = (state.orders || []).reduce((sum, o) => sum + (o.total || 0), 0);
+            const totalProxies = (state.orders || []).reduce((sum, o) => sum + (Array.isArray(o.proxies) ? o.proxies.length : 0), 0);
+
+            const tEl = document.getElementById('adm-stat-turnover');
+            if (tEl) tEl.innerText = `${totalTurnover} ₽`;
+            const pEl = document.getElementById('adm-stat-proxies');
+            if (pEl) pEl.innerText = `${totalProxies} шт.`;
+        }
+
+        function testGatewaySync(providerName) {
+            triggerHaptic();
+            showToast(`Запрос к API ${providerName}...`);
+            setTimeout(() => {
+                showToast(`Связь с ${providerName} активна (200 OK)`);
+            }, 600);
+        }
+
+        function confirmAdminProlong(proxyId, orderId) {
+            const order = (state.orders || []).find(o => o.id === orderId);
+            const proxy = order?.proxies?.find(p => p.id === proxyId);
+            if (!proxy) return;
+
+            requestConfirmation({
+                title: "Продлить срок прокси?",
+                desc: `Добавить 30 дней для ${proxy.ip}:${proxy.port} без списания средств?`,
+                confirmBtnText: "Добавить 30 дн.",
+                isDestructive: false,
+                onConfirm: () => {
+                    proxy.daysLeft = (proxy.daysLeft || 0) + 30;
+                    saveState();
+                    if (adminActiveUserId) renderUserDetail(adminActiveUserId);
+                    renderAdminProxies();
+                    showToast(`Срок увеличен на 30 дн.`);
+                }
+            });
+        }
+
+        function confirmAdminReplace(proxyId, orderId) {
+            const order = (state.orders || []).find(o => o.id === orderId);
+            const proxy = order?.proxies?.find(p => p.id === proxyId);
+            if (!proxy) return;
+
+            requestConfirmation({
+                title: "Заменить IP-адрес?",
+                desc: `Будет сгенерирован новый IP для порта ${proxy.port}. Старый адрес станет недоступен.`,
+                confirmBtnText: "Заменить",
+                isDestructive: true,
+                onConfirm: () => {
+                    const newIp = `${Math.floor(Math.random() * 110 + 70)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 240 + 10)}`;
+                    proxy.ip = newIp;
+                    proxy.full = `${newIp}:${proxy.port}:${proxy.user}:${proxy.pass}`;
+                    saveState();
+                    if (adminActiveUserId) renderUserDetail(adminActiveUserId);
+                    renderAdminProxies();
+                    showToast(`IP заменен на ${newIp}`);
+                }
+            });
+        }
+
+        function confirmAdminDelete(proxyId, orderId) {
+            const order = (state.orders || []).find(o => o.id === orderId);
+            if (!order || !order.proxies) return;
+
+            requestConfirmation({
+                title: "Удалить прокси?",
+                desc: "Прокси будет безвозвратно удален из базы данных и заказа клиента.",
+                confirmBtnText: "Удалить",
+                isDestructive: true,
+                onConfirm: () => {
+                    order.proxies = order.proxies.filter(p => p.id !== proxyId);
+                    order.count = order.proxies.length;
+                    saveState();
+                    if (adminActiveUserId) renderUserDetail(adminActiveUserId);
+                    renderAdminProxies();
+                    renderOrders();
+                    showToast("Прокси удален");
+                }
+            });
         }
 
         function openAdminBalanceModal(userId, name) {
@@ -1447,164 +1763,26 @@
             if (!val || val <= 0) return;
 
             const u = (state.crmUsers || []).find(x => String(x.id) === String(adminTargetUserId));
-            if (u) {
-                u.balance = (u.balance || 0) + (isAdd ? val : -val);
-                if (String(adminTargetUserId) === String(state.user.id)) {
-                    state.balance = u.balance;
-                    refreshProfileDisplay();
-                }
-                saveState();
-                renderAdminUsers();
-                showToast(`Баланс ${u.name} изменен на ${isAdd ? '+' : '-'}${val} ₽`);
-                closeAdminBalanceModal();
-            }
-        }
+            if (!u) return;
 
-        function renderAdminProxies() {
-            const container = document.getElementById('adm-proxies-list');
-            if (!container) return;
-            const search = (document.getElementById('adm-proxy-search')?.value || "").trim().toLowerCase();
-
-            const allProxies = [];
-            (state.orders || []).forEach(order => {
-                if (order && Array.isArray(order.proxies)) {
-                    order.proxies.forEach(p => {
-                        allProxies.push({ ...p, orderId: order.id });
-                    });
+            requestConfirmation({
+                title: isAdd ? "Начислить баланс?" : "Списать баланс?",
+                desc: `${isAdd ? 'Начислить' : 'Списать'} ${val} ₽ пользователю ${u.name} (ID: ${u.id})?`,
+                confirmBtnText: isAdd ? "Начислить" : "Списать",
+                isDestructive: !isAdd,
+                onConfirm: () => {
+                    u.balance = (u.balance || 0) + (isAdd ? val : -val);
+                    if (String(adminTargetUserId) === String(state.user.id)) {
+                        state.balance = u.balance;
+                        refreshProfileDisplay();
+                    }
+                    saveState();
+                    closeAdminBalanceModal();
+                    if (adminActiveUserId) renderUserDetail(adminActiveUserId);
+                    renderAdminUsers();
+                    showToast(`Баланс ${u.name}: ${(u.balance).toFixed(2)} ₽`);
                 }
             });
-
-            const filtered = allProxies.filter(p => 
-                (p.full && p.full.toLowerCase().includes(search)) || 
-                (p.country && p.country.toLowerCase().includes(search)) ||
-                (p.poolName && p.poolName.toLowerCase().includes(search))
-            );
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<p class="text-xs text-zinc-500 text-center py-4">Прокси не найдены</p>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(p => `
-                <div class="surface-card rounded-xl p-3 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-1.5">
-                            <img src="https://flagcdn.com/24x18/${p.country || 'ru'}.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="Flag">
-                            <span class="mono text-xs text-zinc-200">${p.full}</span>
-                        </div>
-                        <span class="text-[10px] text-emerald-400 font-bold">${p.daysLeft || 30} дн.</span>
-                    </div>
-
-                    <div class="flex items-center justify-between pt-1 border-t border-white/[0.04]">
-                        <span class="text-[10px] text-zinc-400">${p.poolName || 'Standard'} • ${p.tariffTitle || 'IPv4'}</span>
-                        <div class="flex items-center gap-1.5">
-                            <button type="button" onclick="openAdminProlongModal(${p.id}, ${p.orderId})" class="px-2 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">
-                                + Срок
-                            </button>
-                            <button type="button" onclick="adminReplaceProxy(${p.id}, ${p.orderId})" class="px-2 py-1 rounded bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-[10px] font-bold">
-                                🔄 Заменить IP
-                            </button>
-                            <button type="button" onclick="adminDeleteProxy(${p.id}, ${p.orderId})" class="px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-[10px] font-bold">
-                                ✕
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openAdminProlongModal(proxyId, orderId) {
-            triggerHaptic();
-            const order = (state.orders || []).find(o => o.id === orderId);
-            const proxy = order?.proxies?.find(p => p.id === proxyId);
-            if (!proxy) return;
-
-            adminActiveProlong = { proxy, order };
-            adminSelectedProlongDays = 30;
-
-            const strEl = document.getElementById('admin-prolong-proxy-str');
-            if (strEl) strEl.innerText = proxy.full;
-            selectAdminProlongDays(30);
-
-            const modal = document.getElementById('modal-admin-prolong');
-            if (modal) {
-                modal.classList.remove('opacity-0', 'pointer-events-none');
-                modal.querySelector('.modal-sheet')?.classList.remove('translate-y-full');
-            }
-        }
-
-        function closeAdminProlongModal() {
-            const modal = document.getElementById('modal-admin-prolong');
-            if (modal) {
-                modal.classList.add('opacity-0', 'pointer-events-none');
-                modal.querySelector('.modal-sheet')?.classList.add('translate-y-full');
-            }
-            adminActiveProlong = null;
-        }
-
-        function selectAdminProlongDays(days) {
-            triggerHaptic();
-            adminSelectedProlongDays = days;
-            [7, 30, 90, 365].forEach(d => {
-                const btn = document.getElementById(`btn-admin-prolong-${d}`);
-                if (btn) {
-                    btn.className = d === days 
-                        ? 'py-2 rounded-xl border border-emerald-500/40 bg-emerald-500/20 text-emerald-300 text-xs font-semibold mono' 
-                        : 'py-2 rounded-xl border border-white/10 surface-input text-xs font-semibold mono';
-                }
-            });
-        }
-
-        function executeAdminProlong() {
-            triggerHaptic();
-            if (!adminActiveProlong) return;
-
-            adminActiveProlong.proxy.daysLeft = (adminActiveProlong.proxy.daysLeft || 0) + adminSelectedProlongDays;
-            saveState();
-            renderAdminProxies();
-            renderOrders();
-
-            showToast(`Успешно продлено на +${adminSelectedProlongDays} дн. (Бесплатно)`);
-            closeAdminProlongModal();
-        }
-
-        function adminReplaceProxy(proxyId, orderId) {
-            triggerHaptic();
-            const order = (state.orders || []).find(o => o.id === orderId);
-            const proxy = order?.proxies?.find(p => p.id === proxyId);
-            if (!proxy) return;
-
-            const newIp = `${Math.floor(Math.random() * 110 + 70)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 240 + 10)}`;
-            const newPort = Math.floor(Math.random() * 8000 + 1000);
-            const newUser = "u" + Math.random().toString(36).substring(2, 6);
-            const newPass = "p" + Math.random().toString(36).substring(2, 6);
-
-            proxy.ip = newIp;
-            proxy.port = newPort;
-            proxy.user = newUser;
-            proxy.pass = newPass;
-            proxy.full = `${newIp}:${newPort}:${newUser}:${newPass}`;
-
-            saveState();
-            renderAdminProxies();
-            renderOrders();
-
-            showToast(`Прокси заменен на новый: ${newIp}`);
-        }
-
-        function adminDeleteProxy(proxyId, orderId) {
-            triggerHaptic();
-            const order = (state.orders || []).find(o => o.id === orderId);
-            if (!order || !order.proxies) return;
-
-            order.proxies = order.proxies.filter(p => p.id !== proxyId);
-            order.count = order.proxies.length;
-
-            saveState();
-            renderAdminProxies();
-            renderOrders();
-
-            showToast(`Прокси удален из системы`);
         }
 
         function copyString(str, msg = "Скопировано в буфер") {
@@ -1682,7 +1860,6 @@
             }, 3000);
         }
 
-        // Запуск приложения
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initApp);
         } else {
