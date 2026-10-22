@@ -2,112 +2,102 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Proxy Terminal</title>
-    <link rel="icon" href="data:,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Proxy Terminal & Admin</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-        
+
         * {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             -webkit-tap-highlight-color: transparent;
             box-sizing: border-box;
         }
 
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .hidden { display: none !important; }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
 
         body {
             background-color: #07080b;
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 55%),
+                radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 0% 50%, rgba(30, 41, 59, 0.25) 0%, transparent 60%);
             color: #f1f5f9;
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
         }
 
-        .cyber-grid {
-            position: fixed;
-            inset: 0;
-            background-size: 32px 32px;
-            background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            mask-image: radial-gradient(ellipse at 50% 20%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);
-            -webkit-mask-image: radial-gradient(ellipse at 50% 20%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .ambient-depth {
-            position: fixed;
-            inset: 0;
-            background: 
-                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.06) 0%, transparent 55%),
-                radial-gradient(circle at 50% 100%, rgba(15, 23, 42, 0.3) 0%, transparent 60%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
+        /* Премиум карточки с едва заметным неоновым отливом */
         .surface-card {
-            background: rgba(13, 15, 22, 0.85);
+            background: rgba(15, 18, 26, 0.78);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .surface-card:hover {
-            border-color: rgba(255, 255, 255, 0.16);
-            background: rgba(18, 21, 30, 0.9);
+            border-color: rgba(16, 185, 129, 0.25);
+            background: rgba(19, 23, 33, 0.88);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 15px -3px rgba(16, 185, 129, 0.08);
         }
 
         .surface-input {
-            background: rgba(16, 18, 26, 0.9);
-            backdrop-filter: blur(8px);
+            background: rgba(16, 20, 29, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.08);
             transition: all 0.2s ease;
         }
 
-        .surface-input:hover, .surface-input:focus-within {
-            border-color: rgba(255, 255, 255, 0.22);
+        .surface-input:focus-within, .surface-input:hover {
+            border-color: rgba(16, 185, 129, 0.35);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
         }
 
-        .btn-glow {
+        /* Неоновая кнопка действия */
+        .btn-neon {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 2px 14px rgba(16, 185, 129, 0.28);
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .btn-glow:hover {
-            box-shadow: 0 0 16px rgba(255, 255, 255, 0.15);
-            filter: brightness(1.05);
+        .btn-neon:hover {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.45);
+            filter: brightness(1.06);
+        }
+        .btn-neon:active {
+            transform: scale(0.98);
         }
 
         .btn-secondary {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(8px);
             transition: all 0.2s ease;
         }
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.09);
-            border-color: rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.18);
             color: #ffffff;
         }
 
+        /* Плавные аккордеоны */
         .accordion-grid {
             display: grid;
             grid-template-rows: 0fr;
             transition: grid-template-rows 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .accordion-grid.open { grid-template-rows: 1fr; }
-        .accordion-inner { overflow: hidden; }
+        .accordion-grid.open {
+            grid-template-rows: 1fr;
+        }
+        .accordion-inner {
+            overflow: hidden;
+        }
 
+        /* Выпадающие меню со скроллом */
         .dropdown-menu {
             opacity: 0;
-            transform: scale(0.96) translateY(-4px);
+            transform: scale(0.96) translateY(-6px);
             pointer-events: none;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
             transform-origin: top;
         }
         .dropdown-menu.active {
@@ -116,239 +106,128 @@
             pointer-events: auto;
         }
 
-        .modal-sheet {
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(16, 185, 129, 0.4);
+        }
+
+        /* Убираем стрелочки у input number */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
         }
 
         .fade-in {
-            animation: fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+        .safe-bottom {
+            padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between select-none pb-24" onclick="closeAllDropdowns(event)">
-
-    <div class="cyber-grid"></div>
-    <div class="ambient-depth"></div>
+<body class="min-h-screen flex flex-col justify-between select-none safe-bottom" onclick="closeAllDropdowns(event)">
 
     <!-- Toast уведомление -->
-    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 ease-out opacity-0 -translate-y-2 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#11131c]/95 backdrop-blur-xl border border-white/10 text-xs text-zinc-100 shadow-2xl">
-        <span id="toast-icon" class="text-zinc-400 font-bold">✓</span>
+    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 ease-out opacity-0 -translate-y-2 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900/95 backdrop-blur-md border border-white/10 text-xs text-zinc-100 shadow-2xl">
+        <span id="toast-icon" class="text-emerald-400 font-bold">✓</span>
         <span id="toast-text"></span>
     </div>
 
-    <!-- МОДАЛКА: Универсальное подтверждение (Confirm Modal) -->
-    <div id="modal-confirm" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-150">
-        <div class="w-full max-w-sm bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
-            <div class="space-y-1.5">
-                <h3 class="text-sm font-semibold text-zinc-100" id="confirm-title">Подтверждение</h3>
-                <p class="text-xs text-zinc-400 leading-relaxed" id="confirm-desc">Вы уверены?</p>
-            </div>
-            <div class="flex gap-2 pt-1">
-                <button type="button" onclick="closeConfirmModal()" class="flex-1 py-2.5 rounded-xl border border-white/10 surface-input text-xs font-medium text-zinc-300 hover:text-white transition">
-                    Отмена
-                </button>
-                <button type="button" id="confirm-action-btn" class="flex-1 py-2.5 rounded-xl text-xs font-semibold transition">
-                    Подтвердить
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Основной контейнер -->
+    <main class="w-full max-w-md mx-auto p-4 flex-1">
 
-    <!-- МОДАЛКА: Возврат средств и удаление прокси (Админ) -->
-    <div id="modal-admin-refund" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-150">
-        <div class="w-full max-w-md bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-start">
-                <div>
-                    <h3 class="text-sm font-semibold text-zinc-100">Возврат средств и отзыв прокси</h3>
-                    <p class="text-xs text-zinc-400 mono mt-0.5 break-all" id="refund-proxy-str">—</p>
-                </div>
-                <button type="button" onclick="closeRefundModal()" class="text-zinc-400 hover:text-white text-sm p-1">✕</button>
+        <!-- Верхняя шапка со статусом и переключателем Админки -->
+        <div class="flex items-center justify-between pb-3 mb-1 border-b border-white/[0.05]">
+            <div class="flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Склад онлайн</span>
             </div>
-
-            <!-- Инфо-сводка по чеку -->
-            <div class="p-3 rounded-xl bg-black/40 border border-white/[0.06] space-y-1.5 text-xs">
-                <div class="flex justify-between text-zinc-400">
-                    <span>Клиент:</span>
-                    <span class="text-zinc-200 font-medium" id="refund-user-label">—</span>
-                </div>
-                <div class="flex justify-between text-zinc-400">
-                    <span>Уплачено по чеку:</span>
-                    <span class="text-zinc-100 font-semibold mono" id="refund-paid-amount">0 ₽</span>
-                </div>
-                <div class="flex justify-between text-zinc-400">
-                    <span>Срок прокси:</span>
-                    <span class="text-zinc-200 mono" id="refund-period-info">0 из 0 дн.</span>
-                </div>
-            </div>
-
-            <!-- Выбор типа возврата -->
-            <div class="space-y-1.5">
-                <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Режим компенсации</label>
-                <div class="space-y-1.5">
-                    <label onclick="selectRefundType('full')" class="flex items-center justify-between p-2.5 rounded-xl surface-input border cursor-pointer transition" id="refund-opt-full">
-                        <div class="flex items-center gap-2">
-                            <input type="radio" name="refund-mode" id="rad-refund-full" checked class="accent-white">
-                            <span class="text-xs text-zinc-200">100% Возврат (Тех. невалид)</span>
-                        </div>
-                        <span class="text-xs font-semibold mono text-emerald-400" id="val-refund-full">0 ₽</span>
-                    </label>
-
-                    <label onclick="selectRefundType('prorate')" class="flex items-center justify-between p-2.5 rounded-xl surface-input border border-transparent cursor-pointer transition" id="refund-opt-prorate">
-                        <div class="flex items-center gap-2">
-                            <input type="radio" name="refund-mode" id="rad-refund-prorate" class="accent-white">
-                            <span class="text-xs text-zinc-200">По остатку срока (Prorated)</span>
-                        </div>
-                        <span class="text-xs font-semibold mono text-emerald-400" id="val-refund-prorate">0 ₽</span>
-                    </label>
-
-                    <label onclick="selectRefundType('zero')" class="flex items-center justify-between p-2.5 rounded-xl surface-input border border-transparent cursor-pointer transition" id="refund-opt-zero">
-                        <div class="flex items-center gap-2">
-                            <input type="radio" name="refund-mode" id="rad-refund-zero" class="accent-white">
-                            <span class="text-xs text-zinc-200">Без выплаты (Блокировка за спам)</span>
-                        </div>
-                        <span class="text-xs font-semibold mono text-zinc-400">0 ₽</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Предупреждение о шлюзе -->
-            <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 leading-relaxed" id="refund-gateway-notice">
-                <!-- Заполняется динамически -->
-            </div>
-
-            <div class="flex gap-2 pt-1">
-                <button type="button" onclick="closeRefundModal()" class="flex-1 py-2.5 rounded-xl border border-white/10 surface-input text-xs font-medium text-zinc-300 hover:text-white transition">
-                    Отмена
-                </button>
-                <button type="button" onclick="executeRefundAndRevoke()" class="flex-1 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-semibold transition">
-                    Аннулировать и начислить
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- МОДАЛКА: Клиентское продление -->
-    <div id="modal-prolong" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
-        <div class="modal-sheet w-full max-w-md bg-[#0f111a] border border-white/10 rounded-t-3xl sm:rounded-2xl p-5 space-y-4 shadow-2xl transform translate-y-full sm:translate-y-0">
-            <div class="flex justify-between items-start">
-                <div class="pr-2">
-                    <h3 class="text-base font-semibold text-zinc-100">Продление прокси</h3>
-                    <p class="text-xs text-zinc-400 mono mt-0.5 break-all" id="prolong-proxy-str">—</p>
-                </div>
-                <button type="button" onclick="closeProlongModal()" class="text-zinc-400 hover:text-white p-1 text-sm">✕</button>
-            </div>
-            <div class="space-y-1.5">
-                <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Период продления</label>
-                <div class="grid grid-cols-4 gap-1.5">
-                    <button type="button" onclick="selectProlongDays(3)" id="btn-prolong-3" class="py-2.5 rounded-xl border border-white/10 surface-input text-xs font-semibold mono">3 дн.</button>
-                    <button type="button" onclick="selectProlongDays(7)" id="btn-prolong-7" class="py-2.5 rounded-xl border border-white/10 surface-input text-xs font-semibold mono">7 дн.</button>
-                    <button type="button" onclick="selectProlongDays(30)" id="btn-prolong-30" class="py-2.5 rounded-xl border border-zinc-400 bg-white/10 text-xs font-semibold mono">30 дн.</button>
-                    <button type="button" onclick="selectProlongDays(90)" id="btn-prolong-90" class="py-2.5 rounded-xl border border-white/10 surface-input text-xs font-semibold mono">90 дн.</button>
-                </div>
-            </div>
-            <div class="surface-card rounded-xl p-3 flex justify-between items-center">
-                <span class="text-xs text-zinc-400">К списанию:</span>
-                <span class="text-sm font-semibold mono text-zinc-100" id="prolong-price-display">0 ₽</span>
-            </div>
-            <button type="button" id="btn-confirm-prolong" onclick="executeProlong()" class="w-full py-3.5 rounded-xl bg-zinc-100 text-zinc-950 font-semibold text-xs btn-glow active:scale-[0.99] transition">
-                Подтвердить продление
+            <button onclick="toggleAdminView()" id="btn-admin-switch" class="px-2.5 py-1 rounded-lg surface-card border-white/10 hover:border-emerald-500/40 text-[10px] font-mono text-zinc-300 flex items-center gap-1.5 transition">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></span>
+                <span id="admin-switch-text">Админ-панель</span>
             </button>
         </div>
-    </div>
 
-    <!-- МОДАЛКА: Баланс пользователя (Админ) -->
-    <div id="modal-admin-balance" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
-        <div class="w-full max-w-sm bg-[#0f111a] border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center">
-                <h3 class="text-sm font-semibold text-zinc-100" id="admin-balance-title">Коррекция баланса</h3>
-                <button type="button" onclick="closeAdminBalanceModal()" class="text-zinc-400 hover:text-white text-sm">✕</button>
-            </div>
-            <div class="space-y-1">
-                <label class="text-[11px] text-zinc-400">Сумма в рублях:</label>
-                <input id="admin-balance-input" type="number" placeholder="Например: 500" class="w-full p-2.5 rounded-xl surface-input text-xs text-zinc-100 mono focus:outline-none">
-            </div>
-            <div class="flex gap-2">
-                <button type="button" onclick="applyAdminBalanceChange(true)" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-100 border border-white/10 text-xs font-semibold transition">
-                    + Начислить
-                </button>
-                <button type="button" onclick="applyAdminBalanceChange(false)" class="flex-1 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs font-semibold transition">
-                    - Списать
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- МОДАЛКА: Резервный просмотр .TXT -->
-    <div id="modal-txt-view" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
-        <div class="w-full max-w-md bg-[#0f111a] border border-white/10 rounded-2xl p-5 space-y-3 shadow-2xl">
-            <div class="flex justify-between items-center">
-                <h3 class="text-sm font-semibold text-zinc-100" id="txt-modal-title">Экспорт прокси</h3>
-                <button type="button" onclick="closeTxtModal()" class="text-zinc-400 hover:text-white text-sm">✕</button>
-            </div>
-            <textarea id="txt-modal-content" readonly class="w-full h-40 p-3 rounded-xl bg-zinc-950 border border-white/10 font-mono text-[11px] text-zinc-300 focus:outline-none resize-none"></textarea>
-            <button type="button" onclick="copyModalTxt()" class="w-full py-3 rounded-xl bg-zinc-100 text-zinc-950 font-semibold text-xs active:scale-95 transition">
-                Скопировать весь список
-            </button>
-        </div>
-    </div>
-
-    <!-- Основной контейнер страниц -->
-    <main class="w-full max-w-md mx-auto p-4 flex-1 relative z-10">
-
-        <!-- ================= ЭКРАН 1: КАТАЛОГ ================= -->
+        <!-- ================= ЭКРАН 1: КАТАЛОГ СЕТЕЙ ================= -->
         <section id="view-providers" class="fade-in space-y-3">
-            <header class="pt-2 pb-1">
-                <h1 class="text-xl font-semibold tracking-tight text-zinc-100">Каталог сетей</h1>
+            <header class="pt-1 pb-1">
+                <h1 class="text-xl font-bold tracking-tight text-zinc-100">Каталог сетей</h1>
                 <p class="text-xs text-zinc-400">Выберите подходящую серверную подсеть</p>
             </header>
 
-            <button type="button" onclick="selectProvider('pool1')" class="w-full text-left surface-card rounded-2xl p-4 cursor-pointer active:scale-[0.99] relative overflow-hidden group">
+            <!-- Пул 1 -->
+            <div onclick="selectProvider('pool1')" class="surface-card rounded-2xl p-4 cursor-pointer active:scale-[0.99] relative overflow-hidden group">
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="flex items-center gap-2">
-                            <h3 class="text-sm font-semibold text-zinc-100 group-hover:text-white transition">Standard Pool</h3>
-                            <span class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.04] text-zinc-300 border border-white/[0.08]">
-                                Proxy6
+                            <h3 class="text-sm font-semibold text-zinc-100 group-hover:text-emerald-400 transition">Standard Pool</h3>
+                            <span class="text-[9px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                Базовый
                             </span>
                         </div>
                         <p class="text-xs text-zinc-400 mt-1">IPv6 / IPv4 адреса высокой доступности</p>
+                        <div class="flex items-center gap-2 mt-2 text-[10px] text-zinc-500 font-mono">
+                            <span>HTTP/SOCKS5</span>
+                            <span>•</span>
+                            <span>до 100 Мбит/с</span>
+                        </div>
                     </div>
                     <div class="text-right">
-                        <span class="text-xs font-semibold mono text-zinc-100">от 15 ₽</span>
+                        <span class="text-xs font-semibold mono text-emerald-400">от 15 ₽</span>
                         <span class="block text-[10px] text-zinc-400">в месяц</span>
                     </div>
                 </div>
-            </button>
+            </div>
 
-            <button type="button" onclick="selectProvider('pool2')" class="w-full text-left surface-card rounded-2xl p-4 cursor-pointer active:scale-[0.99] relative overflow-hidden group">
+            <!-- Пул 2 -->
+            <div onclick="selectProvider('pool2')" class="surface-card rounded-2xl p-4 cursor-pointer active:scale-[0.99] relative overflow-hidden group">
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="flex items-center gap-2">
-                            <h3 class="text-sm font-semibold text-zinc-100 group-hover:text-white transition">Prime Pool</h3>
-                            <span class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.04] text-zinc-300 border border-white/[0.08]">
-                                ProxyLine
+                            <h3 class="text-sm font-semibold text-zinc-100 group-hover:text-cyan-400 transition">Prime Pool</h3>
+                            <span class="text-[9px] font-medium px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                Приоритет
                             </span>
                         </div>
                         <p class="text-xs text-zinc-400 mt-1">Высокий IP-траст для критичных задач</p>
+                        <div class="flex items-center gap-2 mt-2 text-[10px] text-zinc-500 font-mono">
+                            <span>Чистые подсети</span>
+                            <span>•</span>
+                            <span>до 1 Гбит/с</span>
+                        </div>
                     </div>
                     <div class="text-right">
-                        <span class="text-xs font-semibold mono text-zinc-100">от 65 ₽</span>
+                        <span class="text-xs font-semibold mono text-cyan-400">от 65 ₽</span>
                         <span class="block text-[10px] text-zinc-400">в месяц</span>
                     </div>
                 </div>
-            </button>
+            </div>
         </section>
 
         <!-- ================= ЭКРАН 2: КОНФИГУРАТОР ТОВАРА ================= -->
         <section id="view-config" class="hidden space-y-4">
-            <button type="button" onclick="navigate('providers')" class="text-xs text-zinc-400 hover:text-zinc-100 flex items-center gap-1.5 transition py-1">
+            <button onclick="navigate('providers')" class="text-xs text-zinc-400 hover:text-emerald-400 flex items-center gap-1.5 transition py-1">
                 <span>←</span> Назад к каталогу
             </button>
 
@@ -357,42 +236,41 @@
                 <p class="text-xs text-zinc-400" id="conf-pool-desc">Параметры подключения</p>
             </header>
 
+            <!-- Тип адреса -->
             <div class="space-y-1.5">
                 <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Тип адреса</label>
-                <div class="grid grid-cols-1 gap-1.5" id="conf-tariff-list"></div>
+                <div class="grid grid-cols-1 gap-1.5" id="conf-tariff-list">
+                    <!-- Заполняется динамически -->
+                </div>
             </div>
 
+            <!-- Выбор страны (Дропдаун с поиском и прокруткой) -->
             <div class="space-y-1.5 relative">
                 <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Локация</label>
                 <div onclick="toggleDropdown(event, 'dropdown-country')" class="w-full p-2.5 rounded-xl surface-input text-xs text-zinc-200 flex items-center justify-between cursor-pointer active:scale-[0.99] transition">
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2.5">
                         <img id="selected-country-flag" src="https://flagcdn.com/24x18/ru.png" class="w-4 h-3 object-cover rounded-sm shadow-sm" alt="Flag">
                         <span id="selected-country-name" class="font-medium">Россия (RU)</span>
                     </div>
                     <span class="text-[10px] text-zinc-400">▼</span>
                 </div>
 
-                <div id="dropdown-country" class="dropdown-menu absolute left-0 right-0 top-[60px] z-30 p-1.5 bg-[#12141e] border border-white/10 rounded-xl shadow-2xl space-y-0.5 backdrop-blur-2xl">
-                    <div onclick="selectCountry('ru', 'Россия (RU)')" class="flex items-center gap-2 p-2 rounded-lg hover:bg-white/[0.06] cursor-pointer text-xs transition">
-                        <img src="https://flagcdn.com/24x18/ru.png" class="w-4 h-3 object-cover rounded-sm" alt="RU">
-                        <span>Россия (RU)</span>
+                <div id="dropdown-country" class="dropdown-menu absolute left-0 right-0 top-[62px] z-30 p-2 bg-[#10131c]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl space-y-2">
+                    <!-- Поле живого поиска -->
+                    <div class="relative" onclick="event.stopPropagation()">
+                        <input type="text" id="country-search-input" oninput="filterCountries(this.value)" placeholder="Поиск страны..." class="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50">
                     </div>
-                    <div onclick="selectCountry('de', 'Германия (DE)')" class="flex items-center gap-2 p-2 rounded-lg hover:bg-white/[0.06] cursor-pointer text-xs transition">
-                        <img src="https://flagcdn.com/24x18/de.png" class="w-4 h-3 object-cover rounded-sm" alt="DE">
-                        <span>Германия (DE)</span>
-                    </div>
-                    <div onclick="selectCountry('nl', 'Нидерланды (NL)')" class="flex items-center gap-2 p-2 rounded-lg hover:bg-white/[0.06] cursor-pointer text-xs transition">
-                        <img src="https://flagcdn.com/24x18/nl.png" class="w-4 h-3 object-cover rounded-sm" alt="NL">
-                        <span>Нидерланды (NL)</span>
-                    </div>
-                    <div onclick="selectCountry('us', 'США (US)')" class="flex items-center gap-2 p-2 rounded-lg hover:bg-white/[0.06] cursor-pointer text-xs transition">
-                        <img src="https://flagcdn.com/24x18/us.png" class="w-4 h-3 object-cover rounded-sm" alt="US">
-                        <span>США (US)</span>
+
+                    <!-- Скроллируемый список стран -->
+                    <div id="countries-scroll-list" class="max-h-56 overflow-y-auto space-y-0.5 custom-scroll pr-1">
+                        <!-- Динамический список стран -->
                     </div>
                 </div>
             </div>
 
+            <!-- Период и Количество -->
             <div class="grid grid-cols-2 gap-2.5">
+                <!-- Дропдаун периода со скроллом -->
                 <div class="space-y-1.5 relative">
                     <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Период</label>
                     <div onclick="toggleDropdown(event, 'dropdown-period')" class="w-full p-2.5 rounded-xl surface-input text-xs text-zinc-200 flex items-center justify-between cursor-pointer active:scale-[0.99] transition">
@@ -400,34 +278,65 @@
                         <span class="text-[10px] text-zinc-400">▼</span>
                     </div>
 
-                    <div id="dropdown-period" class="dropdown-menu absolute left-0 right-0 top-[60px] z-30 p-1.5 bg-[#12141e] border border-white/10 rounded-xl shadow-2xl space-y-0.5 backdrop-blur-2xl">
-                        <div onclick="selectPeriod(3, '3 дня')" class="p-2 rounded-lg hover:bg-white/[0.06] cursor-pointer text-xs">3 дня</div>
-                        <div onclick="selectPeriod(7, '7 дней')" class="p-2 rounded-lg hover:bg-white/[0.06] cursor-pointer text-xs">7 дней</div>
-                        <div onclick="selectPeriod(30, '30 дней')" class="p-2 rounded-lg hover:bg-white/[0.06] cursor-pointer text-xs">30 дней</div>
-                        <div onclick="selectPeriod(90, '90 дней')" class="p-2 rounded-lg hover:bg-white/[0.06] cursor-pointer text-xs">90 дней</div>
+                    <div id="dropdown-period" class="dropdown-menu absolute left-0 right-0 top-[62px] z-30 p-1.5 bg-[#10131c]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl space-y-0.5 max-h-52 overflow-y-auto custom-scroll">
+                        <div onclick="selectPeriod(3, '3 дня')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
+                            <span>3 дня</span><span class="text-[10px] text-zinc-500">тест</span>
+                        </div>
+                        <div onclick="selectPeriod(7, '7 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
+                            <span>7 дней</span><span class="text-[10px] text-zinc-500">1 нед.</span>
+                        </div>
+                        <div onclick="selectPeriod(14, '14 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
+                            <span>14 дней</span><span class="text-[10px] text-zinc-500">2 нед.</span>
+                        </div>
+                        <div onclick="selectPeriod(30, '30 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between text-emerald-400 font-medium">
+                            <span>30 дней</span><span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/10 border border-emerald-500/20">Хит</span>
+                        </div>
+                        <div onclick="selectPeriod(60, '60 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
+                            <span>60 дней</span><span class="text-[10px] text-cyan-400">-5%</span>
+                        </div>
+                        <div onclick="selectPeriod(90, '90 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
+                            <span>90 дней</span><span class="text-[10px] text-cyan-400">-10%</span>
+                        </div>
+                        <div onclick="selectPeriod(180, '180 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
+                            <span>180 дней</span><span class="text-[10px] text-cyan-400">-15%</span>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Количество со свободным вводом с клавиатуры -->
                 <div class="space-y-1.5">
                     <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Количество</label>
                     <div class="flex items-center rounded-xl surface-input overflow-hidden h-[41px]">
-                        <button type="button" onclick="changeCount(-1)" class="w-9 h-full text-zinc-400 hover:text-white hover:bg-white/5 active:bg-white/10 transition">-</button>
-                        <input id="conf-count" type="number" value="1" min="1" max="100" readonly class="w-full bg-transparent text-center text-xs font-semibold mono text-zinc-100 focus:outline-none">
-                        <button type="button" onclick="changeCount(1)" class="w-9 h-full text-zinc-400 hover:text-white hover:bg-white/5 active:bg-white/10 transition">+</button>
+                        <button onclick="changeCount(-1)" class="w-9 h-full text-zinc-400 hover:text-emerald-400 hover:bg-white/5 active:bg-white/10 transition">-</button>
+                        <input id="conf-count" type="number" value="1" min="1" max="500" oninput="onCountManualInput(this.value)" onblur="onCountBlur(this.value)" class="w-full bg-transparent text-center text-xs font-semibold mono text-zinc-100 focus:outline-none focus:text-emerald-400 transition">
+                        <button onclick="changeCount(1)" class="w-9 h-full text-zinc-400 hover:text-emerald-400 hover:bg-white/5 active:bg-white/10 transition">+</button>
                     </div>
                 </div>
             </div>
 
-            <div class="surface-card rounded-2xl p-3.5 flex items-center justify-between">
-                <span class="text-xs text-zinc-400">Стоимость позиции:</span>
-                <span class="text-base font-semibold mono text-zinc-100" id="conf-total-display">0 ₽</span>
+            <!-- Быстрые чипсы количества -->
+            <div class="flex items-center justify-between gap-1.5 pt-0.5">
+                <span class="text-[10px] text-zinc-500">Быстро:</span>
+                <div class="flex gap-1">
+                    <button onclick="setExactCount(1)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100 hover:border-emerald-500/40">1</button>
+                    <button onclick="setExactCount(5)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100 hover:border-emerald-500/40">+5</button>
+                    <button onclick="setExactCount(10)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100 hover:border-emerald-500/40">+10</button>
+                    <button onclick="setExactCount(25)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100 hover:border-emerald-500/40">+25</button>
+                </div>
             </div>
 
+            <!-- Итоговая стоимость позиции -->
+            <div class="surface-card rounded-2xl p-3.5 flex items-center justify-between border-emerald-500/20">
+                <span class="text-xs text-zinc-400">Стоимость позиции:</span>
+                <span class="text-base font-bold mono text-emerald-400" id="conf-total-display">0 ₽</span>
+            </div>
+
+            <!-- Кнопки действий -->
             <div class="space-y-2 pt-1">
-                <button type="button" onclick="addToCart()" class="w-full py-3.5 rounded-xl bg-zinc-100 text-zinc-950 font-semibold text-xs btn-glow active:scale-[0.99] transition">
-                    + Добавить в корзину
+                <button onclick="addToCart()" class="w-full py-3.5 rounded-xl btn-neon text-zinc-950 font-bold text-xs active:scale-[0.99] transition flex items-center justify-center gap-1.5">
+                    <span>+</span> Добавить в корзину
                 </button>
-                <button type="button" onclick="navigate('cart')" class="w-full py-2.5 rounded-xl btn-secondary text-xs text-zinc-300 font-medium active:scale-[0.99] transition">
+                <button onclick="navigate('cart')" class="w-full py-2.5 rounded-xl btn-secondary text-xs text-zinc-300 font-medium active:scale-[0.99] transition">
                     Перейти к оформлению (<span id="btn-cart-count">0</span>)
                 </button>
             </div>
@@ -437,249 +346,275 @@
         <section id="view-cart" class="hidden space-y-3">
             <header class="pt-2 flex justify-between items-center">
                 <div>
-                    <h2 class="text-xl font-semibold tracking-tight text-zinc-100">Корзина</h2>
+                    <h2 class="text-xl font-bold tracking-tight text-zinc-100">Корзина</h2>
                     <p class="text-xs text-zinc-400" id="cart-items-summary">0 позиций</p>
                 </div>
-                <button type="button" onclick="clearCart()" class="text-[11px] text-zinc-400 hover:text-rose-400 transition p-1">Очистить всё</button>
+                <button onclick="clearCart()" class="text-[11px] text-zinc-500 hover:text-rose-400 transition p-1">Очистить всё</button>
             </header>
 
-            <div id="cart-list" class="space-y-2"></div>
+            <div id="cart-list" class="space-y-2">
+                <!-- Карточки корзины -->
+            </div>
 
             <div id="cart-footer" class="space-y-3 pt-2">
                 <div class="surface-card rounded-2xl p-3.5 flex items-center justify-between">
                     <span class="text-xs text-zinc-400">Итого к списанию:</span>
-                    <span class="text-base font-semibold mono text-zinc-100" id="cart-total-amount">0 ₽</span>
+                    <span class="text-base font-bold mono text-emerald-400" id="cart-total-amount">0 ₽</span>
                 </div>
-                <button type="button" id="btn-checkout" onclick="checkoutCart()" class="w-full py-3.5 rounded-xl bg-zinc-100 text-zinc-950 font-semibold text-xs btn-glow active:scale-[0.99] transition">
+                <button onclick="checkoutCart()" class="w-full py-3.5 rounded-xl btn-neon text-zinc-950 font-bold text-xs active:scale-[0.99] transition">
                     Оплатить заказ
                 </button>
             </div>
         </section>
 
-        <!-- ================= ЭКРАН 4: ЗАКАЗЫ + ПОИСК ================= -->
+        <!-- ================= ЭКРАН 4: ЗАКАЗЫ ================= -->
         <section id="view-orders" class="hidden space-y-3">
-            <header class="pt-2 space-y-2.5">
-                <div class="flex justify-between items-center relative">
-                    <div>
-                        <h2 class="text-xl font-semibold tracking-tight text-zinc-100">Заказы</h2>
-                        <p class="text-xs text-zinc-400" id="orders-summary-label">0 пакетов</p>
-                    </div>
-
-                    <div class="relative">
-                        <div onclick="toggleDropdown(event, 'dropdown-orders-sort')" class="px-2.5 py-1.5 rounded-xl surface-input text-[11px] text-zinc-300 flex items-center gap-1.5 cursor-pointer hover:border-zinc-500">
-                            <span id="selected-orders-sort-label">Сначала новые</span>
-                            <span class="text-[9px] text-zinc-400">▼</span>
-                        </div>
-
-                        <div id="dropdown-orders-sort" class="dropdown-menu absolute right-0 top-9 z-30 w-40 p-1 bg-[#12141e] border border-white/10 rounded-xl shadow-2xl space-y-0.5 backdrop-blur-2xl">
-                            <div onclick="setOrdersSort('date_desc', 'Сначала новые')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">Сначала новые</div>
-                            <div onclick="setOrdersSort('date_asc', 'Сначала старые')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">Сначала старые</div>
-                            <div onclick="setOrdersSort('price_desc', 'По сумме (макс)')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">По сумме (макс)</div>
-                            <div onclick="setOrdersSort('price_asc', 'По сумме (мин)')" class="p-2 rounded-lg hover:bg-white/[0.06] text-[11px] cursor-pointer">По сумме (мин)</div>
-                        </div>
-                    </div>
+            <header class="pt-2 flex justify-between items-center relative">
+                <div>
+                    <h2 class="text-xl font-bold tracking-tight text-zinc-100">Заказы</h2>
+                    <p class="text-xs text-zinc-400" id="orders-summary-label">0 пакетов</p>
                 </div>
 
                 <div class="relative">
-                    <input id="orders-search-input" oninput="handleSearch(this.value)" type="text" placeholder="Поиск по IP, порту, логину или номеру..." class="w-full pl-9 pr-8 py-2.5 rounded-xl surface-input text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none mono">
-                    <svg class="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <button type="button" onclick="clearSearch()" id="search-clear-btn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 text-xs">✕</button>
+                    <div onclick="toggleDropdown(event, 'dropdown-orders-sort')" class="px-2.5 py-1.5 rounded-xl surface-input text-[11px] text-zinc-300 flex items-center gap-1.5 cursor-pointer hover:border-emerald-500/40">
+                        <span id="selected-orders-sort-label">Сначала новые</span>
+                        <span class="text-[9px] text-zinc-400">▼</span>
+                    </div>
+
+                    <div id="dropdown-orders-sort" class="dropdown-menu absolute right-0 top-9 z-30 w-44 p-1 bg-[#10131c]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl space-y-0.5">
+                        <div onclick="setOrdersSort('date_desc', 'Сначала новые')" class="p-2 rounded-xl hover:bg-zinc-800 text-[11px] cursor-pointer">Сначала новые</div>
+                        <div onclick="setOrdersSort('date_asc', 'Сначала старые')" class="p-2 rounded-xl hover:bg-zinc-800 text-[11px] cursor-pointer">Сначала старые</div>
+                        <div onclick="setOrdersSort('price_desc', 'По сумме (макс)')" class="p-2 rounded-xl hover:bg-zinc-800 text-[11px] cursor-pointer">По сумме (макс)</div>
+                        <div onclick="setOrdersSort('price_asc', 'По сумме (мин)')" class="p-2 rounded-xl hover:bg-zinc-800 text-[11px] cursor-pointer">По сумме (мин)</div>
+                    </div>
                 </div>
             </header>
 
-            <div id="orders-list-container" class="space-y-2.5"></div>
+            <div id="orders-list-container" class="space-y-2.5">
+                <!-- Карточки заказов -->
+            </div>
         </section>
 
         <!-- ================= ЭКРАН 5: ПРОФИЛЬ ================= -->
         <section id="view-profile" class="hidden space-y-4">
             <header class="pt-2">
-                <h2 class="text-xl font-semibold tracking-tight text-zinc-100">Учетная запись</h2>
+                <h2 class="text-xl font-bold tracking-tight text-zinc-100">Учетная запись</h2>
+                <p class="text-xs text-zinc-400">Синхронизация баланса и параметров</p>
             </header>
 
+            <!-- Основная карточка пользователя -->
             <div class="surface-card rounded-2xl p-4 space-y-4">
-                <div class="flex items-center gap-3">
-                    <div id="prof-avatar-container" class="w-12 h-12 rounded-2xl bg-zinc-800/80 border border-white/10 overflow-hidden flex items-center justify-center text-sm font-semibold text-zinc-100 shadow-inner">
-                        U
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-zinc-100" id="prof-username">Пользователь</h3>
-                        <div class="flex items-center gap-1.5 text-zinc-400 text-[11px] mono mt-0.5 cursor-pointer hover:text-zinc-200" onclick="copyString(state.user.id, 'ID скопирован')">
-                            <span id="prof-user-id">ID: —</span>
-                            <svg class="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 flex items-center justify-center text-sm font-bold text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]" id="prof-avatar">
+                            U
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <h3 class="text-sm font-semibold text-zinc-100" id="prof-username">Пользователь</h3>
+                                <span class="px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] font-semibold">Active</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-zinc-400 text-[11px] mono mt-0.5 cursor-pointer hover:text-emerald-400 transition" onclick="copyString(state.user.id, 'ID скопирован')">
+                                <span id="prof-user-id">ID: —</span>
+                                <svg class="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            </div>
                         </div>
                     </div>
+                    <span class="text-[10px] font-mono px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                        Tier 1 Client
+                    </span>
                 </div>
 
+                <!-- Баланс и быстрое пополнение -->
                 <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
                     <div>
                         <span class="text-[11px] text-zinc-400 block font-medium">Основной баланс</span>
                         <span class="text-xl font-bold mono text-zinc-100" id="prof-balance-val">0.00 ₽</span>
                     </div>
-                    <button type="button" onclick="topUpBalance(1500)" class="px-3.5 py-2 rounded-xl btn-secondary text-xs font-semibold text-zinc-200 active:scale-95 transition">
+                    <button onclick="topUpBalance(1500)" class="px-3.5 py-2 rounded-xl btn-secondary text-xs font-semibold text-emerald-400 border-emerald-500/20 hover:border-emerald-500/40 active:scale-95 transition">
                         +1,500 ₽ (Тест)
                     </button>
                 </div>
             </div>
 
+            <!-- Синхронизированная аналитика (4 плитки) -->
             <div class="grid grid-cols-2 gap-2 text-xs">
                 <div class="surface-card rounded-2xl p-3">
                     <span class="text-zinc-400 text-[11px] font-medium">Всего заказов</span>
                     <span class="text-base font-semibold mono text-zinc-100 mt-1 block" id="prof-stat-orders">0</span>
-                    <span class="text-[10px] text-zinc-400 mt-0.5 block">За все время</span>
+                    <span class="text-[10px] text-zinc-500 mt-0.5 block">За все время</span>
                 </div>
                 <div class="surface-card rounded-2xl p-3">
                     <span class="text-zinc-400 text-[11px] font-medium">Активных прокси</span>
                     <span class="text-base font-semibold mono text-emerald-400 mt-1 block" id="prof-stat-proxies">0</span>
-                    <span class="text-[10px] text-zinc-400 mt-0.5 block">На серверах</span>
+                    <span class="text-[10px] text-zinc-500 mt-0.5 block">На серверах</span>
                 </div>
                 <div class="surface-card rounded-2xl p-3">
                     <span class="text-zinc-400 text-[11px] font-medium">Потрачено</span>
                     <span class="text-base font-semibold mono text-zinc-100 mt-1 block" id="prof-stat-spent">0 ₽</span>
-                    <span class="text-[10px] text-zinc-400 mt-0.5 block">Списания в боте</span>
+                    <span class="text-[10px] text-zinc-500 mt-0.5 block">Списания в боте</span>
                 </div>
                 <div class="surface-card rounded-2xl p-3">
                     <span class="text-zinc-400 text-[11px] font-medium">В корзине сейчас</span>
                     <span class="text-base font-semibold mono text-zinc-100 mt-1 block" id="prof-stat-cart">0 шт.</span>
-                    <span class="text-[10px] text-zinc-400 mt-0.5 block" id="prof-stat-cart-sum">на 0 ₽</span>
+                    <span class="text-[10px] text-zinc-500 mt-0.5 block" id="prof-stat-cart-sum">на 0 ₽</span>
                 </div>
             </div>
 
-            <div class="pt-2">
-                <button type="button" onclick="resetStorage()" class="w-full py-2.5 rounded-xl border border-rose-500/20 text-rose-400 hover:bg-rose-500/10 text-xs font-medium transition active:scale-[0.99]">
-                    Сбросить данные кэша (LocalStorage)
-                </button>
+            <!-- Сервисные настройки -->
+            <div class="surface-card rounded-2xl p-3.5 space-y-3 text-xs">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-zinc-200 font-medium block">Автоматическое продление</span>
+                        <span class="text-zinc-400 text-[10px]">Продлевать при наличии баланса</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" checked class="sr-only peer">
+                        <div class="w-9 h-5 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                    </label>
+                </div>
+
+                <div class="pt-2 border-t border-white/[0.06] flex items-center justify-between">
+                    <div>
+                        <span class="text-zinc-200 font-medium block">API Token (Реселлинг)</span>
+                        <span class="text-zinc-400 text-[10px] mono">px_sec_91823...</span>
+                    </div>
+                    <button onclick="copyString('px_sec_91823abf8921cd', 'API токен скопирован')" class="px-2.5 py-1.5 rounded-lg btn-secondary text-[11px] text-zinc-300 hover:text-emerald-400">
+                        Копия
+                    </button>
+                </div>
             </div>
         </section>
 
-        <!-- ================= ЭКРАН 6: АДМИН-ПАНЕЛЬ ================= -->
-        <section id="view-admin" class="hidden space-y-4 pb-4">
-            <header class="pt-2 flex justify-between items-center border-b border-white/[0.06] pb-3">
+        <!-- ================= ЭКРАН 6: АДМИН-ПАНЕЛЬ (PROXY6 & PROXYLINE) ================= -->
+        <section id="view-admin" class="hidden space-y-4">
+            <header class="pt-1 flex items-center justify-between">
                 <div>
-                    <h2 class="text-lg font-semibold tracking-tight text-zinc-100">Панель управления</h2>
-                    <p class="text-xs text-zinc-400">Управление пользователями, складом и шлюзами</p>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">ADMIN v2.4</span>
+                        <span class="text-xs text-zinc-500 mono">API Gateways</span>
+                    </div>
+                    <h2 class="text-lg font-bold tracking-tight text-zinc-100 mt-0.5">Управление API Складом</h2>
                 </div>
-                <div class="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08]">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    <span class="text-[10px] font-mono text-zinc-300">ADMIN</span>
-                </div>
+                <button onclick="syncAllApi()" class="px-2.5 py-1.5 rounded-xl btn-secondary text-[10px] text-zinc-300 flex items-center gap-1.5 hover:text-emerald-400 transition">
+                    <span id="sync-icon">🔄</span> Синхронизация
+                </button>
             </header>
 
-            <!-- Навигация по вкладкам админки -->
-            <div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-zinc-900/60 border border-white/[0.06]">
-                <button type="button" onclick="switchAdminTab('users')" id="tab-adm-users" class="py-2 rounded-lg text-xs font-medium text-white bg-white/10 transition">Пользователи</button>
-                <button type="button" onclick="switchAdminTab('proxies')" id="tab-adm-proxies" class="py-2 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition">Все прокси</button>
-                <button type="button" onclick="switchAdminTab('gateways')" id="tab-adm-gateways" class="py-2 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition">Шлюзы API</button>
-            </div>
-
-            <!-- Вкладка 1: Пользователи -->
-            <div id="adm-view-users" class="space-y-3">
-                <!-- 1.1: Список пользователей -->
-                <div id="adm-user-list-mode" class="space-y-3">
-                    <div class="relative">
-                        <input id="adm-user-search" oninput="renderAdminUsers()" type="text" placeholder="Поиск по ID или имени..." class="w-full pl-9 pr-3 py-2.5 rounded-xl surface-input text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none mono">
-                        <svg class="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </div>
-                    <div id="adm-users-list" class="space-y-2"></div>
-                </div>
-
-                <!-- 1.2: Карточка конкретного пользователя -->
-                <div id="adm-user-detail-mode" class="hidden space-y-4">
-                    <button type="button" onclick="closeUserDetail()" class="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1.5 transition">
-                        <span>←</span> Назад к списку пользователей
-                    </button>
-
-                    <div class="surface-card rounded-2xl p-4 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <h3 class="text-sm font-semibold text-zinc-100" id="detail-user-name">—</h3>
-                                    <span class="text-[10px] text-zinc-400 mono" id="detail-user-id">ID: —</span>
-                                    <span class="text-[9px] px-1.5 py-0.2 rounded font-medium" id="detail-user-status-badge">Активен</span>
-                                </div>
-                                <p class="text-xs text-zinc-400 mt-0.5" id="detail-user-stats">0 заказов • 0 активных прокси</p>
-                            </div>
-                            <div class="flex items-center gap-1.5">
-                                <button type="button" onclick="openBalanceEditFromDetail()" class="px-2.5 py-1.5 rounded-xl border border-white/10 hover:border-white/20 text-xs font-medium text-zinc-200 transition">
-                                    ± Баланс
-                                </button>
-                                <button type="button" id="btn-toggle-block" onclick="toggleUserBlockFromDetail()" class="px-2.5 py-1.5 rounded-xl border border-rose-500/20 text-rose-400 hover:bg-rose-500/10 text-xs font-medium transition">
-                                    Бан
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
-                            <span class="text-xs text-zinc-400">Баланс аккаунта:</span>
-                            <span class="text-base font-semibold mono text-emerald-400" id="detail-user-balance">0.00 ₽</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between px-1">
-                            <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Прокси пользователя</h4>
-                            <span class="text-[11px] text-zinc-400 mono" id="detail-proxies-count">0 шт.</span>
-                        </div>
-                        <div id="detail-user-proxies" class="space-y-2"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Вкладка 2: Все прокси системы -->
-            <div id="adm-view-proxies" class="hidden space-y-3">
-                <div class="relative">
-                    <input id="adm-proxy-search" oninput="renderAdminProxies()" type="text" placeholder="Поиск по IP, порту, логину или пулу..." class="w-full pl-9 pr-3 py-2.5 rounded-xl surface-input text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none mono">
-                    <svg class="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-                <div id="adm-proxies-list" class="space-y-2"></div>
-            </div>
-
-            <!-- Вкладка 3: Шлюзы и API -->
-            <div id="adm-view-gateways" class="hidden space-y-3">
-                <div class="surface-card rounded-2xl p-4 space-y-3">
+            <!-- Провайдеры API: Балансы и Шлюзы -->
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <!-- Proxy6 Gateway -->
+                <div class="surface-card rounded-2xl p-3 border-emerald-500/20 space-y-2">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <div class="flex items-center gap-1.5">
-                                <h3 class="text-xs font-semibold text-zinc-100">Proxy6 API</h3>
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                            </div>
-                            <p class="text-[11px] text-zinc-400 mt-0.5">Метод удаления: /delete/?ids= (Без автовозврата на баланс API)</p>
-                        </div>
-                        <span class="text-xs font-mono font-semibold text-emerald-400" id="gw-p6-balance">1 420.00 ₽</span>
+                        <span class="font-bold text-zinc-100">Proxy6.net</span>
+                        <span class="text-[9px] font-mono text-emerald-400 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 42ms
+                        </span>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] text-zinc-400 border-t border-white/[0.04] pt-2">
-                        <span>Гарантия манибека: 24 часа (через саппорт)</span>
-                        <button type="button" onclick="testGatewaySync('Proxy6')" class="text-zinc-300 hover:text-white underline">Проверить связь</button>
+                    <div>
+                        <span class="text-[10px] text-zinc-400 block">Баланс API (Ключ #1)</span>
+                        <span class="text-base font-bold mono text-emerald-400" id="admin-p6-balance">14,280.50 ₽</span>
+                    </div>
+                    <div class="pt-1 border-t border-white/[0.06] text-[10px] text-zinc-400 flex justify-between">
+                        <span>Активно: <b class="text-zinc-200">128 шт.</b></span>
+                        <span class="text-emerald-400 cursor-pointer" onclick="testApiPing('Proxy6')">Ping</span>
                     </div>
                 </div>
 
-                <div class="surface-card rounded-2xl p-4 space-y-3">
+                <!-- ProxyLine Gateway -->
+                <div class="surface-card rounded-2xl p-3 border-cyan-500/20 space-y-2">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <div class="flex items-center gap-1.5">
-                                <h3 class="text-xs font-semibold text-zinc-100">ProxyLine API</h3>
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-                            </div>
-                            <p class="text-[11px] text-zinc-400 mt-0.5">Метод удаления в API: отсутствует (Только ручной тикет)</p>
-                        </div>
-                        <span class="text-xs font-mono font-semibold text-blue-400" id="gw-pl-balance">2 150.00 ₽</span>
+                        <span class="font-bold text-zinc-100">ProxyLine</span>
+                        <span class="text-[9px] font-mono text-cyan-400 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> 38ms
+                        </span>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] text-zinc-400 border-t border-white/[0.04] pt-2">
-                        <span>Манибек: 48 часов (&lt; 500 МБ)</span>
-                        <button type="button" onclick="testGatewaySync('ProxyLine')" class="text-zinc-300 hover:text-white underline">Проверить связь</button>
+                    <div>
+                        <span class="text-[10px] text-zinc-400 block">Баланс API (Ключ #2)</span>
+                        <span class="text-base font-bold mono text-cyan-400" id="admin-pl-balance">$ 184.20</span>
+                    </div>
+                    <div class="pt-1 border-t border-white/[0.06] text-[10px] text-zinc-400 flex justify-between">
+                        <span>Активно: <b class="text-zinc-200">45 шт.</b></span>
+                        <span class="text-cyan-400 cursor-pointer" onclick="testApiPing('ProxyLine')">Ping</span>
                     </div>
                 </div>
+            </div>
 
-                <div class="surface-card rounded-2xl p-4 space-y-2">
-                    <h4 class="text-xs font-semibold text-zinc-300">Сводные показатели</h4>
-                    <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
-                        <div class="p-2.5 rounded-xl bg-black/30 border border-white/[0.04]">
-                            <span class="text-[10px] text-zinc-400 block">Оборот бота</span>
-                            <span class="text-sm font-semibold mono text-zinc-100" id="adm-stat-turnover">0 ₽</span>
+            <!-- Управление наценкой (Pricing Engine) -->
+            <div class="surface-card rounded-2xl p-3.5 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-semibold text-zinc-100 block">Розничная наценка (Маржа)</span>
+                        <span class="text-[10px] text-zinc-400">Коэффициент поверх себестоимости API</span>
+                    </div>
+                    <span class="text-sm font-bold mono text-emerald-400" id="admin-margin-label">+45%</span>
+                </div>
+                <input type="range" min="10" max="150" step="5" value="45" oninput="updateMargin(this.value)" class="w-full accent-emerald-500 cursor-pointer bg-zinc-800 h-1.5 rounded-lg">
+                <div class="flex justify-between text-[10px] text-zinc-500 font-mono">
+                    <span>Мин: +10%</span>
+                    <span>Рекомендуется: +40-50%</span>
+                    <span>Макс: +150%</span>
+                </div>
+            </div>
+
+            <!-- Живые остатки на складах (API getcount / getAvailableCount) -->
+            <div class="surface-card rounded-2xl p-3.5 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-zinc-100">Склад провайдеров (Live Rest)</span>
+                    <span class="text-[10px] text-zinc-400 mono">API: getcount</span>
+                </div>
+
+                <div class="space-y-1.5 text-xs">
+                    <div class="p-2 rounded-xl bg-zinc-900/80 border border-white/[0.05] flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <img src="https://flagcdn.com/24x18/ru.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="RU">
+                            <span class="text-zinc-300 font-medium">Россия IPv4 Индивид.</span>
                         </div>
-                        <div class="p-2.5 rounded-xl bg-black/30 border border-white/[0.04]">
-                            <span class="text-[10px] text-zinc-400 block">Всего прокси в базе</span>
-                            <span class="text-sm font-semibold mono text-zinc-100" id="adm-stat-proxies">0 шт.</span>
+                        <div class="flex items-center gap-2 font-mono text-[11px]">
+                            <span class="text-emerald-400">940 шт.</span>
+                            <span class="text-zinc-500 text-[10px]">(Proxy6)</span>
                         </div>
+                    </div>
+
+                    <div class="p-2 rounded-xl bg-zinc-900/80 border border-white/[0.05] flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <img src="https://flagcdn.com/24x18/de.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="DE">
+                            <span class="text-zinc-300 font-medium">Германия Prime Shared</span>
+                        </div>
+                        <div class="flex items-center gap-2 font-mono text-[11px]">
+                            <span class="text-cyan-400">210 шт.</span>
+                            <span class="text-zinc-500 text-[10px]">(ProxyLine)</span>
+                        </div>
+                    </div>
+
+                    <div class="p-2 rounded-xl bg-zinc-900/80 border border-white/[0.05] flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <img src="https://flagcdn.com/24x18/us.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="US">
+                            <span class="text-zinc-300 font-medium">США IPv6 Пул</span>
+                        </div>
+                        <div class="flex items-center gap-2 font-mono text-[11px]">
+                            <span class="text-emerald-400">1,500+ шт.</span>
+                            <span class="text-zinc-500 text-[10px]">(Proxy6)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Лог последних событий API шлюза -->
+            <div class="surface-card rounded-2xl p-3.5 space-y-2">
+                <span class="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider block">Лог шлюза (Webhook & REST)</span>
+                <div class="space-y-1 font-mono text-[10px] text-zinc-400" id="admin-logs-container">
+                    <div class="flex items-center justify-between py-0.5 border-b border-white/[0.03]">
+                        <span class="text-emerald-400">[200 OK] Proxy6 /api/buy</span>
+                        <span class="text-zinc-600">1 мин назад</span>
+                    </div>
+                    <div class="flex items-center justify-between py-0.5 border-b border-white/[0.03]">
+                        <span class="text-cyan-400">[200 OK] ProxyLine /api/getcount</span>
+                        <span class="text-zinc-600">3 мин назад</span>
+                    </div>
+                    <div class="flex items-center justify-between py-0.5">
+                        <span class="text-zinc-300">[SYNC] Балансы обновлены</span>
+                        <span class="text-zinc-600">5 мин назад</span>
                     </div>
                 </div>
             </div>
@@ -687,36 +622,37 @@
 
     </main>
 
-    <!-- Нижняя навигация -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#07080b]/90 backdrop-blur-xl border-t border-white/[0.08]">
-        <div class="max-w-md mx-auto grid grid-cols-5 p-1">
-            <button type="button" onclick="navigate('providers')" id="nav-btn-providers" class="flex flex-col items-center gap-1 py-1.5 text-zinc-100 text-[10px] font-medium transition hover:text-white">
+    <!-- ================= НАВИГАЦИОННАЯ ПАНЕЛЬ ================= -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#07080b]/90 backdrop-blur-2xl border-t border-white/[0.08]">
+        <div class="max-w-md mx-auto grid grid-cols-4 p-1.5 pb-2">
+
+            <!-- 1. Каталог -->
+            <button onclick="navigate('providers')" id="nav-btn-providers" class="flex flex-col items-center gap-1 py-1.5 text-emerald-400 text-[11px] font-medium transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 Каталог
             </button>
 
-            <button type="button" onclick="navigate('cart')" id="nav-btn-cart" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[10px] font-medium transition hover:text-white">
+            <!-- 2. Корзина -->
+            <button onclick="navigate('cart')" id="nav-btn-cart" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[11px] font-medium transition hover:text-white">
                 <div class="relative inline-flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    <span id="nav-cart-badge" class="hidden absolute -top-1.5 -right-3 min-w-[15px] h-3.5 px-1 rounded-full bg-zinc-100 text-zinc-950 font-black text-[8px] flex items-center justify-center shadow-lg">0</span>
+                    <span id="nav-cart-badge" class="hidden absolute -top-1.5 -right-3 min-w-[16px] h-4 px-1 rounded-full bg-emerald-500 text-zinc-950 font-black text-[9px] flex items-center justify-center shadow-[0_0_8px_rgba(16,185,129,0.5)]">0</span>
                 </div>
                 Корзина
             </button>
 
-            <button type="button" onclick="navigate('orders')" id="nav-btn-orders" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[10px] font-medium transition hover:text-white">
+            <!-- 3. Заказы -->
+            <button onclick="navigate('orders')" id="nav-btn-orders" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[11px] font-medium transition hover:text-white">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                 Заказы
             </button>
 
-            <button type="button" onclick="navigate('profile')" id="nav-btn-profile" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[10px] font-medium transition hover:text-white">
+            <!-- 4. Профиль -->
+            <button onclick="navigate('profile')" id="nav-btn-profile" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[11px] font-medium transition hover:text-white">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 Профиль
             </button>
 
-            <button type="button" onclick="navigate('admin')" id="nav-btn-admin" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[10px] font-medium transition hover:text-white">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                Админ
-            </button>
         </div>
     </nav>
 
@@ -724,37 +660,45 @@
         // Инициализация Telegram WebApp
         const tg = window.Telegram?.WebApp;
         if (tg) {
+            tg.ready();
+            tg.expand();
             try {
-                tg.ready();
-                tg.expand();
                 tg.setHeaderColor('#07080b');
                 tg.setBackgroundColor('#07080b');
-            } catch(e) {}
-        }
-
-        function triggerHaptic() {
-            try {
-                if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            } catch(e) {}
-        }
-
-        const STORAGE_KEY = "proxy_terminal_state_v6";
-        
-        function loadSavedState() {
-            try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (raw) return JSON.parse(raw);
             } catch (e) {}
-            return null;
+
+            if (tg.BackButton) {
+                tg.BackButton.onClick(() => {
+                    navigate('providers');
+                });
+            }
         }
 
-        const defaultState = {
+        function triggerHaptic(style = 'light') {
+            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred(style);
+        }
+
+        // База доступных стран
+        const countriesDatabase = [
+            { code: 'ru', name: 'Россия (RU)', stock: '940+ шт.' },
+            { code: 'de', name: 'Германия (DE)', stock: '480+ шт.' },
+            { code: 'nl', name: 'Нидерланды (NL)', stock: '320+ шт.' },
+            { code: 'us', name: 'США (US)', stock: '1200+ шт.' },
+            { code: 'gb', name: 'Великобритания (GB)', stock: '260+ шт.' },
+            { code: 'fr', name: 'Франция (FR)', stock: '190+ шт.' },
+            { code: 'pl', name: 'Польша (PL)', stock: '140+ шт.' },
+            { code: 'kz', name: 'Казахстан (KZ)', stock: '310+ шт.' },
+            { code: 'tr', name: 'Турция (TR)', stock: '95+ шт.' },
+            { code: 'fi', name: 'Финляндия (FI)', stock: '80+ шт.' }
+        ];
+
+        // Состояние приложения
+        const state = {
             balance: 2000.00,
             spent: 0.00,
             user: {
-                name: (tg?.initDataUnsafe?.user?.first_name) ? tg.initDataUnsafe.user.first_name : "Alexey",
-                id: (tg?.initDataUnsafe?.user?.id) ? String(tg.initDataUnsafe.user.id) : "8401928",
-                photoUrl: tg?.initDataUnsafe?.user?.photo_url || null
+                name: tg?.initDataUnsafe?.user?.first_name || "Alexey",
+                id: tg?.initDataUnsafe?.user?.id || "8401928"
             },
             currentPool: 'pool1',
             tariffIndex: 0,
@@ -764,65 +708,18 @@
             selectedPeriodName: '30 дней',
             count: 1,
             cart: [],
-            searchQuery: "",
             ordersSort: 'date_desc',
-            openOrderIds: [],
+            openOrderIds: new Set(),
             orderItemSorts: {},
             orders: [],
-            crmUsers: [
-                { id: "8401928", name: "Alexey (Вы)", balance: 2000.00, isBlocked: false },
-                { id: "1092841", name: "Dmitry Arb", balance: 450.00, isBlocked: false },
-                { id: "4920194", name: "Crypto Team", balance: 8900.00, isBlocked: false }
-            ]
+            isAdminActive: false,
+            adminMargin: 45
         };
-
-        const rawState = Object.assign({}, defaultState, loadSavedState() || {});
-        const state = {
-            balance: typeof rawState.balance === 'number' ? rawState.balance : 2000.00,
-            spent: typeof rawState.spent === 'number' ? rawState.spent : 0.00,
-            user: {
-                name: (rawState.user && rawState.user.name) ? String(rawState.user.name) : "Alexey",
-                id: (rawState.user && rawState.user.id) ? String(rawState.user.id) : "8401928",
-                photoUrl: rawState.user?.photoUrl || null
-            },
-            currentPool: rawState.currentPool || 'pool1',
-            tariffIndex: typeof rawState.tariffIndex === 'number' ? rawState.tariffIndex : 0,
-            selectedCountry: rawState.selectedCountry || 'ru',
-            selectedCountryName: rawState.selectedCountryName || 'Россия (RU)',
-            selectedPeriod: typeof rawState.selectedPeriod === 'number' ? rawState.selectedPeriod : 30,
-            selectedPeriodName: rawState.selectedPeriodName || '30 дней',
-            count: typeof rawState.count === 'number' ? rawState.count : 1,
-            cart: Array.isArray(rawState.cart) ? rawState.cart : [],
-            searchQuery: "",
-            ordersSort: rawState.ordersSort || 'date_desc',
-            openOrderIds: new Set(Array.isArray(rawState.openOrderIds) ? rawState.openOrderIds : []),
-            orderItemSorts: rawState.orderItemSorts || {},
-            orders: Array.isArray(rawState.orders) ? rawState.orders : [],
-            crmUsers: Array.isArray(rawState.crmUsers) ? rawState.crmUsers : defaultState.crmUsers
-        };
-
-        function saveState() {
-            try {
-                const toSave = Object.assign({}, state, {
-                    openOrderIds: Array.from(state.openOrderIds)
-                });
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
-            } catch (e) {}
-        }
-
-        function resetStorage() {
-            triggerHaptic();
-            try {
-                localStorage.removeItem(STORAGE_KEY);
-            } catch(e) {}
-            location.reload();
-        }
 
         const pools = {
             pool1: {
                 name: "Standard Pool",
-                provider: "Proxy6",
-                desc: "Базовый пул адресов (Proxy6 API)",
+                desc: "Базовый пул адресов",
                 tariffs: [
                     { id: 'ipv6', label: 'IPv6', price: 15 },
                     { id: 'ipv4_shared', label: 'IPv4 Shared', price: 40 },
@@ -831,8 +728,7 @@
             },
             pool2: {
                 name: "Prime Pool",
-                provider: "ProxyLine",
-                desc: "Приоритетные подсети (ProxyLine API)",
+                desc: "Приоритетные подсети высокой чистоты",
                 tariffs: [
                     { id: 'ipv4_shared', label: 'IPv4 Shared', price: 65 },
                     { id: 'ipv4_custom', label: 'IPv4 Индивидуальный', price: 160 }
@@ -840,37 +736,49 @@
             }
         };
 
-        function initApp() {
-            try {
-                const profUser = document.getElementById('prof-username');
-                if (profUser) profUser.innerText = state.user.name;
+        // Запуск
+        document.getElementById('prof-username').innerText = state.user.name;
+        document.getElementById('prof-avatar').innerText = state.user.name[0].toUpperCase();
+        document.getElementById('prof-user-id').innerText = `ID: ${state.user.id}`;
+        renderCountriesList(countriesDatabase);
+        refreshProfileDisplay();
+        updateCartBadge();
 
-                const profId = document.getElementById('prof-user-id');
-                if (profId) profId.innerText = "ID: " + state.user.id;
-
-                const avatarBox = document.getElementById('prof-avatar-container');
-                if (avatarBox) {
-                    if (state.user.photoUrl) {
-                        avatarBox.innerHTML = '<img src="' + state.user.photoUrl + '" class="w-full h-full object-cover" alt="Avatar">';
-                    } else {
-                        avatarBox.innerText = (state.user.name && state.user.name.length > 0) ? state.user.name.charAt(0).toUpperCase() : "U";
-                    }
-                }
-
-                refreshProfileDisplay();
-                updateCartBadge();
-            } catch(e) {
-                console.error("InitApp error:", e);
+        // Рендер стран со скроллом
+        function renderCountriesList(list) {
+            const container = document.getElementById('countries-scroll-list');
+            if (!container) return;
+            if (list.length === 0) {
+                container.innerHTML = `<div class="p-3 text-center text-zinc-500 text-xs">Ничего не найдено</div>`;
+                return;
             }
+            container.innerHTML = list.map(c => `
+                <div onclick="selectCountry('${c.code}', '${c.name}')" class="flex items-center justify-between p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs transition">
+                    <div class="flex items-center gap-2">
+                        <img src="https://flagcdn.com/24x18/${c.code}.png" class="w-4 h-3 object-cover rounded-sm shadow-sm" alt="${c.code}">
+                        <span class="text-zinc-200">${c.name}</span>
+                    </div>
+                    <span class="text-[10px] font-mono text-zinc-500">${c.stock}</span>
+                </div>
+            `).join('');
         }
 
+        function filterCountries(query) {
+            const q = query.trim().toLowerCase();
+            const filtered = countriesDatabase.filter(c => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q));
+            renderCountriesList(filtered);
+        }
+
+        // Дропдауны
         function toggleDropdown(event, id) {
-            if (event && event.stopPropagation) event.stopPropagation();
+            event.stopPropagation();
             const target = document.getElementById(id);
-            if (!target) return;
             const isOpen = target.classList.contains('active');
             closeAllDropdowns();
-            if (!isOpen) target.classList.add('active');
+            if (!isOpen) {
+                triggerHaptic();
+                target.classList.add('active');
+            }
         }
 
         function closeAllDropdowns() {
@@ -881,61 +789,114 @@
             triggerHaptic();
             state.selectedCountry = code;
             state.selectedCountryName = name;
-            const elName = document.getElementById('selected-country-name');
-            if (elName) elName.innerText = name;
-            const elFlag = document.getElementById('selected-country-flag');
-            if (elFlag) elFlag.src = "https://flagcdn.com/24x18/" + code + ".png";
+            document.getElementById('selected-country-name').innerText = name;
+            document.getElementById('selected-country-flag').src = `https://flagcdn.com/24x18/${code}.png`;
             closeAllDropdowns();
-            saveState();
         }
 
         function selectPeriod(days, name) {
             triggerHaptic();
             state.selectedPeriod = days;
             state.selectedPeriodName = name;
-            const elName = document.getElementById('selected-period-name');
-            if (elName) elName.innerText = name;
+            document.getElementById('selected-period-name').innerText = name;
             calcTotal();
             closeAllDropdowns();
-            saveState();
         }
 
-        function setOrdersSort(sortType, label) {
+        // Ввод количества с клавиатуры и кнопок
+        function changeCount(delta) {
             triggerHaptic();
-            state.ordersSort = sortType;
-            const elLabel = document.getElementById('selected-orders-sort-label');
-            if (elLabel) elLabel.innerText = label;
-            closeAllDropdowns();
-            renderOrders();
-            saveState();
+            let c = state.count + delta;
+            setValidatedCount(c);
         }
 
+        function setExactCount(val) {
+            triggerHaptic();
+            setValidatedCount(val);
+        }
+
+        function onCountManualInput(rawVal) {
+            let val = parseInt(rawVal);
+            if (isNaN(val)) return;
+            if (val > 500) val = 500;
+            state.count = val;
+            calcTotal();
+        }
+
+        function onCountBlur(rawVal) {
+            let val = parseInt(rawVal);
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > 500) val = 500;
+            setValidatedCount(val);
+        }
+
+        function setValidatedCount(num) {
+            if (num < 1) num = 1;
+            if (num > 500) num = 500;
+            state.count = num;
+            document.getElementById('conf-count').value = num;
+            calcTotal();
+        }
+
+        function calcTotal() {
+            const tariff = pools[state.currentPool].tariffs[state.tariffIndex];
+            let discount = 1.0;
+            if (state.selectedPeriod === 60) discount = 0.95;
+            if (state.selectedPeriod === 90) discount = 0.90;
+            if (state.selectedPeriod === 180) discount = 0.85;
+
+            const total = Math.round(tariff.price * (state.selectedPeriod / 30) * state.count * discount);
+            document.getElementById('conf-total-display').innerText = `${total} ₽`;
+            return total;
+        }
+
+        // Навигация
         function navigate(view) {
             triggerHaptic();
             closeAllDropdowns();
-            
+
+            if (tg?.BackButton) {
+                if (view === 'config' || view === 'admin') {
+                    tg.BackButton.show();
+                } else {
+                    tg.BackButton.hide();
+                }
+            }
+
             ['providers', 'config', 'cart', 'orders', 'profile', 'admin'].forEach(v => {
-                const el = document.getElementById('view-' + v);
+                const el = document.getElementById(`view-${v}`);
                 if (el) el.classList.add('hidden');
             });
 
-            const target = document.getElementById('view-' + view);
+            const target = document.getElementById(`view-${view}`);
             if (target) {
                 target.classList.remove('hidden');
                 target.classList.add('fade-in');
             }
 
-            ['providers', 'cart', 'orders', 'profile', 'admin'].forEach(btn => {
-                const nav = document.getElementById('nav-btn-' + btn);
-                if (!nav) return;
+            // Подсветка навбара
+            ['providers', 'cart', 'orders', 'profile'].forEach(btn => {
+                const nav = document.getElementById(`nav-btn-${btn}`);
                 const isActive = (btn === view) || (view === 'config' && btn === 'providers');
-                nav.className = "flex flex-col items-center gap-1 py-1.5 text-[10px] font-medium transition " + (isActive ? "text-zinc-100 font-semibold" : "text-zinc-400 hover:text-white");
+                nav.className = `flex flex-col items-center gap-1 py-1.5 text-[11px] font-medium transition ${isActive ? 'text-emerald-400' : 'text-zinc-400 hover:text-white'}`;
             });
 
             if (view === 'cart') renderCart();
             if (view === 'orders') renderOrders();
             if (view === 'profile') refreshProfileDisplay();
-            if (view === 'admin') renderAdminView();
+        }
+
+        function toggleAdminView() {
+            triggerHaptic();
+            state.isAdminActive = !state.isAdminActive;
+            const btnText = document.getElementById('admin-switch-text');
+            if (state.isAdminActive) {
+                btnText.innerText = "Клиентский вид";
+                navigate('admin');
+            } else {
+                btnText.innerText = "Админ-панель";
+                navigate('providers');
+            }
         }
 
         function selectProvider(poolId) {
@@ -943,31 +904,26 @@
             state.currentPool = poolId;
             state.tariffIndex = 0;
             const pool = pools[poolId];
-            if (!pool) return;
 
-            const nameEl = document.getElementById('conf-pool-name');
-            if (nameEl) nameEl.innerText = pool.name;
-            const descEl = document.getElementById('conf-pool-desc');
-            if (descEl) descEl.innerText = pool.desc;
+            document.getElementById('conf-pool-name').innerText = pool.name;
+            document.getElementById('conf-pool-desc').innerText = pool.desc;
 
             renderTariffs();
             calcTotal();
             navigate('config');
-            saveState();
         }
 
         function renderTariffs() {
             const container = document.getElementById('conf-tariff-list');
-            if (!container) return;
             container.innerHTML = '';
-            const tariffs = pools[state.currentPool]?.tariffs || [];
+            const tariffs = pools[state.currentPool].tariffs;
 
             tariffs.forEach((t, i) => {
                 const isSelected = state.tariffIndex === i;
                 container.innerHTML += `
-                    <div onclick="selectTariff(${i})" class="p-3 rounded-xl border cursor-pointer transition flex items-center justify-between ${isSelected ? 'border-zinc-400 bg-white/[0.08] shadow-sm' : 'border-white/[0.07] surface-card'}">
-                        <span class="text-xs font-semibold text-zinc-200">${t.label}</span>
-                        <span class="text-xs font-semibold mono text-zinc-300">${t.price} ₽/мес</span>
+                    <div onclick="selectTariff(${i})" class="p-3 rounded-xl border cursor-pointer transition flex items-center justify-between ${isSelected ? 'border-emerald-500/50 bg-emerald-500/10 shadow-[0_0_12px_rgba(16,185,129,0.12)]' : 'border-white/[0.07] surface-card'}">
+                        <span class="text-xs font-semibold ${isSelected ? 'text-emerald-300' : 'text-zinc-200'}">${t.label}</span>
+                        <span class="text-xs font-semibold mono ${isSelected ? 'text-emerald-400' : 'text-zinc-400'}">${t.price} ₽/мес</span>
                     </div>
                 `;
             });
@@ -978,43 +934,20 @@
             state.tariffIndex = idx;
             renderTariffs();
             calcTotal();
-            saveState();
         }
 
-        function changeCount(delta) {
-            triggerHaptic();
-            let c = (state.count || 1) + delta;
-            if (c < 1) c = 1;
-            if (c > 100) c = 100;
-            state.count = c;
-            const input = document.getElementById('conf-count');
-            if (input) input.value = c;
-            calcTotal();
-            saveState();
-        }
-
-        function calcTotal() {
-            const tariff = pools[state.currentPool]?.tariffs[state.tariffIndex] || { price: 40 };
-            const period = state.selectedPeriod || 30;
-            const count = state.count || 1;
-            const total = Math.round(tariff.price * (period / 30) * count);
-            const totalEl = document.getElementById('conf-total-display');
-            if (totalEl) totalEl.innerText = total + " ₽";
-            return total;
-        }
+        // ================= КОРЗИНА =================
 
         function addToCart() {
-            triggerHaptic();
-            const tariff = pools[state.currentPool]?.tariffs[state.tariffIndex] || { label: 'IPv4', price: 40 };
+            triggerHaptic('medium');
+            const tariff = pools[state.currentPool].tariffs[state.tariffIndex];
             const itemTotal = calcTotal();
 
             state.cart.push({
                 cartId: Date.now() + Math.random(),
                 poolId: state.currentPool,
-                poolName: pools[state.currentPool]?.name || "Standard Pool",
-                provider: pools[state.currentPool]?.provider || "Proxy6",
+                poolName: pools[state.currentPool].name,
                 tariffTitle: tariff.label,
-                basePrice: tariff.price,
                 country: state.selectedCountry,
                 periodDays: state.selectedPeriod,
                 count: state.count,
@@ -1023,23 +956,20 @@
 
             updateCartBadge();
             refreshProfileDisplay();
-            saveState();
-            showToast("Добавлено: " + tariff.label + " (" + state.count + " шт.)");
+            showToast(`Добавлено: ${tariff.label} (${state.count} шт.)`);
         }
 
         function updateCartBadge() {
             const badge = document.getElementById('nav-cart-badge');
             const btnCount = document.getElementById('btn-cart-count');
-            const totalCount = (state.cart || []).reduce((sum, item) => sum + (item.count || 0), 0);
+            const totalCount = state.cart.reduce((sum, item) => sum + item.count, 0);
 
             if (btnCount) btnCount.innerText = totalCount;
-            if (badge) {
-                if (totalCount > 0) {
-                    badge.innerText = totalCount;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
+            if (totalCount > 0) {
+                badge.innerText = totalCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
             }
         }
 
@@ -1047,30 +977,29 @@
             const container = document.getElementById('cart-list');
             const summary = document.getElementById('cart-items-summary');
             const footer = document.getElementById('cart-footer');
-            if (!container) return;
 
-            if (!state.cart || state.cart.length === 0) {
-                if (summary) summary.innerText = "0 позиций";
+            if (state.cart.length === 0) {
+                summary.innerText = "0 позиций";
                 container.innerHTML = `
                     <div class="surface-card rounded-2xl p-8 text-center text-zinc-400">
                         <p class="text-xs">Корзина пуста</p>
-                        <button type="button" onclick="navigate('providers')" class="mt-2 text-xs font-semibold text-zinc-200 hover:text-white">Перейти в каталог →</button>
+                        <button onclick="navigate('providers')" class="mt-2 text-xs font-semibold text-emerald-400 hover:underline">Перейти в каталог →</button>
                     </div>
                 `;
-                if (footer) footer.classList.add('hidden');
+                footer.classList.add('hidden');
                 return;
             }
 
-            if (footer) footer.classList.remove('hidden');
-            if (summary) summary.innerText = state.cart.length + " позиций";
+            footer.classList.remove('hidden');
+            summary.innerText = `${state.cart.length} позиций`;
 
             let overallTotal = 0;
             container.innerHTML = state.cart.map(item => {
-                overallTotal += (item.total || 0);
+                overallTotal += item.total;
                 return `
                     <div class="surface-card rounded-2xl p-3 flex items-center justify-between">
                         <div class="space-y-1">
-                            <div class="flex items-center gap-1.5">
+                            <div class="flex items-center gap-2">
                                 <img src="https://flagcdn.com/24x18/${item.country}.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="Flag">
                                 <span class="text-xs font-semibold text-zinc-100">${item.poolName} • ${item.tariffTitle}</span>
                             </div>
@@ -1079,24 +1008,22 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="text-xs font-semibold mono text-zinc-200">${item.total} ₽</span>
-                            <button type="button" onclick="removeCartItem(${item.cartId})" class="text-zinc-500 hover:text-rose-400 text-sm p-1 transition">✕</button>
+                            <span class="text-xs font-semibold mono text-emerald-400">${item.total} ₽</span>
+                            <button onclick="removeCartItem(${item.cartId})" class="text-zinc-500 hover:text-rose-400 text-sm p-1 transition">✕</button>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            const totalEl = document.getElementById('cart-total-amount');
-            if (totalEl) totalEl.innerText = overallTotal + " ₽";
+            document.getElementById('cart-total-amount').innerText = `${overallTotal} ₽`;
         }
 
         function removeCartItem(cartId) {
             triggerHaptic();
-            state.cart = (state.cart || []).filter(item => item.cartId !== cartId);
+            state.cart = state.cart.filter(item => item.cartId !== cartId);
             updateCartBadge();
             refreshProfileDisplay();
             renderCart();
-            saveState();
         }
 
         function clearCart() {
@@ -1105,133 +1032,75 @@
             updateCartBadge();
             refreshProfileDisplay();
             renderCart();
-            saveState();
         }
 
         function checkoutCart() {
-            triggerHaptic();
-            const btn = document.getElementById('btn-checkout');
-            const overallTotal = (state.cart || []).reduce((sum, item) => sum + (item.total || 0), 0);
+            triggerHaptic('heavy');
+            const overallTotal = state.cart.reduce((sum, item) => sum + item.total, 0);
 
             if (state.balance < overallTotal) {
                 showToast("Недостаточно средств на балансе", true);
                 return;
             }
 
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = "Оформление...";
-            }
+            state.balance -= overallTotal;
+            state.spent += overallTotal;
 
-            setTimeout(() => {
-                state.balance -= overallTotal;
-                state.spent += overallTotal;
+            const allProxies = [];
+            state.cart.forEach(item => {
+                for (let i = 0; i < item.count; i++) {
+                    const ip = `${Math.floor(Math.random() * 120 + 60)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 240 + 10)}`;
+                    const port = Math.floor(Math.random() * 8000 + 1000);
+                    const user = "u" + Math.random().toString(36).substring(2, 6);
+                    const pass = "p" + Math.random().toString(36).substring(2, 6);
 
-                const allProxies = [];
-                state.cart.forEach(item => {
-                    const singlePrice = Math.round(item.total / item.count);
-                    for (let i = 0; i < item.count; i++) {
-                        const ip = `${Math.floor(Math.random() * 120 + 60)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 240 + 10)}`;
-                        const port = Math.floor(Math.random() * 8000 + 1000);
-                        const user = "u" + Math.random().toString(36).substring(2, 6);
-                        const pass = "p" + Math.random().toString(36).substring(2, 6);
-
-                        allProxies.push({
-                            id: Math.floor(Math.random() * 89999 + 10000),
-                            userId: state.user.id,
-                            ip: ip,
-                            port: port,
-                            user: user,
-                            pass: pass,
-                            country: item.country,
-                            poolName: item.poolName || "Standard Pool",
-                            provider: item.provider || "Proxy6",
-                            tariffTitle: item.tariffTitle,
-                            basePrice: item.basePrice || 40,
-                            periodDays: item.periodDays,
-                            totalDays: item.periodDays,
-                            daysLeft: item.periodDays,
-                            paidAmount: singlePrice, // Точный чек покупки
-                            purchasedAt: new Date().toISOString(),
-                            full: `${ip}:${port}:${user}:${pass}`
-                        });
-                    }
-                });
-
-                const newOrder = {
-                    id: Math.floor(Math.random() * 89999 + 10000),
-                    userId: state.user.id,
-                    total: overallTotal,
-                    count: allProxies.length,
-                    createdAt: new Date().toISOString(),
-                    proxies: allProxies
-                };
-
-                state.orders.unshift(newOrder);
-                state.cart = [];
-                updateCartBadge();
-                refreshProfileDisplay();
-                saveState();
-
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = "Оплатить заказ";
+                    allProxies.push({
+                        id: Math.floor(Math.random() * 89999 + 10000),
+                        ip: ip,
+                        port: port,
+                        user: user,
+                        pass: pass,
+                        country: item.country,
+                        tariffTitle: item.tariffTitle,
+                        daysLeft: item.periodDays,
+                        full: `${ip}:${port}:${user}:${pass}`
+                    });
                 }
+            });
 
-                showToast("Заказ #" + newOrder.id + " оплачен (" + newOrder.count + " адресов)");
-                navigate('orders');
-            }, 250);
+            const newOrder = {
+                id: Math.floor(Math.random() * 89999 + 10000),
+                total: overallTotal,
+                count: allProxies.length,
+                createdAt: new Date(),
+                proxies: allProxies
+            };
+
+            state.orders.unshift(newOrder);
+            state.cart = [];
+            updateCartBadge();
+            refreshProfileDisplay();
+
+            showToast(`Заказ #${newOrder.id} оплачен (${newOrder.count} адресов)`);
+            navigate('orders');
         }
 
-        function handleSearch(val) {
-            state.searchQuery = (val || "").trim().toLowerCase();
-            const clearBtn = document.getElementById('search-clear-btn');
-            if (clearBtn) clearBtn.classList.toggle('hidden', state.searchQuery === '');
+        // ================= ЗАКАЗЫ =================
+
+        function setOrdersSort(sortType, label) {
+            triggerHaptic();
+            state.ordersSort = sortType;
+            document.getElementById('selected-orders-sort-label').innerText = label;
+            closeAllDropdowns();
             renderOrders();
-        }
-
-        function clearSearch() {
-            const input = document.getElementById('orders-search-input');
-            if (input) input.value = "";
-            handleSearch("");
-        }
-
-        function renderProxyCardHtml(p, orderId) {
-            return `
-                <div class="p-3 rounded-xl bg-zinc-900/90 border border-white/[0.06] space-y-2 hover:border-white/15 transition">
-                    <div class="flex items-center gap-2 cursor-pointer active:opacity-70" onclick="copyString('${p.full}', 'Строка скопирована')">
-                        <img src="https://flagcdn.com/24x18/${p.country || 'ru'}.png" class="w-4 h-3 object-cover rounded-sm shadow-sm shrink-0" alt="Flag">
-                        <span class="mono text-xs font-medium text-zinc-200 break-all select-all">${p.full}</span>
-                    </div>
-
-                    <div class="flex items-center justify-between pt-1 border-t border-white/[0.04]">
-                        <div class="flex items-center gap-1.5 text-[10px] text-zinc-400">
-                            <span class="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] text-zinc-300 font-medium">
-                                ${p.poolName || 'Standard Pool'} • ${p.tariffTitle || 'IPv4'}
-                            </span>
-                            <span class="text-emerald-400 font-semibold">${p.daysLeft || 30} дн.</span>
-                        </div>
-
-                        <div class="flex items-center gap-1.5 shrink-0">
-                            <button type="button" onclick="openProlongModal(${p.id}, ${orderId})" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold active:scale-95 transition">
-                                Продлить
-                            </button>
-                            <button type="button" onclick="copyString('${p.full}', 'Строка скопирована')" class="px-2.5 py-1 rounded-lg btn-secondary text-[10px] font-semibold text-zinc-200 active:scale-95 transition">
-                                Копия
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
         }
 
         function renderOrders() {
             const container = document.getElementById('orders-list-container');
             const summaryLabel = document.getElementById('orders-summary-label');
-            if (summaryLabel) summaryLabel.innerText = (state.orders || []).length + " пакетов";
-            if (!container) return;
+            summaryLabel.innerText = `${state.orders.length} пакетов`;
 
-            if (!state.orders || state.orders.length === 0) {
+            if (state.orders.length === 0) {
                 container.innerHTML = `
                     <div class="surface-card rounded-2xl p-8 text-center text-zinc-400">
                         <p class="text-xs">Заказов пока нет</p>
@@ -1240,111 +1109,68 @@
                 return;
             }
 
-            const query = state.searchQuery || "";
-            let filteredOrders = state.orders.map(order => {
-                if (!order) return null;
-                const proxiesArr = Array.isArray(order.proxies) ? order.proxies : [];
-                const matchesOrderId = order.id ? String(order.id).includes(query) : false;
-                const matchingProxies = proxiesArr.filter(p => 
-                    (p.full && p.full.toLowerCase().includes(query)) || 
-                    (p.country && p.country.toLowerCase().includes(query)) ||
-                    (p.poolName && p.poolName.toLowerCase().includes(query)) ||
-                    (p.tariffTitle && p.tariffTitle.toLowerCase().includes(query))
-                );
-
-                if (query === "" || matchesOrderId) {
-                    return { order, proxies: proxiesArr };
-                } else if (matchingProxies.length > 0) {
-                    return { order, proxies: matchingProxies };
-                }
-                return null;
-            }).filter(Boolean);
-
-            if (filteredOrders.length === 0) {
-                container.innerHTML = `
-                    <div class="surface-card rounded-2xl p-8 text-center text-zinc-400">
-                        <p class="text-xs">Ничего не найдено по запросу «${query}»</p>
-                    </div>
-                `;
-                return;
-            }
-
-            filteredOrders.sort((a, b) => {
-                const dateA = new Date(a.order.createdAt || 0);
-                const dateB = new Date(b.order.createdAt || 0);
-                if (state.ordersSort === 'date_desc') return dateB - dateA;
-                if (state.ordersSort === 'date_asc') return dateA - dateB;
-                if (state.ordersSort === 'price_desc') return (b.order.total || 0) - (a.order.total || 0);
-                if (state.ordersSort === 'price_asc') return (a.order.total || 0) - (b.order.total || 0);
+            const sortedOrders = [...state.orders].sort((a, b) => {
+                if (state.ordersSort === 'date_desc') return b.createdAt - a.createdAt;
+                if (state.ordersSort === 'date_asc') return a.createdAt - b.createdAt;
+                if (state.ordersSort === 'price_desc') return b.total - a.total;
+                if (state.ordersSort === 'price_asc') return a.total - b.total;
                 return 0;
             });
 
-            container.innerHTML = filteredOrders.map(({ order, proxies }) => {
-                const isOpen = query !== "" ? true : state.openOrderIds.has(order.id);
-                const dateStr = order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
-
-                const innerSort = state.orderItemSorts[order.id] || 'default';
-                let proxiesList = [...proxies];
-                if (innerSort === 'time_desc') proxiesList.sort((a, b) => (b.daysLeft || 0) - (a.daysLeft || 0));
-                if (innerSort === 'time_asc') proxiesList.sort((a, b) => (a.daysLeft || 0) - (b.daysLeft || 0));
-                if (innerSort === 'country') proxiesList.sort((a, b) => (a.country || "").localeCompare(b.country || ""));
-
-                const foundCountText = query !== '' ? ' (найдено ' + proxiesList.length + ')' : '';
-                const innerSortText = innerSort === 'time_desc' ? 'Срок (макс)' : innerSort === 'time_asc' ? 'Срок (мин)' : innerSort === 'country' ? 'По стране' : 'По умолчанию';
-                const proxiesHtml = proxiesList.map(p => renderProxyCardHtml(p, order.id)).join('');
+            container.innerHTML = sortedOrders.map(order => {
+                const isOpen = state.openOrderIds.has(order.id);
+                const dateStr = order.createdAt.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 
                 return `
                     <div class="surface-card rounded-2xl overflow-hidden transition">
-                        <div onclick="toggleOrder(${order.id})" class="p-3.5 cursor-pointer hover:bg-white/[0.04] flex items-center justify-between select-none">
+                        <div onclick="toggleOrder(${order.id})" class="p-3 cursor-pointer hover:bg-white/[0.04] flex items-center justify-between select-none">
                             <div class="space-y-0.5">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-semibold text-zinc-100">#${order.id}</span>
-                                    <span class="text-[10px] text-zinc-400 mono">${dateStr}</span>
+                                    <span class="text-[10px] text-zinc-500 mono">${dateStr}</span>
                                 </div>
                                 <div class="text-[11px] text-zinc-400">
-                                    <span>Пакет: ${order.count || proxiesList.length} адресов${foundCountText}</span>
+                                    <span>Пакет из ${order.count} адресов</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3">
-                                <span class="text-xs font-semibold mono text-zinc-100">${order.total || 0} ₽</span>
+                                <span class="text-xs font-semibold mono text-emerald-400">${order.total} ₽</span>
                                 <span class="text-xs text-zinc-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}">▼</span>
                             </div>
                         </div>
 
                         <div class="accordion-grid ${isOpen ? 'open' : ''}">
                             <div class="accordion-inner">
-                                <div class="p-3 pt-2.5 border-t border-white/[0.06] space-y-2 bg-[#090b11]">
-                                    
-                                    <div class="flex flex-wrap items-center justify-between gap-2 pb-1 text-[11px] text-zinc-400">
-                                        <div class="flex items-center gap-1.5">
-                                            <span class="text-[10px]">Сорт:</span>
-                                            <div class="relative">
-                                                <button type="button" onclick="toggleDropdown(event, 'inner-sort-${order.id}')" class="px-2 py-1 rounded-lg surface-input text-zinc-300 text-[10px] flex items-center gap-1">
-                                                    ${innerSortText} 
-                                                    <span class="text-[8px]">▼</span>
-                                                </button>
-                                                <div id="inner-sort-${order.id}" class="dropdown-menu absolute left-0 top-7 z-30 w-32 p-1 bg-[#12141e] border border-white/10 rounded-xl shadow-2xl space-y-0.5 backdrop-blur-2xl">
-                                                    <div onclick="setInnerSort(${order.id}, 'time_desc')" class="p-1.5 rounded-lg hover:bg-white/[0.06] text-[10px] cursor-pointer">Срок (макс)</div>
-                                                    <div onclick="setInnerSort(${order.id}, 'time_asc')" class="p-1.5 rounded-lg hover:bg-white/[0.06] text-[10px] cursor-pointer">Срок (мин)</div>
-                                                    <div onclick="setInnerSort(${order.id}, 'country')" class="p-1.5 rounded-lg hover:bg-white/[0.06] text-[10px] cursor-pointer">По стране</div>
+                                <div class="p-3 pt-2.5 border-t border-white/[0.06] space-y-2 bg-[#090b10]">
+                                    <div class="flex justify-between items-center text-[10px] text-zinc-400 pb-1">
+                                        <button onclick="downloadTxt(${order.id})" class="text-cyan-400 hover:underline flex items-center gap-1">
+                                            <span>💾</span> Экспорт .txt
+                                        </button>
+                                        <button onclick="copyAllInOrder(${order.id})" class="text-zinc-300 hover:text-white underline">
+                                            Копировать всё (${order.proxies.length})
+                                        </button>
+                                    </div>
+
+                                    <div class="space-y-1.5">
+                                        ${order.proxies.map(p => `
+                                            <div class="p-2 rounded-xl bg-zinc-900/90 border border-white/[0.05] flex items-center justify-between text-xs hover:border-emerald-500/20 transition">
+                                                <div class="space-y-0.5">
+                                                    <div class="flex items-center gap-2">
+                                                        <img src="https://flagcdn.com/24x18/${p.country}.png" class="w-3.5 h-2.5 object-cover rounded-sm shadow-sm" alt="Flag">
+                                                        <span class="mono text-[11px] text-zinc-200 select-all">${p.full}</span>
+                                                    </div>
+                                                    <div class="flex items-center gap-2 text-[10px] text-zinc-500">
+                                                        <span>Тариф: ${p.tariffTitle}</span>
+                                                        <span>•</span>
+                                                        <span class="text-emerald-400 font-medium">${p.daysLeft} дн.</span>
+                                                    </div>
                                                 </div>
+                                                <button onclick="copyString('${p.full}', 'Прокси скопирован')" class="px-2.5 py-1.5 rounded-lg btn-secondary text-[10px] font-semibold text-zinc-200 active:scale-95 transition">
+                                                    Копия
+                                                </button>
                                             </div>
-                                        </div>
-
-                                        <div class="flex items-center gap-2">
-                                            <button type="button" onclick="requestOrderTxt(${order.id})" class="px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 text-[10px] font-semibold active:scale-95 transition flex items-center gap-1">
-                                                <span>📄 .txt в чат</span>
-                                            </button>
-                                            <button type="button" onclick="copyAllInOrder(${order.id})" class="text-[10px] text-zinc-300 hover:text-white underline">
-                                                Копия (${proxies.length})
-                                            </button>
-                                        </div>
+                                        `).join('')}
                                     </div>
-
-                                    <div class="space-y-2">
-                                        ${proxiesHtml}
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
@@ -1361,719 +1187,97 @@
             } else {
                 state.openOrderIds.add(id);
             }
-            saveState();
             renderOrders();
-        }
-
-        function setInnerSort(orderId, sortType) {
-            triggerHaptic();
-            state.orderItemSorts[orderId] = sortType;
-            closeAllDropdowns();
-            saveState();
-            renderOrders();
-        }
-
-        function requestOrderTxt(orderId) {
-            triggerHaptic();
-            const order = (state.orders || []).find(o => o.id === orderId);
-            if (!order || !order.proxies) return;
-
-            if (tg && tg.initData) {
-                try {
-                    tg.sendData(JSON.stringify({ action: "send_order_txt", order_id: order.id }));
-                    showToast("Запрос отправлен! Бот пришлет файл в чат.");
-                    return;
-                } catch(e) {}
-            }
-
-            const text = order.proxies.map(p => p.full).join('\n');
-            const titleEl = document.getElementById('txt-modal-title');
-            if (titleEl) titleEl.innerText = "Прокси заказа #" + order.id + " (" + order.proxies.length + " шт.)";
-            const contentEl = document.getElementById('txt-modal-content');
-            if (contentEl) contentEl.value = text;
-            const modal = document.getElementById('modal-txt-view');
-            if (modal) modal.classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-        function closeTxtModal() {
-            const modal = document.getElementById('modal-txt-view');
-            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-        function copyModalTxt() {
-            triggerHaptic();
-            const textarea = document.getElementById('txt-modal-content');
-            if (textarea) {
-                textarea.select();
-                navigator.clipboard.writeText(textarea.value).then(() => {
-                    showToast("Весь список скопирован!");
-                    closeTxtModal();
-                });
-            }
-        }
-
-        // Клиентское продление
-        let activeProlongTarget = null;
-        let selectedProlongDays = 30;
-
-        function openProlongModal(proxyId, orderId) {
-            triggerHaptic();
-            const order = (state.orders || []).find(o => o.id === orderId);
-            const proxy = order?.proxies?.find(p => p.id === proxyId);
-            if (!proxy) return;
-
-            activeProlongTarget = { proxy, order };
-            selectedProlongDays = 30;
-
-            const strEl = document.getElementById('prolong-proxy-str');
-            if (strEl) strEl.innerText = proxy.full;
-            selectProlongDays(30);
-
-            const modal = document.getElementById('modal-prolong');
-            if (modal) {
-                modal.classList.remove('opacity-0', 'pointer-events-none');
-                modal.querySelector('.modal-sheet')?.classList.remove('translate-y-full');
-            }
-        }
-
-        function closeProlongModal() {
-            const modal = document.getElementById('modal-prolong');
-            if (modal) {
-                modal.classList.add('opacity-0', 'pointer-events-none');
-                modal.querySelector('.modal-sheet')?.classList.add('translate-y-full');
-            }
-            activeProlongTarget = null;
-        }
-
-        function selectProlongDays(days) {
-            triggerHaptic();
-            selectedProlongDays = days;
-            [3, 7, 30, 90].forEach(d => {
-                const btn = document.getElementById('btn-prolong-' + d);
-                if (btn) {
-                    btn.className = d === days 
-                        ? 'py-2.5 rounded-xl border border-zinc-400 bg-white/10 text-xs font-semibold mono' 
-                        : 'py-2.5 rounded-xl border border-white/10 surface-input text-xs font-semibold mono';
-                }
-            });
-
-            if (activeProlongTarget) {
-                const baseMonthly = activeProlongTarget.proxy.basePrice || 40;
-                const cost = Math.round(baseMonthly * (days / 30));
-                const priceEl = document.getElementById('prolong-price-display');
-                if (priceEl) priceEl.innerText = cost + " ₽";
-            }
-        }
-
-        function executeProlong() {
-            triggerHaptic();
-            if (!activeProlongTarget) return;
-
-            const btn = document.getElementById('btn-confirm-prolong');
-            const baseMonthly = activeProlongTarget.proxy.basePrice || 40;
-            const cost = Math.round(baseMonthly * (selectedProlongDays / 30));
-
-            if (state.balance < cost) {
-                showToast("Недостаточно средств для продления", true);
-                return;
-            }
-
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = "Продление...";
-            }
-
-            setTimeout(() => {
-                state.balance -= cost;
-                state.spent += cost;
-                activeProlongTarget.proxy.daysLeft = (activeProlongTarget.proxy.daysLeft || 0) + selectedProlongDays;
-
-                saveState();
-                refreshProfileDisplay();
-                renderOrders();
-
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = "Подтвердить продление";
-                }
-
-                showToast("Прокси продлен на +" + selectedProlongDays + " дн.");
-                closeProlongModal();
-            }, 250);
-        }
-
-        // ==========================================
-        // МОДУЛЬ ПОДТВЕРЖДЕНИЙ (CONFIRMATION MODAL)
-        // ==========================================
-        let pendingConfirmCallback = null;
-
-        function requestConfirmation({ title, desc, confirmBtnText = "Подтвердить", isDestructive = false, onConfirm }) {
-            triggerHaptic();
-            const modal = document.getElementById('modal-confirm');
-            const titleEl = document.getElementById('confirm-title');
-            const descEl = document.getElementById('confirm-desc');
-            const actionBtn = document.getElementById('confirm-action-btn');
-
-            if (!modal || !titleEl || !descEl || !actionBtn) {
-                if (typeof onConfirm === 'function') onConfirm();
-                return;
-            }
-
-            titleEl.innerText = title;
-            descEl.innerText = desc;
-            actionBtn.innerText = confirmBtnText;
-
-            if (isDestructive) {
-                actionBtn.className = "flex-1 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-semibold transition";
-            } else {
-                actionBtn.className = "flex-1 py-2.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 text-xs font-semibold transition";
-            }
-
-            pendingConfirmCallback = onConfirm;
-
-            actionBtn.onclick = () => {
-                const cb = pendingConfirmCallback;
-                closeConfirmModal();
-                if (typeof cb === 'function') cb();
-            };
-
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-        function closeConfirmModal() {
-            const modal = document.getElementById('modal-confirm');
-            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
-            pendingConfirmCallback = null;
-        }
-
-        // ==========================================
-        // МОДУЛЬ ВОЗВРАТА СРЕДСТВ И ОТЗЫВА (REFUND)
-        // ==========================================
-        let activeRefundTarget = null;
-        let selectedRefundMode = 'full';
-
-        function openRefundModal(proxyId, orderId) {
-            triggerHaptic();
-            const order = (state.orders || []).find(o => o.id === orderId);
-            const proxy = order?.proxies?.find(p => p.id === proxyId);
-            if (!proxy) return;
-
-            const user = (state.crmUsers || []).find(u => String(u.id) === String(order.userId || proxy.userId));
-            activeRefundTarget = { proxy, order, user };
-
-            const paid = proxy.paidAmount || proxy.basePrice || 40;
-            const totalDays = proxy.totalDays || proxy.periodDays || 30;
-            const daysLeft = proxy.daysLeft || 0;
-            
-            // Расчет пропорционального возврата (Prorate)
-            const prorated = Math.max(0, Math.round(paid * (daysLeft / totalDays)));
-
-            document.getElementById('refund-proxy-str').innerText = proxy.full;
-            document.getElementById('refund-user-label').innerText = (user ? user.name : "ID: " + proxy.userId);
-            document.getElementById('refund-paid-amount').innerText = paid + " ₽";
-            document.getElementById('refund-period-info').innerText = daysLeft + " из " + totalDays + " дн.";
-
-            document.getElementById('val-refund-full').innerText = paid + " ₽";
-            document.getElementById('val-refund-prorate').innerText = prorated + " ₽";
-
-            // Специфика поставщиков
-            const noticeEl = document.getElementById('refund-gateway-notice');
-            if (proxy.provider === 'Proxy6') {
-                noticeEl.innerHTML = `<b>Шлюз Proxy6:</b> При подтверждении будет вызван API <code>/delete/?ids=</code>. Деньги начисляются из резерва бота. Для возврата на баланс Proxy6 напишите в саппорт (до 24ч).`;
-            } else {
-                noticeEl.innerHTML = `<b>Шлюз ProxyLine:</b> В API нет метода delete. Адрес удаляется из базы бота. Деньги начисляются клиенту. Для манибека от ProxyLine откройте тикет в кабинете (до 48ч, &lt; 500 МБ).`;
-            }
-
-            selectRefundType('full');
-
-            const modal = document.getElementById('modal-admin-refund');
-            if (modal) modal.classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-        function closeRefundModal() {
-            const modal = document.getElementById('modal-admin-refund');
-            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
-            activeRefundTarget = null;
-        }
-
-        function selectRefundType(mode) {
-            triggerHaptic();
-            selectedRefundMode = mode;
-            ['full', 'prorate', 'zero'].forEach(m => {
-                const el = document.getElementById('refund-opt-' + m);
-                const rad = document.getElementById('rad-refund-' + m);
-                if (el) {
-                    el.className = (m === mode) 
-                        ? "flex items-center justify-between p-2.5 rounded-xl surface-input border border-white/30 bg-white/[0.04] cursor-pointer transition"
-                        : "flex items-center justify-between p-2.5 rounded-xl surface-input border border-transparent cursor-pointer transition";
-                }
-                if (rad) rad.checked = (m === mode);
-            });
-        }
-
-        function executeRefundAndRevoke() {
-            triggerHaptic();
-            if (!activeRefundTarget) return;
-
-            const { proxy, order, user } = activeRefundTarget;
-            const paid = proxy.paidAmount || proxy.basePrice || 40;
-            const totalDays = proxy.totalDays || proxy.periodDays || 30;
-            const daysLeft = proxy.daysLeft || 0;
-
-            let refundAmount = 0;
-            if (selectedRefundMode === 'full') refundAmount = paid;
-            if (selectedRefundMode === 'prorate') refundAmount = Math.max(0, Math.round(paid * (daysLeft / totalDays)));
-            if (selectedRefundMode === 'zero') refundAmount = 0;
-
-            // Начисление средств пользователю
-            if (user) {
-                user.balance = (user.balance || 0) + refundAmount;
-                if (String(user.id) === String(state.user.id)) {
-                    state.balance = user.balance;
-                }
-            }
-
-            // Удаление прокси из заказа
-            order.proxies = (order.proxies || []).filter(p => p.id !== proxy.id);
-            order.count = order.proxies.length;
-
-            saveState();
-            closeRefundModal();
-            refreshProfileDisplay();
-
-            if (adminActiveUserId) renderUserDetail(adminActiveUserId);
-            renderAdminProxies();
-            renderOrders();
-
-            showToast("Прокси отозван. Клиенту начислено " + refundAmount + " ₽");
-        }
-
-        // ==========================================
-        // ЛОГИКА АДМИН-ПАНЕЛИ (ADMIN CORE)
-        // ==========================================
-        let adminActiveUserId = null;
-        let adminTargetUserId = null;
-
-        function switchAdminTab(tabName) {
-            triggerHaptic();
-            ['users', 'proxies', 'gateways'].forEach(t => {
-                const el = document.getElementById('adm-view-' + t);
-                if (el) el.classList.add('hidden');
-                const btn = document.getElementById('tab-adm-' + t);
-                if (btn) btn.className = "py-2 rounded-lg text-xs font-medium text-zinc-400 hover:text-white transition";
-            });
-
-            const activeView = document.getElementById('adm-view-' + tabName);
-            if (activeView) activeView.classList.remove('hidden');
-            const activeBtn = document.getElementById('tab-adm-' + tabName);
-            if (activeBtn) activeBtn.className = "py-2 rounded-lg text-xs font-medium text-white bg-white/10 transition";
-
-            if (tabName === 'users') {
-                if (!adminActiveUserId) {
-                    renderAdminUsers();
-                } else {
-                    renderUserDetail(adminActiveUserId);
-                }
-            }
-            if (tabName === 'proxies') renderAdminProxies();
-            if (tabName === 'gateways') renderAdminGateways();
-        }
-
-        function renderAdminView() {
-            switchAdminTab('users');
-        }
-
-        function getUserProxies(userId) {
-            const list = [];
-            (state.orders || []).forEach(o => {
-                if (String(o.userId) === String(userId) && Array.isArray(o.proxies)) {
-                    o.proxies.forEach(p => list.push({ ...p, orderId: o.id }));
-                }
-            });
-            return list;
-        }
-
-        function renderAdminUsers() {
-            const container = document.getElementById('adm-users-list');
-            if (!container) return;
-
-            const search = (document.getElementById('adm-user-search')?.value || "").trim().toLowerCase();
-            const users = Array.isArray(state.crmUsers) ? state.crmUsers : [];
-
-            const filtered = users.filter(u => 
-                (u.id && String(u.id).includes(search)) || 
-                (u.name && u.name.toLowerCase().includes(search))
-            );
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="p-6 text-center text-xs text-zinc-500 surface-card rounded-xl">Пользователи не найдены</div>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(u => {
-                const userProxies = getUserProxies(u.id);
-                const statusBadge = u.isBlocked 
-                    ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold">БАН</span>`
-                    : '';
-
-                return `
-                    <div onclick="openUserDetail('${u.id}')" class="surface-card rounded-xl p-3.5 flex items-center justify-between cursor-pointer hover:border-white/20 transition group">
-                        <div class="space-y-1">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-semibold text-zinc-200 group-hover:text-white transition">${u.name}</span>
-                                <span class="text-[10px] text-zinc-500 mono">ID:${u.id}</span>
-                                ${statusBadge}
-                            </div>
-                            <div class="flex items-center gap-3 text-[11px] text-zinc-400">
-                                <span>Прокси: <b class="text-zinc-200 font-medium">${userProxies.length}</b></span>
-                                <span>•</span>
-                                <span>Баланс: <b class="mono text-zinc-200 font-medium">${(u.balance || 0).toFixed(0)} ₽</b></span>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs text-zinc-500 group-hover:text-zinc-300 transition">Открыть →</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function openUserDetail(userId) {
-            adminActiveUserId = userId;
-            document.getElementById('adm-user-list-mode')?.classList.add('hidden');
-            document.getElementById('adm-user-detail-mode')?.classList.remove('hidden');
-            renderUserDetail(userId);
-        }
-
-        function closeUserDetail() {
-            adminActiveUserId = null;
-            document.getElementById('adm-user-detail-mode')?.classList.add('hidden');
-            document.getElementById('adm-user-list-mode')?.classList.remove('hidden');
-            renderAdminUsers();
-        }
-
-        function renderUserDetail(userId) {
-            const user = (state.crmUsers || []).find(u => String(u.id) === String(userId));
-            if (!user) {
-                closeUserDetail();
-                return;
-            }
-
-            const nameEl = document.getElementById('detail-user-name');
-            const idEl = document.getElementById('detail-user-id');
-            const balanceEl = document.getElementById('detail-user-balance');
-            const statsEl = document.getElementById('detail-user-stats');
-            const countEl = document.getElementById('detail-proxies-count');
-            const badgeEl = document.getElementById('detail-user-status-badge');
-            const blockBtn = document.getElementById('btn-toggle-block');
-            const listContainer = document.getElementById('detail-user-proxies');
-
-            if (nameEl) nameEl.innerText = user.name;
-            if (idEl) idEl.innerText = "ID: " + user.id;
-            if (balanceEl) balanceEl.innerText = (user.balance || 0).toFixed(2) + " ₽";
-
-            if (user.isBlocked) {
-                badgeEl.innerText = "Заблокирован";
-                badgeEl.className = "text-[9px] px-1.5 py-0.5 rounded font-medium bg-rose-500/20 text-rose-400 border border-rose-500/30";
-                if (blockBtn) blockBtn.innerText = "Разбан";
-            } else {
-                badgeEl.innerText = "Активен";
-                badgeEl.className = "text-[9px] px-1.5 py-0.5 rounded font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-                if (blockBtn) blockBtn.innerText = "Бан";
-            }
-
-            const proxies = getUserProxies(userId);
-            const userOrders = (state.orders || []).filter(o => String(o.userId) === String(userId));
-
-            if (statsEl) statsEl.innerText = userOrders.length + " заказов • " + proxies.length + " активных адресов";
-            if (countEl) countEl.innerText = proxies.length + " шт.";
-
-            if (!listContainer) return;
-
-            if (proxies.length === 0) {
-                listContainer.innerHTML = `<div class="p-6 text-center text-xs text-zinc-500 surface-card rounded-xl">У пользователя нет активных прокси</div>`;
-                return;
-            }
-
-            listContainer.innerHTML = proxies.map(p => {
-                const paid = p.paidAmount || p.basePrice || 40;
-                const buyDateStr = p.purchasedAt ? new Date(p.purchasedAt).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }) : '—';
-                const pingId = "ping-" + p.id;
-
-                return `
-                    <div class="surface-card rounded-xl p-3.5 space-y-2.5 border border-white/[0.06]">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2 cursor-pointer" onclick="copyString('${p.full}', 'Строка скопирована')">
-                                <img src="https://flagcdn.com/24x18/${p.country || 'ru'}.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="Flag">
-                                <span class="mono text-xs text-zinc-200 select-all">${p.full}</span>
-                            </div>
-                            <span class="text-[11px] mono font-medium text-emerald-400">${p.daysLeft || 30} дн.</span>
-                        </div>
-
-                        <!-- Фиксация цены покупки и поставщика -->
-                        <div class="flex items-center justify-between text-[11px] text-zinc-400 bg-black/25 px-2.5 py-1.5 rounded-lg border border-white/[0.03]">
-                            <div>
-                                <span>Куплен за: <b class="text-zinc-200 mono font-semibold">${paid} ₽</b> / ${p.totalDays || 30} дн. (${buyDateStr})</span>
-                            </div>
-                            <span class="text-[10px] mono text-zinc-400">${p.provider || 'Proxy6'}</span>
-                        </div>
-
-                        <!-- Блок инструментов админа -->
-                        <div class="flex items-center justify-between pt-1 border-t border-white/[0.04]">
-                            <div class="flex items-center gap-1.5">
-                                <button type="button" id="${pingId}" onclick="runProxyPing(${p.id}, '${pingId}')" class="px-2 py-1 rounded-lg border border-white/10 hover:border-white/20 text-zinc-400 hover:text-zinc-200 text-[10px] transition">
-                                    ⚡ Пинг
-                                </button>
-                                <button type="button" onclick="confirmAdminExtend(${p.id}, ${p.orderId})" class="px-2 py-1 rounded-lg border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white text-[10px] transition">
-                                    + Срок
-                                </button>
-                            </div>
-
-                            <button type="button" onclick="openRefundModal(${p.id}, ${p.orderId})" class="px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-[10px] font-medium transition">
-                                Возврат и отзыв
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Диагностика прокси (Live Ping)
-        function runProxyPing(proxyId, btnId) {
-            triggerHaptic();
-            const btn = document.getElementById(btnId);
-            if (!btn) return;
-
-            btn.innerText = "Тест...";
-            btn.className = "px-2 py-1 rounded-lg border border-white/10 text-zinc-400 text-[10px]";
-
-            setTimeout(() => {
-                const ms = Math.floor(Math.random() * 60 + 45);
-                btn.innerText = `✓ 200 OK (${ms}ms)`;
-                btn.className = "px-2 py-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-[10px] font-mono";
-            }, 400);
-        }
-
-        function confirmAdminExtend(proxyId, orderId) {
-            const order = (state.orders || []).find(o => o.id === orderId);
-            const proxy = order?.proxies?.find(p => p.id === proxyId);
-            if (!proxy) return;
-
-            requestConfirmation({
-                title: "Компенсация срока",
-                desc: `Добавить +7 дней к сроку действия ${proxy.ip}:${proxy.port} без списания средств?`,
-                confirmBtnText: "+7 дней бесплатно",
-                isDestructive: false,
-                onConfirm: () => {
-                    proxy.daysLeft = (proxy.daysLeft || 0) + 7;
-                    saveState();
-                    if (adminActiveUserId) renderUserDetail(adminActiveUserId);
-                    renderAdminProxies();
-                    showToast("Срок увеличен на +7 дней");
-                }
-            });
-        }
-
-        function toggleUserBlockFromDetail() {
-            if (!adminActiveUserId) return;
-            const user = (state.crmUsers || []).find(u => String(u.id) === String(adminActiveUserId));
-            if (!user) return;
-
-            const isBlocking = !user.isBlocked;
-            requestConfirmation({
-                title: isBlocking ? "Заблокировать пользователя?" : "Разблокировать пользователя?",
-                desc: isBlocking 
-                    ? `Пользователь ${user.name} (ID: ${user.id}) потеряет доступ к интерфейсу бота.` 
-                    : `Восстановить доступ пользователю ${user.name}?`,
-                confirmBtnText: isBlocking ? "Заблокировать" : "Разблокировать",
-                isDestructive: isBlocking,
-                onConfirm: () => {
-                    user.isBlocked = isBlocking;
-                    saveState();
-                    renderUserDetail(user.id);
-                    showToast(isBlocking ? "Пользователь заблокирован" : "Пользователь разблокирован");
-                }
-            });
-        }
-
-        function openBalanceEditFromDetail() {
-            if (!adminActiveUserId) return;
-            const user = (state.crmUsers || []).find(u => String(u.id) === String(adminActiveUserId));
-            if (user) openAdminBalanceModal(user.id, user.name);
-        }
-
-        function renderAdminProxies() {
-            const container = document.getElementById('adm-proxies-list');
-            if (!container) return;
-
-            const search = (document.getElementById('adm-proxy-search')?.value || "").trim().toLowerCase();
-            const allProxies = [];
-
-            (state.orders || []).forEach(o => {
-                if (Array.isArray(o.proxies)) {
-                    o.proxies.forEach(p => allProxies.push({ ...p, orderId: o.id, userId: o.userId }));
-                }
-            });
-
-            const filtered = allProxies.filter(p => 
-                (p.full && p.full.toLowerCase().includes(search)) ||
-                (p.poolName && p.poolName.toLowerCase().includes(search)) ||
-                (p.country && p.country.toLowerCase().includes(search))
-            );
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="p-6 text-center text-xs text-zinc-500 surface-card rounded-xl">Прокси не найдены</div>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(p => `
-                <div class="surface-card rounded-xl p-3 space-y-2 border border-white/[0.06]">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <img src="https://flagcdn.com/24x18/${p.country || 'ru'}.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="Flag">
-                            <span class="mono text-xs text-zinc-200">${p.full}</span>
-                        </div>
-                        <span class="text-[11px] mono font-medium text-emerald-400">${p.daysLeft || 30} дн.</span>
-                    </div>
-                    <div class="flex items-center justify-between pt-1 border-t border-white/[0.04] text-[10px] text-zinc-400">
-                        <span>ID ${p.userId || '—'} • ${p.paidAmount || p.basePrice || 40} ₽ • ${p.provider || 'Proxy6'}</span>
-                        <div class="flex items-center gap-1.5">
-                            <button type="button" onclick="openRefundModal(${p.id}, ${p.orderId})" class="px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-[10px] transition">
-                                Возврат / Отзыв
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderAdminGateways() {
-            const totalTurnover = (state.orders || []).reduce((sum, o) => sum + (o.total || 0), 0);
-            const totalProxies = (state.orders || []).reduce((sum, o) => sum + (Array.isArray(o.proxies) ? o.proxies.length : 0), 0);
-
-            const tEl = document.getElementById('adm-stat-turnover');
-            if (tEl) tEl.innerText = `${totalTurnover} ₽`;
-            const pEl = document.getElementById('adm-stat-proxies');
-            if (pEl) pEl.innerText = `${totalProxies} шт.`;
-        }
-
-        function testGatewaySync(providerName) {
-            triggerHaptic();
-            showToast("Запрос к API " + providerName + "...");
-            setTimeout(() => {
-                showToast("Шлюз " + providerName + " активен (200 OK)");
-            }, 450);
-        }
-
-        function openAdminBalanceModal(userId, name) {
-            triggerHaptic();
-            adminTargetUserId = userId;
-            const titleEl = document.getElementById('admin-balance-title');
-            if (titleEl) titleEl.innerText = "Баланс: " + name;
-            const inputEl = document.getElementById('admin-balance-input');
-            if (inputEl) inputEl.value = "";
-            const modal = document.getElementById('modal-admin-balance');
-            if (modal) modal.classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-        function closeAdminBalanceModal() {
-            const modal = document.getElementById('modal-admin-balance');
-            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-        function applyAdminBalanceChange(isAdd) {
-            triggerHaptic();
-            const val = parseFloat(document.getElementById('admin-balance-input')?.value || "0");
-            if (!val || val <= 0) return;
-
-            const u = (state.crmUsers || []).find(x => String(x.id) === String(adminTargetUserId));
-            if (!u) return;
-
-            requestConfirmation({
-                title: isAdd ? "Начислить баланс?" : "Списать баланс?",
-                desc: (isAdd ? 'Начислить ' : 'Списать ') + val + ' ₽ пользователю ' + u.name + ' (ID: ' + u.id + ')?',
-                confirmBtnText: isAdd ? "Начислить" : "Списать",
-                isDestructive: !isAdd,
-                onConfirm: () => {
-                    u.balance = (u.balance || 0) + (isAdd ? val : -val);
-                    if (String(adminTargetUserId) === String(state.user.id)) {
-                        state.balance = u.balance;
-                        refreshProfileDisplay();
-                    }
-                    saveState();
-                    closeAdminBalanceModal();
-                    if (adminActiveUserId) renderUserDetail(adminActiveUserId);
-                    renderAdminUsers();
-                    showToast("Баланс " + u.name + ": " + (u.balance).toFixed(2) + " ₽");
-                }
-            });
         }
 
         function copyString(str, msg = "Скопировано в буфер") {
             triggerHaptic();
-            if (navigator?.clipboard?.writeText) {
-                navigator.clipboard.writeText(str).then(() => showToast(msg)).catch(() => showToast("Скопировано"));
-            } else {
+            navigator.clipboard.writeText(str).then(() => {
                 showToast(msg);
-            }
+            });
         }
 
         function copyAllInOrder(orderId) {
             triggerHaptic();
-            const order = (state.orders || []).find(o => o.id === orderId);
-            if (!order || !order.proxies) return;
+            const order = state.orders.find(o => o.id === orderId);
+            if (!order) return;
             const text = order.proxies.map(p => p.full).join('\n');
-            copyString(text, "Скопировано " + order.proxies.length + " шт.");
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`Скопировано ${order.proxies.length} шт.`);
+            });
+        }
+
+        function downloadTxt(orderId) {
+            triggerHaptic();
+            const order = state.orders.find(o => o.id === orderId);
+            if (!order) return;
+            const text = order.proxies.map(p => p.full).join('\n');
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `proxies_order_${order.id}.txt`;
+            link.click();
+            showToast("Файл .txt сгенерирован");
         }
 
         function topUpBalance(amount) {
-            triggerHaptic();
-            state.balance = (state.balance || 0) + amount;
+            triggerHaptic('medium');
+            state.balance += amount;
             refreshProfileDisplay();
-            saveState();
-            showToast("Баланс пополнен на +" + amount + " ₽");
+            showToast(`Баланс пополнен на +${amount} ₽`);
         }
 
         function refreshProfileDisplay() {
-            try {
-                const bEl = document.getElementById('prof-balance-val');
-                if (bEl) bEl.innerText = (state.balance || 0).toFixed(2) + " ₽";
+            document.getElementById('prof-balance-val').innerText = `${state.balance.toFixed(2)} ₽`;
+            document.getElementById('prof-stat-orders').innerText = state.orders.length;
 
-                const oEl = document.getElementById('prof-stat-orders');
-                if (oEl) oEl.innerText = (state.orders || []).length;
-                
-                const totalProxies = (state.orders || []).reduce((acc, o) => acc + ((o && Array.isArray(o.proxies)) ? o.proxies.length : (o.count || 0)), 0);
-                const pEl = document.getElementById('prof-stat-proxies');
-                if (pEl) pEl.innerText = totalProxies;
+            const totalProxies = state.orders.reduce((acc, o) => acc + o.count, 0);
+            document.getElementById('prof-stat-proxies').innerText = totalProxies;
+            document.getElementById('prof-stat-spent').innerText = `${state.spent.toFixed(0)} ₽`;
 
-                const sEl = document.getElementById('prof-stat-spent');
-                if (sEl) sEl.innerText = (state.spent || 0).toFixed(0) + " ₽";
-
-                const cartCount = (state.cart || []).reduce((sum, item) => sum + (item.count || 0), 0);
-                const cartSum = (state.cart || []).reduce((sum, item) => sum + (item.total || 0), 0);
-
-                const cEl = document.getElementById('prof-stat-cart');
-                if (cEl) cEl.innerText = cartCount + " шт.";
-
-                const csEl = document.getElementById('prof-stat-cart-sum');
-                if (csEl) csEl.innerText = "на " + cartSum + " ₽";
-            } catch(e) {}
+            const cartCount = state.cart.reduce((sum, item) => sum + item.count, 0);
+            const cartSum = state.cart.reduce((sum, item) => sum + item.total, 0);
+            document.getElementById('prof-stat-cart').innerText = `${cartCount} шт.`;
+            document.getElementById('prof-stat-cart-sum').innerText = `на ${cartSum} ₽`;
         }
 
+        // ================= АДМИН-ФУНКЦИИ (PROXY6 & PROXYLINE) =================
+
+        function updateMargin(val) {
+            state.adminMargin = val;
+            document.getElementById('admin-margin-label').innerText = `+${val}%`;
+        }
+
+        function syncAllApi() {
+            triggerHaptic('medium');
+            const icon = document.getElementById('sync-icon');
+            icon.classList.add('animate-spin');
+            setTimeout(() => {
+                icon.classList.remove('animate-spin');
+                showToast("Шлюзы Proxy6 и ProxyLine синхронизированы");
+            }, 700);
+        }
+
+        function testApiPing(provider) {
+            triggerHaptic();
+            showToast(`${provider} API активен (отклик 35ms)`);
+        }
+
+        // Надежный Toast
         let toastTimer = null;
         function showToast(text, isError = false) {
             const toast = document.getElementById('toast');
             const toastText = document.getElementById('toast-text');
             const toastIcon = document.getElementById('toast-icon');
-            if (!toast || !toastText) return;
 
-            if (toastTimer) clearTimeout(toastTimer);
+            if (toastTimer) {
+                clearTimeout(toastTimer);
+                toastTimer = null;
+            }
 
             toastText.innerText = text;
-            if (toastIcon) {
-                toastIcon.innerText = isError ? '✕' : '✓';
-                toastIcon.className = isError ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold';
-            }
+            toastIcon.innerText = isError ? '✕' : '✓';
+            toastIcon.className = isError ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold';
 
             toast.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
             toast.classList.add('opacity-100', 'translate-y-0');
@@ -2082,12 +1286,6 @@
                 toast.classList.remove('opacity-100', 'translate-y-0');
                 toast.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
             }, 3000);
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
-        } else {
-            initApp();
         }
     </script>
 </body>
