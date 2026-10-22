@@ -28,7 +28,7 @@
         color: #f1f5f9; min-height: 100vh; overscroll-behavior-y: none;
         -webkit-font-smoothing: antialiased; -webkit-user-select: none; user-select: none;
     }
-    /* iOS: в полях ввода и блоках кода выделение/ввод должны работать при user-select:none */
+    /* iOS: в полях ввода выделение/ввод должны работать при user-select:none */
     input, textarea, .select-all { -webkit-user-select: text; user-select: text; }
     @media (pointer: coarse) { input, textarea { font-size: 16px !important; } } /* без авто-зума iOS */
 
@@ -63,10 +63,9 @@
 
     /* Сегменты и чипы */
     .seg { display: flex; padding: 3px; border-radius: .85rem; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); }
-    .seg button { flex: 1; padding: .48rem .4rem; font-size: 11px; font-weight: 600; color: #8b8b94; border-radius: .65rem; transition: all .22s cubic-bezier(.16,1,.3,1); white-space: nowrap; }
+    .seg button { flex: 1; padding: .5rem .4rem; font-size: 11.5px; font-weight: 600; color: #8b8b94; border-radius: .65rem; transition: all .22s cubic-bezier(.16,1,.3,1); white-space: nowrap; }
     .seg button.on { background: rgba(255,255,255,.09); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.06); }
-    .seg-emerald button.on { background: rgba(16,185,129,.16); color: #34d399; box-shadow: inset 0 0 0 1px rgba(16,185,129,.32); }
-    .chip { flex-shrink: 0; padding: .32rem .75rem; font-size: 11px; font-weight: 500; color: #a1a1aa; border-radius: 99px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.025); transition: all .2s; cursor: pointer; }
+    .chip { flex-shrink: 0; padding: .32rem .75rem; font-size: 11px; font-weight: 500; color: #a1a1aa; border-radius: 99px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.025); transition: all .2s; cursor: pointer; white-space: nowrap; }
     .chip.on { color: #34d399; border-color: rgba(16,185,129,.4); background: rgba(16,185,129,.08); }
     .opt { border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.03); border-radius: .8rem; padding: .6rem .25rem; text-align: center; transition: all .2s; cursor: pointer; }
     .opt.on { border-color: rgba(16,185,129,.55); background: rgba(16,185,129,.08); box-shadow: 0 0 16px -5px rgba(16,185,129,.45); }
@@ -100,10 +99,12 @@
     .chev { transition: transform .25s cubic-bezier(.16,1,.3,1); }
     .chev.rot { transform: rotate(180deg); }
 
-    /* Выпадающие списки */
-    .dropdown { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 30; background: #10131c; border: 1px solid rgba(255,255,255,.1);
-                border-radius: 1rem; box-shadow: 0 24px 50px -12px rgba(0,0,0,.85); opacity: 0; transform: scale(.97) translateY(-4px); pointer-events: none;
-                transition: opacity .2s, transform .2s cubic-bezier(.16,1,.3,1); transform-origin: top; scroll-margin-bottom: 110px; }
+    /* Выпадающие списки (фикс перекрытия через поднятие z-index родителя) */
+    .dd-wrap { position: relative; }
+    .dd-wrap.dd-open { z-index: 50 !important; }
+    .dropdown { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 55; background: #10131c; border: 1px solid rgba(255,255,255,.12);
+                border-radius: 1rem; box-shadow: 0 24px 50px -12px rgba(0,0,0,.95); opacity: 0; transform: scale(.97) translateY(-4px); pointer-events: none;
+                transition: opacity .18s, transform .18s cubic-bezier(.16,1,.3,1); transform-origin: top; scroll-margin-bottom: 110px; }
     .dropdown.active { opacity: 1; transform: none; pointer-events: auto; }
     .dd-item { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .55rem .6rem; border-radius: .65rem; font-size: 12px; cursor: pointer; transition: background .15s; }
     @media (hover: hover) { .dd-item:hover { background: rgba(255,255,255,.06); } }
@@ -121,7 +122,7 @@
     .overlay.open { opacity: 1; visibility: visible; }
     .sheet { width: 100%; max-width: 28rem; background: #0d1017; border: 1px solid rgba(255,255,255,.08); border-bottom: none; border-radius: 1.5rem 1.5rem 0 0;
              padding: .6rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px)); transform: translateY(28px); transition: transform .32s cubic-bezier(.16,1,.3,1);
-             max-height: 92vh; overflow-y: auto; box-shadow: 0 -20px 60px -20px rgba(16,185,129,.12); }
+             max-height: 90vh; overflow-y: auto; box-shadow: 0 -20px 60px -20px rgba(16,185,129,.12); }
     .overlay.open .sheet { transform: none; }
     .grip { width: 36px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.14); margin: 0 auto .9rem; }
 
@@ -141,8 +142,8 @@
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
     .toast.show.actionable { pointer-events: auto; }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-    .fade-in { animation: fadeIn .28s cubic-bezier(.16,1,.3,1) both; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn .24s cubic-bezier(.16,1,.3,1); }
     @keyframes tick { 0% { transform: scale(1); } 40% { transform: scale(1.07); } 100% { transform: scale(1); } }
     .tick { display: inline-block; animation: tick .3s ease; }
     @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
@@ -158,7 +159,7 @@
     <button id="toast-action" class="hidden text-emerald-400 font-semibold pl-1" onclick="toastActionClick()"></button>
 </div>
 
-<!-- Нижняя шторка (подтверждения, продление, пополнение, экспорт в антидетект) -->
+<!-- Нижняя шторка (подтверждения, продление, пополнение, экспорт) -->
 <div id="overlay" class="overlay" onclick="if(event.target===this)hideSheet()">
     <div class="sheet custom-scroll" id="sheet" onclick="event.stopPropagation()"><div id="sheet-body"></div></div>
 </div>
@@ -184,10 +185,7 @@
     <section id="view-config" class="hidden space-y-4">
         <button onclick="navigate('providers')" class="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-100 py-1 transition">← Каталог</button>
         <header class="pb-3 border-b border-white/[0.06]">
-            <div class="flex items-center justify-between gap-2">
-                <h2 class="text-lg font-bold text-zinc-50" id="conf-pool-name">Настройка</h2>
-                <span class="pill pill-ok">HTTP / SOCKS5</span>
-            </div>
+            <h2 class="text-lg font-bold text-zinc-50" id="conf-pool-name">Настройка</h2>
             <p class="text-xs text-zinc-400 mt-0.5" id="conf-pool-desc"></p>
         </header>
 
@@ -198,7 +196,7 @@
 
         <div class="space-y-2">
             <label class="lbl">Локация</label>
-            <div class="relative">
+            <div class="dd-wrap">
                 <button type="button" onclick="toggleDropdown(event,'dd-country')" class="input w-full h-[42px] px-3 flex items-center justify-between text-xs">
                     <span class="flex items-center gap-2.5 min-w-0"><span id="sel-country-flag" class="flex"></span><span id="sel-country-name" class="font-medium truncate">Россия</span></span>
                     <svg class="w-3.5 h-3.5 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
@@ -218,7 +216,7 @@
         <div class="grid grid-cols-2 gap-2.5">
             <div class="space-y-2">
                 <label class="lbl">Период</label>
-                <div class="relative">
+                <div class="dd-wrap">
                     <button type="button" onclick="toggleDropdown(event,'dd-period')" class="input w-full h-[42px] px-3 flex items-center justify-between text-xs">
                         <span id="sel-period-name" class="font-medium">30 дней</span>
                         <svg class="w-3.5 h-3.5 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
@@ -231,7 +229,7 @@
                 <div class="input flex items-center overflow-hidden h-[42px]">
                     <button type="button" onclick="changeCount(-1)" class="w-10 h-full text-zinc-400 hover:text-white active:bg-white/10 transition text-base" aria-label="Меньше">−</button>
                     <input id="conf-count" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" value="1" autocomplete="off"
-                           oninput="onCountInput(this)" onblur="onCountBlur(this)" onfocus="this.select()" onkeydown="if(event.key==='Enter')this.blur()"
+                           oninput="onCountInput(this)" onblur="onCountBlur()" onfocus="this.select()" onkeydown="if(event.key==='Enter')this.blur()"
                            class="w-full min-w-0 text-center text-sm font-semibold mono">
                     <button type="button" onclick="changeCount(1)" class="w-10 h-full text-zinc-400 hover:text-white active:bg-white/10 transition text-base" aria-label="Больше">+</button>
                 </div>
@@ -250,7 +248,6 @@
         </div>
 
         <div class="card rounded-2xl p-4 space-y-2.5">
-            <div class="flex justify-between text-xs"><span class="text-zinc-500">Протоколы</span><span class="mono text-zinc-300">HTTP(S) + SOCKS5</span></div>
             <div class="flex justify-between text-xs"><span class="text-zinc-500">Цена за шт.</span><span id="conf-unit" class="mono text-zinc-300">—</span></div>
             <div class="flex justify-between text-xs"><span class="text-zinc-500">Количество</span><span id="conf-qty" class="mono text-zinc-300">1</span></div>
             <div class="pt-2.5 border-t border-white/[0.06] flex items-center justify-between">
@@ -280,41 +277,21 @@
 
     <!-- ============ ЗАКАЗЫ ============ -->
     <section id="view-orders" class="hidden space-y-3">
-        <header class="pt-1 flex items-start justify-between gap-2">
+        <header class="pt-1 flex items-center justify-between gap-2">
             <div>
                 <h2 class="text-xl font-bold tracking-tight text-zinc-50">Заказы</h2>
                 <p class="text-xs text-zinc-400 mt-0.5" id="orders-sub"></p>
             </div>
-            <!-- Быстрый выбор протокола и формата прямо в заказах -->
-            <div class="flex items-center gap-1.5">
-                <div class="seg seg-emerald" id="orders-proto-seg" style="padding:2px">
-                    <button type="button" class="mono !px-2.5 !py-1 !text-[10.5px]" data-p="http" onclick="setProto('http')">HTTP</button>
-                    <button type="button" class="mono !px-2.5 !py-1 !text-[10.5px]" data-p="socks5" onclick="setProto('socks5')">SOCKS5</button>
-                </div>
+            <!-- Простое переключение отображения HTTP / SOCKS5 сверху -->
+            <div class="seg w-[148px] shrink-0" id="orders-proto-seg">
+                <button type="button" class="mono !py-1.5 !text-[11px]" data-p="http" onclick="setProto('http')">HTTP</button>
+                <button type="button" class="mono !py-1.5 !text-[11px]" data-p="socks5" onclick="setProto('socks5')">SOCKS5</button>
             </div>
         </header>
 
-        <!-- Панель формата для антидетект-браузеров -->
-        <div class="card rounded-2xl p-2.5 flex items-center justify-between gap-2">
-            <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-1.5">
-                    <span class="text-[10px] uppercase tracking-wider font-semibold text-zinc-500">Формат выдачи</span>
-                    <span id="orders-fmt-badge" class="pill pill-ok !text-[9px] !py-0">Dolphin / AdsPower</span>
-                </div>
-                <div id="orders-fmt-preview" class="mono text-[11px] text-zinc-300 truncate mt-0.5">ip:port:user:pass</div>
-            </div>
-            <div class="relative shrink-0">
-                <button type="button" onclick="toggleDropdown(event,'dd-fmt')" class="btn btn-ghost btn-xs gap-1.5">
-                    <span>Изменить</span>
-                    <svg class="w-3 h-3 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-                </button>
-                <div id="dd-fmt" class="dropdown p-1.5" style="left:auto;right:0;width:17.5rem" onclick="event.stopPropagation()"></div>
-            </div>
-        </div>
-
         <div class="flex items-center justify-between gap-2">
-            <div id="orders-chips" class="flex gap-1.5 overflow-x-auto no-scrollbar"></div>
-            <div class="relative shrink-0">
+            <div id="orders-chips" class="flex gap-1.5"></div>
+            <div class="dd-wrap shrink-0">
                 <button type="button" onclick="toggleDropdown(event,'dd-osort')" class="input h-[32px] px-2.5 flex items-center gap-1.5 text-[11px] text-zinc-300">
                     <span id="osort-label">Новые</span>
                     <svg class="w-3 h-3 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
@@ -369,23 +346,22 @@
                 <label class="switch"><input id="set-auto" type="checkbox" onchange="toggleAutoRenew(this.checked)"><i></i></label>
             </div>
 
-            <div class="pt-4 border-t border-white/[0.06] space-y-2.5">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-medium text-zinc-200">Протокол по умолчанию</span>
-                    <span class="text-[10px] text-zinc-500">Меняет порт и префикс</span>
-                </div>
-                <div class="seg seg-emerald" id="set-proto">
-                    <button class="mono" data-p="http" onclick="setProto('http')">HTTP / HTTPS</button>
+            <div class="pt-4 border-t border-white/[0.06] space-y-2">
+                <span class="text-xs font-medium text-zinc-200 block">Протокол отображения</span>
+                <div class="seg" id="set-proto">
+                    <button class="mono" data-p="http" onclick="setProto('http')">HTTP</button>
                     <button class="mono" data-p="socks5" onclick="setProto('socks5')">SOCKS5</button>
                 </div>
             </div>
 
-            <div class="pt-4 border-t border-white/[0.06] space-y-2.5">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-medium text-zinc-200">Шаблон для антидетект-браузеров</span>
-                    <span id="prof-fmt-tag" class="text-[10px] text-emerald-400 font-medium"></span>
+            <div class="pt-4 border-t border-white/[0.06] space-y-2">
+                <span class="text-xs font-medium text-zinc-200 block">Формат выдачи</span>
+                <div class="grid grid-cols-2 gap-1.5" id="set-format">
+                    <button class="opt mono text-[11px] font-medium !py-2.5 !px-2 truncate" data-f="colon" onclick="setFormat('colon')">ip:port:login:pass</button>
+                    <button class="opt mono text-[11px] font-medium !py-2.5 !px-2 truncate" data-f="ip_at" onclick="setFormat('ip_at')">ip:port@login:pass</button>
+                    <button class="opt mono text-[11px] font-medium !py-2.5 !px-2 truncate" data-f="at" onclick="setFormat('at')">login:pass@ip:port</button>
+                    <button class="opt mono text-[11px] font-medium !py-2.5 !px-2 truncate" data-f="url" onclick="setFormat('url')" id="btn-fmt-url">http://login:pass@ip:port</button>
                 </div>
-                <div id="prof-format-grid" class="grid grid-cols-1 gap-1.5"></div>
             </div>
         </div>
 
@@ -441,7 +417,7 @@
                     <input id="ah-search" type="text" autocomplete="off" oninput="adminSearchInput(this.value)" onkeydown="if(event.key==='Enter')adminSearchEnter()" class="w-full text-xs min-w-0">
                     <button id="ah-clear" class="hidden text-zinc-500 hover:text-zinc-200 text-sm leading-none" onclick="adminSearchInput('',true)" aria-label="Очистить">✕</button>
                 </div>
-                <div id="ah-sort-wrap" class="relative shrink-0">
+                <div id="ah-sort-wrap" class="dd-wrap shrink-0">
                     <button type="button" onclick="toggleDropdown(event,'dd-asort')" class="input h-[42px] px-3 flex items-center gap-1.5 text-[11px] text-zinc-300">
                         <span id="asort-label">Активность</span>
                         <svg class="w-3 h-3 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
@@ -585,57 +561,12 @@ const COUNTRIES = [
 const cname = c => COUNTRIES.find(x => x.code === c)?.name || c.toUpperCase();
 const unitPrice = (monthly, days) => Math.max(1, Math.round(monthly * days / 30));
 
-/* ---------- Форматы прокси для антидетект-браузеров и софта ---------- */
-const PROXY_FORMATS = [
-    {
-        id: 'colon',
-        name: 'ip:port:user:pass',
-        tag: 'Dolphin{anty} · AdsPower · Octo',
-        desc: 'Классический формат для большинства антидетектов',
-        sample: p => `${p}ip:port:user:pass`
-    },
-    {
-        id: 'at',
-        name: 'user:pass@ip:port',
-        tag: 'GoLogin · Multilogin · cURL',
-        desc: 'Авторизация перед хостом через @',
-        sample: p => `user:pass@ip:port`
-    },
-    {
-        id: 'url_at',
-        name: 'proto://user:pass@ip:port',
-        tag: 'Dolphin · AdsPower · GoLogin · Скрипты',
-        desc: 'Полный URL с протоколом HTTP / SOCKS5',
-        sample: p => `${p}://user:pass@ip:port`
-    },
-    {
-        id: 'url_colon',
-        name: 'proto://ip:port:user:pass',
-        tag: 'Dolphin{anty} · Nstbrowser · MoreLogin',
-        desc: 'Префикс протокола + формат через двоеточие',
-        sample: p => `${p}://ip:port:user:pass`
-    },
-    {
-        id: 'undetectable',
-        name: 'PROTO://ip:port:user:pass #Name',
-        tag: 'Undetectable · Индиго · Тег страны',
-        desc: 'С комментарием локации и ID для импорта с именем',
-        sample: p => `${p}://ip:port:user:pass #RU-52001`
-    },
-    {
-        id: 'proxifier',
-        name: 'PROTO ip:port user pass',
-        tag: 'Proxifier · Сетевые клиенты',
-        desc: 'Разделение пробелами с типом протокола',
-        sample: p => `${p.toUpperCase()} ip:port user pass`
-    }
-];
-
-/* ---------- Состояние настроек выдачи (с сохранением в localStorage) ---------- */
+/* ---------- Настройки отображения прокси (протокол + базовый формат) ---------- */
+const VALID_FORMATS = ['colon', 'ip_at', 'at', 'url'];
 const savedCfg = (() => { try { return JSON.parse(localStorage.getItem('pt_cfg') || '{}'); } catch (e) { return {}; } })();
 const cfg = {
     proto: savedCfg.proto === 'socks5' ? 'socks5' : 'http',
-    format: PROXY_FORMATS.some(f => f.id === savedCfg.format) ? savedCfg.format : 'colon'
+    format: VALID_FORMATS.includes(savedCfg.format) ? savedCfg.format : 'colon'
 };
 function saveCfg() { try { localStorage.setItem('pt_cfg', JSON.stringify(cfg)); } catch (e) {} }
 
@@ -658,15 +589,15 @@ function createOrder(u, items, at = Date.now()) {
         const isV6 = it.tariffId === 'ipv6' || it.tariffTitle.toLowerCase().includes('ipv6');
         for (let i = 0; i < it.count; i++) {
             const httpPort = rnd(8000, 8999);
-            const socksPort = httpPort + 1000; // Например, HTTP 8xxx, SOCKS5 9xxx
+            const socksPort = httpPort + 1000;
             const ip = isV6
                 ? `2a00:${pick(['1450', '1fa0', '2b40', '4c10'])}:${hex4()}:${hex4()}::${hex4()}`
                 : `${pick([45, 77, 85, 91, 94, 103, 128, 146, 154, 176, 185, 193, 212])}.${rnd(1, 254)}.${rnd(1, 254)}.${rnd(2, 254)}`;
             const p = {
                 id: ++seq.proxy, orderId: order.id, userId: u.id,
                 ip, isV6,
-                port: httpPort,       // обратная совместимость
-                httpPort, socksPort,  // раздельные порты для HTTP и SOCKS5
+                port: httpPort,
+                httpPort, socksPort,
                 login: alnum(8), pass: alnum(10),
                 country: it.country, poolName: it.poolName, tariffTitle: it.tariffTitle, monthly: it.monthly,
                 paid: unit, refunded: 0, createdAt: at, expiresAt: at + it.days * DAY, status: 'active'
@@ -699,15 +630,15 @@ const isAdmin = ADMIN_IDS.includes(ME_ID);
 const me = mkUser(ME_ID, tgUser?.first_name || 'Alexey', tgUser?.username || 'alexey_dev', 2000, 0, 0);
 addTx(me, 'deposit', 2000, 'Стартовый баланс', Date.now() - 1000);
 
-(function seedDemo() { // демо-клиенты и стартовый заказ, чтобы можно было сразу протестировать форматы
+(function seedDemo() { // демо-данные
     const now = Date.now();
     const I = (poolId, tariffId, country, days, count) => { const p = POOLS[poolId], t = p.tariffs.find(x => x.id === tariffId);
         return { poolName: p.name, tariffId: t.id, tariffTitle: t.label, monthly: t.price, country, days, count }; };
     const buy = (u, items, ago) => { const at = now - ago * DAY, o = createOrder(u, items, at); addTx(u, 'purchase', -o.total, `Заказ #${o.id}`, at, o.id); return o; };
     const dep = (u, amt, ago, m) => addTx(u, 'deposit', amt, m, now - ago * DAY);
 
-    // Демо-заказ у текущего пользователя, чтобы сразу пощупать SOCKS5/HTTP и антидетект-форматы
-    buy(me, [I('pool1', 'ipv4_custom', 'de', 30, 3), I('pool1', 'ipv6', 'nl', 30, 2)], 1);
+    // Демо-заказ у текущего пользователя
+    buy(me, [I('pool1', 'ipv4_custom', 'de', 30, 3)], 1);
 
     const u1 = mkUser('7120045', 'Дмитрий', 'dmitry_k', 340, 41, 2);
     dep(u1, 1500, 10, 'CryptoBot'); dep(u1, 500, 3, 'xRocket');
@@ -731,7 +662,7 @@ addTx(me, 'deposit', 2000, 'Стартовый баланс', Date.now() - 1000)
     addTx(u2, 'admin_add', 300, 'Компенсация', now - 5 * DAY);
 })();
 
-/* ---------- Производные и форматирование прокси ---------- */
+/* ---------- Производные ---------- */
 const allProxies = () => [...proxiesById.values()].sort((a, b) => b.createdAt - a.createdAt || b.id - a.id);
 const userProxies = u => u.orders.flatMap(o => o.proxies);
 function pState(p) {
@@ -759,49 +690,35 @@ function userStats(u) {
     return { deposited, refunded, spent: Math.max(0, round2(spent - refunded)), orders: u.orders.length, total: ps.length, live: ps.filter(isLive).length };
 }
 
-/* Форматирование одного прокси под выбранный протокол (http / socks5) и шаблон антидетект-браузера */
+/* ---------- Форматирование прокси (HTTP / SOCKS5 + форматы) ---------- */
 function proxyPort(p, proto = cfg.proto) {
     return proto === 'socks5' ? (p.socksPort || p.port) : (p.httpPort || p.port);
 }
 function proxyHost(p) {
     return p.isV6 || String(p.ip).includes(':') ? `[${p.ip}]` : p.ip;
 }
-function fmtProxy(p, fmt = cfg.format, proto = cfg.proto) {
+function fmtProxy(p, fmt = cfg.format, proto = cfg.proto, { prefix = false, tag = false } = {}) {
     if (!p) return '';
     const host = proxyHost(p);
     const port = proxyPort(p, proto);
     const pr = proto === 'socks5' ? 'socks5' : 'http';
-    const tag = `${p.country.toUpperCase()}-${p.id}`;
+    let s = '';
     switch (fmt) {
-        case 'at':           return `${p.login}:${p.pass}@${host}:${port}`;
-        case 'url_at':       return `${pr}://${p.login}:${p.pass}@${host}:${port}`;
-        case 'url_colon':    return `${pr}://${host}:${port}:${p.login}:${p.pass}`;
-        case 'undetectable': return `${pr}://${host}:${port}:${p.login}:${p.pass} #${tag}`;
-        case 'proxifier':    return `${pr.toUpperCase()} ${host}:${port} ${p.login} ${p.pass}`;
+        case 'ip_at':     s = `${host}:${port}@${p.login}:${p.pass}`; break;
+        case 'at':        s = `${p.login}:${p.pass}@${host}:${port}`; break;
+        case 'url':       s = `${pr}://${p.login}:${p.pass}@${host}:${port}`; break;
+        case 'url_colon': s = `${pr}://${host}:${port}:${p.login}:${p.pass}`; break;
+        case 'proxifier': s = `${pr.toUpperCase()} ${host}:${port} ${p.login} ${p.pass}`; break;
         case 'colon':
-        default:             return `${host}:${port}:${p.login}:${p.pass}`;
+        default:          s = `${host}:${port}:${p.login}:${p.pass}`; break;
     }
-}
-/* Массовое форматирование для экспорта (включая CSV и JSON для антидетектов) */
-function fmtProxyBatch(list, fmt = cfg.format, proto = cfg.proto) {
-    const pr = proto === 'socks5' ? 'socks5' : 'http';
-    if (fmt === 'json') {
-        return JSON.stringify(list.map(p => ({
-            name: `${p.country.toUpperCase()}-${p.id}`,
-            type: pr,
-            host: p.ip,
-            port: proxyPort(p, proto),
-            username: p.login,
-            password: p.pass,
-            country: p.country.toUpperCase()
-        })), null, 2);
+    if (prefix && !s.startsWith('http://') && !s.startsWith('socks5://') && fmt !== 'proxifier') {
+        s = `${pr}://${s}`;
     }
-    if (fmt === 'csv') {
-        const header = 'type,host,port,username,password,name';
-        const rows = list.map(p => `${pr},${p.ip},${proxyPort(p, proto)},${p.login},${p.pass},${p.country.toUpperCase()}-${p.id}`);
-        return [header, ...rows].join('\n');
+    if (tag) {
+        s += ` #${p.country.toUpperCase()}-${p.id}`;
     }
-    return list.map(p => fmtProxy(p, fmt, proto)).join('\n');
+    return s;
 }
 
 const TX_LABEL = { deposit: 'Пополнение', purchase: 'Покупка', prolong: 'Продление', refund: 'Возврат', admin_add: 'Начисление', admin_sub: 'Списание', admin_set: 'Установка баланса', admin_prolong: 'Продление (админ)', revoke: 'Прокси отозван' };
@@ -810,7 +727,13 @@ const isAdminTx = t => t.type.startsWith('admin_') || t.type === 'revoke';
 
 /* ---------- Состояние интерфейса ---------- */
 const state = { pool: 'pool1', tariffIdx: 0, country: 'ru', period: 30, count: 1, cart: [], ordersSort: 'new', ordersFilter: 'all', historyAll: false };
-const ui = { view: 'providers', open: new Set(['c10481']), prolong: { pid: null, oid: null, days: 30 }, deposit: { amount: 500, method: 'CryptoBot' }, exportSheet: { oid: null, fmt: null, proto: null } };
+const ui = {
+    view: 'providers',
+    open: new Set(['c10481']),
+    prolong: { pid: null, oid: null, days: 30 },
+    deposit: { amount: 500, method: 'CryptoBot' },
+    exp: { oid: null, proto: 'http', fmt: 'colon', prefix: false, tag: false }
+};
 const admin = { until: 0, attempts: 0, lockUntil: 0, screen: 'home', tab: 'clients', q: { clients: '', proxies: '', log: '' }, sort: 'active',
     pf: 'all', lf: 'all', limit: { clients: 30, proxies: 30, log: 30 }, userId: null, utab: 'orders', upf: 'all', selected: new Set(), expanded: new Set() };
 const currentTariff = () => POOLS[state.pool].tariffs[state.tariffIdx];
@@ -849,11 +772,22 @@ function confirmSheet({ title, text = '', html = '', okText = 'Подтверд�
 const kv = (k, v, cls = 'text-zinc-200') => `<div class="flex justify-between items-center text-xs py-1"><span class="text-zinc-500">${k}</span><span class="mono ${cls}">${v}</span></div>`;
 
 function toggleDropdown(e, id) {
-    e.stopPropagation(); const el = $(id), was = el.classList.contains('active');
+    e.stopPropagation();
+    const el = $(id), was = el.classList.contains('active');
     closeAllDropdowns();
-    if (!was) { haptic(); el.classList.add('active'); requestAnimationFrame(() => el.scrollIntoView({ block: 'nearest', behavior: 'smooth' })); }
+    if (!was) {
+        haptic();
+        el.classList.add('active');
+        el.closest('.dd-wrap')?.classList.add('dd-open');
+        requestAnimationFrame(() => el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+    }
 }
-function closeAllDropdowns() { document.querySelectorAll('.dropdown.active').forEach(el => el.classList.remove('active')); }
+function closeAllDropdowns() {
+    document.querySelectorAll('.dropdown.active').forEach(el => {
+        el.classList.remove('active');
+        el.closest('.dd-wrap')?.classList.remove('dd-open');
+    });
+}
 
 function copyText(str, msg = 'Скопировано') {
     if (!str) return;
@@ -878,7 +812,9 @@ function navigate(view) {
     if (view === 'admin' && !isAdmin) return;
     haptic(); closeAllDropdowns(); ui.view = view;
     VIEWS.forEach(v => $('view-' + v).classList.toggle('hidden', v !== view));
-    const t = $('view-' + view); t.classList.remove('fade-in'); void t.offsetWidth; t.classList.add('fade-in');
+    const t = $('view-' + view);
+    t.classList.remove('fade-in'); void t.offsetWidth; t.classList.add('fade-in');
+    t.addEventListener('animationend', () => t.classList.remove('fade-in'), { once: true });
     ['providers', 'cart', 'orders', 'profile', 'admin'].forEach(n => $('nav-' + n).classList.toggle('on', n === view || (view === 'config' && n === 'providers')));
     rerenderCurrent(); window.scrollTo(0, 0); syncBackButton();
 }
@@ -905,13 +841,7 @@ function renderCatalog() {
         const min = Math.min(...p.tariffs.map(t => t.price));
         return `<div onclick="selectProvider('${id}')" class="card card-hover pressable rounded-2xl p-4 cursor-pointer">
             <div class="flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <div class="flex items-center gap-2">
-                        <h3 class="text-sm font-semibold text-zinc-100">${esc(p.name)}</h3>
-                        <span class="pill pill-mute !text-[9px]">HTTP / SOCKS5</span>
-                    </div>
-                    <p class="text-xs text-zinc-400 mt-1">${esc(p.desc)}</p>
-                </div>
+                <div class="min-w-0"><h3 class="text-sm font-semibold text-zinc-100">${esc(p.name)}</h3><p class="text-xs text-zinc-400 mt-1">${esc(p.desc)}</p></div>
                 <div class="flex items-center gap-3 shrink-0"><div class="text-right"><div class="mono text-xs font-semibold text-emerald-400">от ${min} ₽</div><div class="text-[10px] text-zinc-500">в месяц</div></div>
                 <svg class="w-4 h-4 text-zinc-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></div>
             </div></div>`;
@@ -974,7 +904,7 @@ function addToCart() {
     const ex = state.cart.find(i => i.poolId === state.pool && i.tariffId === t.id && i.country === state.country && i.days === state.period);
     let added = state.count;
     if (ex) {
-        if (ex.count >= MAX_QTY) { toast(`В корзине уже максимум (${MAX_QTY} шт.) для этой позиции`, { error: true }); return; }
+        if (ex.count >= MAX_QTY) { toast(`В корзине уже максимум (${MAX_QTY} шт.)`, { error: true }); return; }
         added = Math.min(MAX_QTY - ex.count, state.count);
         ex.count += added;
     } else {
@@ -1054,7 +984,7 @@ function checkoutCart() {
 }
 
 /* =====================================================================
-   ЗАКАЗЫ, ПРОТОКОЛЫ (HTTP/SOCKS5) И ЭКСПОРТ ДЛЯ АНТИДЕТЕКТОВ
+   ЗАКАЗЫ И ПРОТОКОЛЫ (HTTP / SOCKS5)
    ===================================================================== */
 const SORT_LABELS = { new: 'Новые', old: 'Старые', sum_desc: 'Дороже', sum_asc: 'Дешевле' };
 function setOrdersFilter(f) { haptic(); state.ordersFilter = f; renderOrders(); }
@@ -1064,38 +994,19 @@ function setProto(p) {
     if (cfg.proto === p) return;
     haptic(); cfg.proto = p; saveCfg();
     rerenderCurrent();
-    toast(`Протокол: ${p.toUpperCase()}`);
+    toast(`Отображение: ${p.toUpperCase()}`);
 }
 function setFormat(f) {
     haptic(); cfg.format = f; saveCfg();
-    closeAllDropdowns();
     rerenderCurrent();
-    const meta = PROXY_FORMATS.find(x => x.id === f);
-    toast(`Формат: ${meta ? meta.name : f}`);
-}
-
-function renderFormatDropdown() {
-    const cur = PROXY_FORMATS.find(x => x.id === cfg.format) || PROXY_FORMATS[0];
-    $('orders-fmt-badge').textContent = cur.tag.split('·')[0].trim();
-    $('orders-fmt-preview').textContent = cur.sample(cfg.proto);
-    $('orders-proto-seg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.p === cfg.proto));
-    $('dd-fmt').innerHTML = PROXY_FORMATS.map(f => {
-        const on = f.id === cfg.format;
-        return `<div class="dd-item flex-col !items-start !gap-0.5 ${on ? 'sel bg-emerald-500/[0.07]' : ''}" onclick="setFormat('${f.id}')">
-            <div class="w-full flex items-center justify-between gap-2">
-                <span class="mono text-[11px] font-semibold ${on ? 'text-emerald-300' : 'text-zinc-200'}">${esc(f.sample(cfg.proto))}</span>
-                ${on ? '<span class="text-emerald-400 text-xs">✓</span>' : ''}
-            </div>
-            <span class="text-[10px] text-zinc-500">${esc(f.tag)}</span>
-        </div>`;
-    }).join('');
+    toast('Формат изменён');
 }
 
 function renderOrders() {
-    renderFormatDropdown();
     const f = state.ordersFilter;
     $('orders-sub').textContent = `${me.orders.length} ${pl(me.orders.length, 'заказ', 'заказа', 'заказов')}`;
     $('osort-label').textContent = SORT_LABELS[state.ordersSort];
+    $('orders-proto-seg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.p === cfg.proto));
     $('orders-chips').innerHTML = [['all', 'Все'], ['live', 'Активные'], ['expired', 'Истёкшие']].map(([k, l]) => `<button class="chip ${f === k ? 'on' : ''}" onclick="setOrdersFilter('${k}')">${l}</button>`).join('');
     let list = me.orders.filter(o => o.proxies.some(p => matchF(p, f)));
     const by = { new: (a, b) => b.createdAt - a.createdAt, old: (a, b) => a.createdAt - b.createdAt, sum_desc: (a, b) => b.total - a.total, sum_asc: (a, b) => a.total - b.total }[state.ordersSort];
@@ -1129,30 +1040,28 @@ function orderBodyHtml(o, ctx) {
     }
     const f = state.ordersFilter, shown = o.proxies.filter(p => matchF(p, f)), n = shown.filter(p => copyable(p, f)).length;
     const actCount = o.proxies.filter(p => p.status === 'active').length;
-    return `${n ? `<div class="flex flex-wrap items-center justify-between gap-1.5 pb-1">
+    return `${n ? `<div class="flex items-center justify-between gap-2 pb-1">
             <div class="flex items-center gap-1.5">
-                <button onclick="openExportSheet(${o.id})" class="btn btn-soft btn-xs">Антидетект / Экспорт</button>
-                <button onclick="downloadOrder(${o.id})" class="btn btn-ghost btn-xs">.txt</button>
+                <button onclick="openExport(${o.id})" class="btn btn-soft btn-xs">Экспорт</button>
                 ${actCount > 1 ? `<button onclick="openProlongOrder(${o.id})" class="btn btn-ghost btn-xs">Продлить все</button>` : ''}
             </div>
-            <button onclick="copyOrder(${o.id})" class="text-[11px] font-semibold text-emerald-400 hover:underline px-1">Копировать (${n})</button>
+            <button onclick="copyOrder(${o.id})" class="text-[11px] font-semibold text-emerald-400 hover:underline">Копировать (${n})</button>
         </div>` : ''}
         <div class="space-y-1.5">${shown.map(clientProxyRow).join('')}</div>`;
 }
 function clientProxyRow(p) {
     const s = pState(p), m = STATE_META[s], left = p.expiresAt - Date.now();
     const meta = s === 'active' || s === 'expiring' ? `Осталось ${leftText(left)}` : s === 'expired' ? 'Срок истёк' : s === 'refunded' ? 'Средства возвращены' : 'Отозван';
-    const protoBadge = cfg.proto === 'socks5' ? 'SOCKS5' : 'HTTP';
     return `<div class="rounded-xl bg-white/[0.025] border border-white/[0.05] p-2.5 space-y-2 ${s === 'refunded' || s === 'revoked' ? 'opacity-50' : ''}">
-        <div class="flex items-start justify-between gap-2">
+        <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-2 min-w-0">
                 ${flag(p.country, 'w-3.5 h-2.5')}
                 <span class="mono text-[11px] text-zinc-200 select-all break-all">${esc(fmtProxy(p))}</span>
             </div>
-            <span class="pill pill-mute !text-[9px] !px-1.5 !py-0 shrink-0 mono">${protoBadge}</span>
+            <span class="mono text-[9.5px] text-zinc-500 shrink-0 uppercase">${cfg.proto}</span>
         </div>
         <div class="flex items-center justify-between gap-2">
-            <div class="text-[10px] text-zinc-500 min-w-0 truncate">${esc(p.tariffTitle)} · <span class="mono text-zinc-400">HTTP:${p.httpPort} / S5:${p.socksPort}</span> · <span class="${m.txt}">${meta}</span></div>
+            <div class="text-[10px] text-zinc-500 min-w-0 truncate">${esc(p.tariffTitle)} · <span class="${m.txt}">${meta}</span></div>
             <div class="flex gap-1.5 shrink-0">
                 ${p.status === 'active' ? `<button class="btn btn-soft btn-xs" onclick="openProlong(${p.id})">Продлить</button>` : ''}
                 ${isLive(p) ? `<button class="btn btn-ghost btn-xs" onclick="copyProxy(${p.id})">Копия</button>` : ''}
@@ -1162,17 +1071,130 @@ const orderCopyableList = o => o.proxies.filter(p => copyable(p, state.ordersFil
 const proxyLines = o => orderCopyableList(o).map(p => fmtProxy(p)).join('\n');
 function copyProxy(id) {
     const p = proxiesById.get(id); if (!p) return;
-    copyText(fmtProxy(p), `Скопировано (${cfg.proto.toUpperCase()})`);
+    copyText(fmtProxy(p), 'Прокси скопирован');
 }
 function copyOrder(id) {
     const o = ordersById.get(id); if (!o) return;
     const t = proxyLines(o);
-    if (t) copyText(t, `Скопировано: ${t.split('\n').length} шт. (${cfg.proto.toUpperCase()})`);
+    if (t) copyText(t, `Скопировано: ${t.split('\n').length} шт.`);
 }
-function downloadFile(content, filename, mime = 'text/plain;charset=utf-8') {
+
+/* =====================================================================
+   ШТОРКА «ЭКСПОРТ» (ВСЕ ПЛЮШКИ, АНТИДЕТЕКТЫ, TXT / CSV / JSON)
+   ===================================================================== */
+const EXP_FORMATS = [
+    { id: 'colon',     label: 'ip:port:login:pass', sub: 'Dolphin{anty} · Octo · AdsPower' },
+    { id: 'ip_at',     label: 'ip:port@login:pass', sub: 'Антидетекты · Чекеры' },
+    { id: 'at',        label: 'login:pass@ip:port', sub: 'GoLogin · Multilogin · cURL' },
+    { id: 'url',       label: 'proto://login:pass@ip:port', sub: 'URL стандарт · Скрипты' },
+    { id: 'url_colon', label: 'proto://ip:port:login:pass', sub: 'Dolphin · Nstbrowser · MoreLogin' },
+    { id: 'proxifier', label: 'PROTO ip:port login pass', sub: 'Proxifier · Сетевой софт' }
+];
+
+function openExport(oid) {
+    haptic();
+    ui.exp.oid = oid;
+    ui.exp.proto = cfg.proto;
+    ui.exp.fmt = cfg.format;
+    ui.exp.prefix = false;
+    ui.exp.tag = false;
+    renderExportSheet();
+}
+function setExpProto(p) { haptic(); ui.exp.proto = p; renderExportSheet(); }
+function setExpFmt(f) { haptic(); ui.exp.fmt = f; renderExportSheet(); }
+function toggleExpOpt(key) { haptic(); ui.exp[key] = !ui.exp[key]; renderExportSheet(); }
+
+function buildExportContent(list, mode = 'lines') {
+    const { proto, fmt, prefix, tag } = ui.exp;
+    const pr = proto === 'socks5' ? 'socks5' : 'http';
+    if (mode === 'json') {
+        return JSON.stringify(list.map(p => ({
+            name: `${p.country.toUpperCase()}-${p.id}`,
+            protocol: pr,
+            host: p.ip,
+            port: proxyPort(p, proto),
+            login: p.login,
+            password: p.pass,
+            country: p.country.toUpperCase()
+        })), null, 2);
+    }
+    if (mode === 'csv') {
+        const head = 'protocol,host,port,login,password,country,name';
+        const rows = list.map(p => `${pr},${p.ip},${proxyPort(p, proto)},${p.login},${p.pass},${p.country.toUpperCase()},${p.country.toUpperCase()}-${p.id}`);
+        return [head, ...rows].join('\n');
+    }
+    return list.map(p => fmtProxy(p, fmt, proto, { prefix, tag })).join('\n');
+}
+
+function renderExportSheet() {
+    const o = ordersById.get(ui.exp.oid); if (!o) return;
+    const list = orderCopyableList(o);
+    const { proto, fmt, prefix, tag } = ui.exp;
+    const preview = buildExportContent(list, 'lines');
+    const canPrefix = !['url', 'url_colon', 'proxifier'].includes(fmt);
+    sheet.onOk = null;
+    showSheet(`<div class="grip"></div>
+        <div class="flex items-center justify-between mb-3">
+            <div>
+                <h3 class="text-base font-semibold text-zinc-50">Экспорт заказа #${o.id}</h3>
+                <p class="text-[11px] text-zinc-400">${list.length} шт. · Настройка формата и выгрузка</p>
+            </div>
+            <button onclick="hideSheet()" class="text-zinc-500 hover:text-white p-1" aria-label="Закрыть">✕</button>
+        </div>
+
+        <label class="lbl mb-1.5">Протокол</label>
+        <div class="seg mb-3">
+            <button type="button" class="mono ${proto === 'http' ? 'on' : ''}" onclick="setExpProto('http')">HTTP</button>
+            <button type="button" class="mono ${proto === 'socks5' ? 'on' : ''}" onclick="setExpProto('socks5')">SOCKS5</button>
+        </div>
+
+        <label class="lbl mb-1.5">Формат (Антидетект / Софт)</label>
+        <div class="grid grid-cols-2 gap-1.5 mb-3">
+            ${EXP_FORMATS.map(f => {
+                const on = f.id === fmt;
+                const lbl = f.label.replace('proto://', proto + '://').replace('PROTO', proto.toUpperCase());
+                return `<div onclick="setExpFmt('${f.id}')" class="opt !text-left !px-2.5 !py-2 ${on ? 'on' : ''}">
+                    <div class="mono text-[10.5px] font-semibold truncate ${on ? 'text-emerald-300' : 'text-zinc-200'}">${esc(lbl)}</div>
+                    <div class="text-[9.5px] text-zinc-500 truncate mt-0.5">${esc(f.sub)}</div>
+                </div>`;
+            }).join('')}
+        </div>
+
+        <div class="flex flex-wrap gap-1.5 mb-3">
+            ${canPrefix ? `<button type="button" class="chip ${prefix ? 'on' : ''}" onclick="toggleExpOpt('prefix')">+ Префикс ${proto}://</button>` : ''}
+            <button type="button" class="chip ${tag ? 'on' : ''}" onclick="toggleExpOpt('tag')">+ #Тег локации (Антидетект имя)</button>
+        </div>
+
+        <div class="flex items-center justify-between mb-1.5">
+            <label class="lbl">Список (${list.length} шт.)</label>
+            <span class="mono text-[10px] text-zinc-500">Порт ${proto.toUpperCase()}</span>
+        </div>
+        <textarea readonly rows="4" onclick="this.select()" class="input w-full p-2.5 mono text-[11px] text-zinc-200 custom-scroll resize-none leading-relaxed">${esc(preview)}</textarea>
+
+        <div class="grid grid-cols-3 gap-1.5 mt-3">
+            <button class="btn btn-ghost py-2.5 text-[11px]" onclick="downloadExport('txt')">Скачать .txt</button>
+            <button class="btn btn-ghost py-2.5 text-[11px]" onclick="downloadExport('csv')">Скачать .csv</button>
+            <button class="btn btn-ghost py-2.5 text-[11px]" onclick="downloadExport('json')">Скачать .json</button>
+        </div>
+        <button class="btn btn-primary w-full py-3 mt-2" onclick="copyExport()">Скопировать список (${list.length})</button>`);
+}
+
+function copyExport() {
+    const o = ordersById.get(ui.exp.oid); if (!o) return;
+    const list = orderCopyableList(o);
+    const text = buildExportContent(list, 'lines');
+    copyText(text, `Скопировано: ${list.length} шт.`);
+}
+function downloadExport(ext) {
+    const o = ordersById.get(ui.exp.oid); if (!o) return;
+    const list = orderCopyableList(o);
+    const mode = ext === 'csv' ? 'csv' : ext === 'json' ? 'json' : 'lines';
+    const content = buildExportContent(list, mode);
     if (!content) return;
     haptic();
+    const filename = `proxies_${o.id}_${ui.exp.proto}.${ext}`;
     try {
+        const mime = ext === 'json' ? 'application/json;charset=utf-8' : ext === 'csv' ? 'text/csv;charset=utf-8' : 'text/plain;charset=utf-8';
         const blob = new Blob([content], { type: mime });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1181,120 +1203,26 @@ function downloadFile(content, filename, mime = 'text/plain;charset=utf-8') {
         setTimeout(() => URL.revokeObjectURL(url), 1500);
         toast(`Файл ${filename} сохранён`);
     } catch (e) {
-        copyText(content, 'Список скопирован в буфер');
+        copyText(content, `Скопировано в буфер (${ext.toUpperCase()})`);
     }
 }
-function downloadOrder(id) {
-    const o = ordersById.get(id); if (!o) return;
-    const t = proxyLines(o); if (!t) return;
-    downloadFile(t, `proxies_${id}_${cfg.proto}.txt`);
-}
 
-/* ---------- Шторка экспорта для антидетект-браузеров ---------- */
-const EXPORT_PRESETS = [
-    { id: 'colon',        label: 'Dolphin / Octo / AdsPower', sub: 'ip:port:user:pass' },
-    { id: 'url_at',       label: 'URL (proto://user:pass@ip:port)', sub: 'GoLogin / AdsPower / Скрипты' },
-    { id: 'url_colon',    label: 'URL (proto://ip:port:user:pass)', sub: 'Dolphin{anty} / MoreLogin' },
-    { id: 'at',           label: 'user:pass@ip:port', sub: 'Multilogin / cURL' },
-    { id: 'undetectable', label: 'С тегом локации (#RU-ID)', sub: 'Undetectable / Массовый импорт' },
-    { id: 'proxifier',    label: 'Proxifier', sub: 'PROTO ip:port user pass' },
-    { id: 'csv',          label: 'CSV таблица', sub: 'Excel / Импорт по колонкам' },
-    { id: 'json',         label: 'JSON массив', sub: 'Для API и автоматизации' }
-];
-function openExportSheet(oid) {
-    haptic();
-    ui.exportSheet.oid = oid;
-    ui.exportSheet.fmt = cfg.format;
-    ui.exportSheet.proto = cfg.proto;
-    renderExportSheet();
-}
-function setExportProto(proto) {
-    haptic(); ui.exportSheet.proto = proto;
-    cfg.proto = proto; saveCfg();
-    renderExportSheet();
-    if (ui.view === 'orders') renderOrders();
-}
-function setExportFmt(fmt) {
-    haptic(); ui.exportSheet.fmt = fmt;
-    if (PROXY_FORMATS.some(x => x.id === fmt)) { cfg.format = fmt; saveCfg(); }
-    renderExportSheet();
-    if (ui.view === 'orders') renderOrders();
-}
-function renderExportSheet() {
-    const o = ordersById.get(ui.exportSheet.oid); if (!o) return;
-    const list = orderCopyableList(o);
-    const fmt = ui.exportSheet.fmt || cfg.format;
-    const proto = ui.exportSheet.proto || cfg.proto;
-    const output = fmtProxyBatch(list, fmt, proto);
-    sheet.onOk = null;
-    showSheet(`<div class="grip"></div>
-        <div class="flex items-center justify-between mb-3">
-            <div>
-                <h3 class="text-base font-semibold text-zinc-50">Экспорт прокси · #${o.id}</h3>
-                <p class="text-[11px] text-zinc-400">${list.length} шт. · Готово для импорта в антидетект</p>
-            </div>
-            <button onclick="hideSheet()" class="text-zinc-500 hover:text-white p-1" aria-label="Закрыть">✕</button>
-        </div>
-
-        <label class="lbl mb-1.5">Протокол подключения</label>
-        <div class="seg seg-emerald mb-3">
-            <button type="button" class="mono ${proto === 'http' ? 'on' : ''}" onclick="setExportProto('http')">HTTP / HTTPS</button>
-            <button type="button" class="mono ${proto === 'socks5' ? 'on' : ''}" onclick="setExportProto('socks5')">SOCKS5</button>
-        </div>
-
-        <label class="lbl mb-1.5">Формат / Антидетект-браузер</label>
-        <div class="grid grid-cols-2 gap-1.5 mb-3">
-            ${EXPORT_PRESETS.map(pr => {
-                const on = pr.id === fmt;
-                return `<div onclick="setExportFmt('${pr.id}')" class="opt !text-left !px-2.5 !py-2 ${on ? 'on' : ''}">
-                    <div class="text-[11px] font-semibold truncate ${on ? 'text-emerald-300' : 'text-zinc-200'}">${esc(pr.label)}</div>
-                    <div class="mono text-[9.5px] text-zinc-500 truncate mt-0.5">${esc(pr.sub)}</div>
-                </div>`;
-            }).join('')}
-        </div>
-
-        <div class="flex items-center justify-between mb-1.5">
-            <label class="lbl">Предпросмотр (${list.length})</label>
-            <span class="mono text-[10px] text-zinc-500">${proto.toUpperCase()} порт</span>
-        </div>
-        <textarea id="exp-preview" readonly rows="5" onclick="this.select()" class="input w-full p-2.5 mono text-[11px] text-zinc-200 custom-scroll resize-none leading-relaxed">${esc(output)}</textarea>
-
-        <div class="grid grid-cols-2 gap-2 mt-4">
-            <button class="btn btn-ghost py-3" onclick="downloadExportedOrder()">Скачать .${fmt === 'csv' ? 'csv' : fmt === 'json' ? 'json' : 'txt'}</button>
-            <button class="btn btn-primary py-3" onclick="copyExportedOrder()">Скопировать всё</button>
-        </div>`);
-}
-function copyExportedOrder() {
-    const o = ordersById.get(ui.exportSheet.oid); if (!o) return;
-    const list = orderCopyableList(o);
-    const out = fmtProxyBatch(list, ui.exportSheet.fmt, ui.exportSheet.proto);
-    copyText(out, `Скопировано ${list.length} шт. (${ui.exportSheet.proto.toUpperCase()})`);
-}
-function downloadExportedOrder() {
-    const o = ordersById.get(ui.exportSheet.oid); if (!o) return;
-    const list = orderCopyableList(o);
-    const fmt = ui.exportSheet.fmt, proto = ui.exportSheet.proto;
-    const ext = fmt === 'csv' ? 'csv' : fmt === 'json' ? 'json' : 'txt';
-    const out = fmtProxyBatch(list, fmt, proto);
-    downloadFile(out, `proxies_${o.id}_${proto}.${ext}`);
-}
-
-/* ---------- Продление (один прокси или весь заказ) ---------- */
+/* ---------- Продление (клиент: 1 прокси или весь заказ) ---------- */
 function openProlong(pid) { haptic(); ui.prolong.pid = pid; ui.prolong.oid = null; renderProlongSheet(); }
 function openProlongOrder(oid) { haptic(); ui.prolong.oid = oid; ui.prolong.pid = null; renderProlongSheet(); }
 function setProlongDays(d) { haptic(); ui.prolong.days = d; renderProlongSheet(); }
 function renderProlongSheet() {
     const days = ui.prolong.days;
-    let list = [], title = 'Продление', subtitle = '';
+    let list = [], title = 'Продление', sub = '';
     if (ui.prolong.oid) {
         const o = ordersById.get(ui.prolong.oid); if (!o) return;
         list = o.proxies.filter(p => p.status === 'active');
         title = `Продлить заказ #${o.id}`;
-        subtitle = `${list.length} активных прокси`;
+        sub = `${list.length} шт.`;
     } else {
         const p = proxiesById.get(ui.prolong.pid); if (!p) return;
         list = [p];
-        subtitle = `${p.ip}:${proxyPort(p)}`;
+        sub = `${p.ip}:${proxyPort(p)}`;
     }
     if (!list.length) return;
     const cost = list.reduce((s, p) => s + unitPrice(p.monthly, days), 0);
@@ -1302,7 +1230,7 @@ function renderProlongSheet() {
     const newExp = Math.max(Date.now(), list[0].expiresAt) + days * DAY;
     sheet.onOk = null;
     showSheet(`<div class="grip"></div>
-        <div class="mb-4"><h3 class="text-base font-semibold text-zinc-50">${esc(title)}</h3><p class="text-xs text-zinc-500 mono mt-1">${esc(subtitle)}</p></div>
+        <div class="mb-4"><h3 class="text-base font-semibold text-zinc-50">${esc(title)}</h3><p class="text-xs text-zinc-500 mono mt-1">${esc(sub)}</p></div>
         <div class="grid grid-cols-5 gap-1.5 mb-4">${[7, 14, 30, 60, 90].map(d => `<div class="opt ${d === days ? 'on' : ''}" onclick="setProlongDays(${d})"><div class="text-xs font-semibold ${d === days ? 'text-emerald-300' : 'text-zinc-200'}">${d}</div><div class="text-[9px] text-zinc-500 mt-0.5">дн.</div></div>`).join('')}</div>
         <div class="space-y-0.5">${kv('Действует до', fmtD(newExp))}${kv('Спишется', fmtMoney(cost), 'text-emerald-400')}${kv(ok ? 'Баланс после' : 'Не хватает', fmtMoney(ok ? after : -after), ok ? 'text-zinc-300' : 'text-rose-400')}</div>
         <div class="grid grid-cols-2 gap-2 mt-5"><button class="btn btn-ghost py-3" onclick="hideSheet()">Отмена</button>
@@ -1319,8 +1247,8 @@ function confirmProlong() {
         const p = proxiesById.get(ui.prolong.pid); if (p && p.status === 'active') list = [p];
     }
     if (!list.length) return;
-    const totalCost = list.reduce((s, p) => s + unitPrice(p.monthly, days), 0);
-    if (me.balance < totalCost) { toast('Недостаточно средств', { error: true }); return; }
+    const cost = list.reduce((s, p) => s + unitPrice(p.monthly, days), 0);
+    if (me.balance < cost) { toast('Недостаточно средств', { error: true }); return; }
     list.forEach(p => prolongProxy(me, p, days, unitPrice(p.monthly, days), false));
     me.lastActive = Date.now(); hideSheet(); rerenderCurrent();
     toast(list.length > 1 ? `Продлено ${list.length} шт. на ${daysWord(days)}` : `Продлено на ${daysWord(days)}`);
@@ -1375,20 +1303,13 @@ function renderProfile() {
     $('ps-orders').textContent = s.orders; $('ps-live').textContent = s.live; $('ps-spent').textContent = fmtMoney(s.spent); $('ps-cart').textContent = `${c.count} шт.`;
     $('set-auto').checked = me.autoRenew;
     $('set-proto').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.p === cfg.proto));
-
-    const curFmt = PROXY_FORMATS.find(x => x.id === cfg.format) || PROXY_FORMATS[0];
-    $('prof-fmt-tag').textContent = curFmt.tag.split('·')[0].trim();
-    $('prof-format-grid').innerHTML = PROXY_FORMATS.map(f => {
-        const on = f.id === cfg.format;
-        return `<div onclick="setFormat('${f.id}')" class="opt !text-left !px-3 !py-2.5 flex items-center justify-between gap-2 ${on ? 'on' : ''}">
-            <div class="min-w-0">
-                <div class="mono text-[11px] font-semibold truncate ${on ? 'text-emerald-300' : 'text-zinc-200'}">${esc(f.sample(cfg.proto))}</div>
-                <div class="text-[10px] text-zinc-500 truncate mt-0.5">${esc(f.tag)}</div>
-            </div>
-            <span class="w-4 h-4 rounded-full border shrink-0 ${on ? 'border-emerald-400 bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,.6)]' : 'border-zinc-600'}"></span>
-        </div>`;
-    }).join('');
-
+    $('btn-fmt-url').textContent = `${cfg.proto}://login:pass@ip:port`;
+    $('set-format').querySelectorAll('button').forEach(b => {
+        const on = b.dataset.f === cfg.format;
+        b.classList.toggle('on', on);
+        b.classList.toggle('text-emerald-300', on);
+        b.classList.toggle('text-zinc-300', !on);
+    });
     const tx = [...me.tx].sort((a, b) => b.at - a.at || b.id - a.id), shown = state.historyAll ? tx : tx.slice(0, 6);
     $('prof-history').innerHTML = shown.length ? shown.map(t => txRow(t, { client: true })).join('') : '<div class="py-6 text-center text-xs text-zinc-500">Операций пока нет</div>';
     const more = $('hist-more'); more.classList.toggle('hidden', tx.length <= 6); more.textContent = state.historyAll ? 'Свернуть' : `Показать все (${tx.length})`;
@@ -1515,7 +1436,7 @@ function adminProxyRow(p, o) {
         <div class="accordion ${open ? 'open' : ''}"><div class="accordion-inner"><div class="px-2.5 pb-2.5 pt-2.5 border-t border-white/[0.05] space-y-2.5">
             <div class="grid grid-cols-2 gap-2.5">
                 ${det('Логин', esc(p.login))}${det('Пароль', esc(p.pass))}
-                ${det('Порт HTTP / SOCKS5', `${p.httpPort} / ${p.socksPort}`)}${det('Локация', esc(cname(p.country)))}
+                ${det('HTTP / SOCKS5', `${p.httpPort} / ${p.socksPort}`)}${det('Локация', esc(cname(p.country)))}
                 ${det('Куплен', fmtDT(p.createdAt))}${det('Истекает', fmtDT(p.expiresAt))}
                 ${det('Оплачено', fmtMoney(p.paid))}${p.status === 'refunded' ? det('Возвращено', fmtMoney(p.refunded)) : ''}
             </div>
@@ -1569,7 +1490,7 @@ function renderAdminUser() {
     renderBulkBar();
     $('au-foot').innerHTML = `<button class="btn ${u.blocked ? 'btn-soft' : 'btn-danger'} w-full py-3" onclick="adminToggleBlock()">${u.blocked ? 'Разблокировать клиента' : 'Заблокировать клиента'}</button>`;
 }
-function adminSetUChip(k) { haptic(); admin.upf = k; renderAdminUser(); }
+function adminSetUChip(k) { haptic(); admin.upf = k; admin.selected.clear(); renderAdminUser(); }
 function adminToggleSel(id, on) { on ? admin.selected.add(id) : admin.selected.delete(id); renderBulkBar(); }
 function adminSelectAll() {
     haptic(); const u = users[admin.userId];
