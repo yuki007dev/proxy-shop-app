@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Proxy Terminal & Admin</title>
+    <title>Proxy Terminal</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -19,50 +19,54 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
+        /* Премиальный глубокий фон с микро-сеткой и деликатным свечением */
         body {
-            background-color: #07080b;
+            background-color: #08090c;
             background-image:
-                radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 55%),
-                radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
-                radial-gradient(circle at 0% 50%, rgba(30, 41, 59, 0.25) 0%, transparent 60%);
+                linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 100% 100%, rgba(15, 23, 42, 0.45) 0%, transparent 50%);
+            background-size: 28px 28px, 28px 28px, 100% 100%, 100% 100%;
             color: #f1f5f9;
         }
 
-        /* Премиум карточки с едва заметным неоновым отливом */
+        /* Дорогие стеклянные карточки */
         .surface-card {
-            background: rgba(15, 18, 26, 0.78);
+            background: rgba(14, 17, 24, 0.75);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .surface-card:hover {
-            border-color: rgba(16, 185, 129, 0.25);
-            background: rgba(19, 23, 33, 0.88);
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 15px -3px rgba(16, 185, 129, 0.08);
+            border-color: rgba(255, 255, 255, 0.14);
+            background: rgba(18, 22, 31, 0.82);
         }
 
         .surface-input {
-            background: rgba(16, 20, 29, 0.85);
+            background: rgba(15, 18, 26, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.08);
             transition: all 0.2s ease;
         }
 
         .surface-input:focus-within, .surface-input:hover {
             border-color: rgba(16, 185, 129, 0.35);
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
         }
 
-        /* Неоновая кнопка действия */
+        /* Акцентная кнопка с мягким изумрудным свечением */
         .btn-neon {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 2px 14px rgba(16, 185, 129, 0.28);
+            background: #10b981;
+            color: #04130c;
+            font-weight: 600;
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.22);
         }
         .btn-neon:hover {
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.45);
-            filter: brightness(1.06);
+            background: #059669;
+            color: #ffffff;
+            box-shadow: 0 0 22px rgba(16, 185, 129, 0.38);
         }
         .btn-neon:active {
             transform: scale(0.98);
@@ -92,12 +96,12 @@
             overflow: hidden;
         }
 
-        /* Выпадающие меню со скроллом */
+        /* Выпадающие меню */
         .dropdown-menu {
             opacity: 0;
-            transform: scale(0.96) translateY(-6px);
+            transform: scale(0.97) translateY(-4px);
             pointer-events: none;
-            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             transform-origin: top;
         }
         .dropdown-menu.active {
@@ -107,20 +111,13 @@
         }
 
         .custom-scroll::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.02);
+            width: 3px;
         }
         .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 6px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: rgba(16, 185, 129, 0.4);
+            background: rgba(255, 255, 255, 0.14);
+            border-radius: 4px;
         }
 
-        /* Убираем стрелочки у input number */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
@@ -131,10 +128,10 @@
         }
 
         .fade-in {
-            animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -146,32 +143,79 @@
 <body class="min-h-screen flex flex-col justify-between select-none safe-bottom" onclick="closeAllDropdowns(event)">
 
     <!-- Toast уведомление -->
-    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 ease-out opacity-0 -translate-y-2 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900/95 backdrop-blur-md border border-white/10 text-xs text-zinc-100 shadow-2xl">
+    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 ease-out opacity-0 -translate-y-2 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-900/95 backdrop-blur-md border border-white/10 text-xs text-zinc-100 shadow-2xl">
         <span id="toast-icon" class="text-emerald-400 font-bold">✓</span>
         <span id="toast-text"></span>
     </div>
 
-    <!-- Основной контейнер -->
-    <main class="w-full max-w-md mx-auto p-4 flex-1">
-
-        <!-- Верхняя шапка со статусом и переключателем Админки -->
-        <div class="flex items-center justify-between pb-3 mb-1 border-b border-white/[0.05]">
-            <div class="flex items-center gap-2">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <span class="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Склад онлайн</span>
+    <!-- Модалка быстрого продления прокси -->
+    <div id="modal-prolong" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4" onclick="closeModalProlong()">
+        <div class="surface-card w-full max-w-sm rounded-2xl p-4 space-y-4 border-white/15" onclick="event.stopPropagation()">
+            <div>
+                <h3 class="text-sm font-semibold text-zinc-100">Продление адреса</h3>
+                <p class="text-xs text-zinc-400 mt-0.5 mono" id="prolong-proxy-str">0.0.0.0:0000</p>
             </div>
-            <button onclick="toggleAdminView()" id="btn-admin-switch" class="px-2.5 py-1 rounded-lg surface-card border-white/10 hover:border-emerald-500/40 text-[10px] font-mono text-zinc-300 flex items-center gap-1.5 transition">
-                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></span>
-                <span id="admin-switch-text">Админ-панель</span>
-            </button>
+            <div class="space-y-1.5">
+                <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Срок продления</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="selectProlongDays(30, 40)" class="p-2.5 rounded-xl surface-input border-emerald-500/40 text-center text-xs font-semibold text-emerald-400">30 дн.<span class="block text-[10px] text-zinc-400 mono">40 ₽</span></button>
+                    <button onclick="selectProlongDays(60, 76)" class="p-2.5 rounded-xl surface-input text-center text-xs font-semibold text-zinc-300">60 дн.<span class="block text-[10px] text-zinc-400 mono">76 ₽</span></button>
+                    <button onclick="selectProlongDays(90, 110)" class="p-2.5 rounded-xl surface-input text-center text-xs font-semibold text-zinc-300">90 дн.<span class="block text-[10px] text-zinc-400 mono">110 ₽</span></button>
+                </div>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeModalProlong()" class="w-1/2 py-2.5 rounded-xl btn-secondary text-xs text-zinc-400">Отмена</button>
+                <button onclick="confirmProlong()" class="w-1/2 py-2.5 rounded-xl btn-neon text-xs">Продлить</button>
+            </div>
         </div>
+    </div>
+
+    <!-- Модалка пополнения баланса -->
+    <div id="modal-deposit" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4" onclick="closeDepositModal()">
+        <div class="surface-card w-full max-w-sm rounded-2xl p-4 space-y-4 border-white/15" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-semibold text-zinc-100">Пополнение баланса</h3>
+                <button onclick="closeDepositModal()" class="text-zinc-500 hover:text-white text-sm">✕</button>
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Сумма (₽)</label>
+                <input type="number" id="deposit-amount" value="500" class="w-full p-2.5 rounded-xl surface-input text-sm font-semibold mono text-zinc-100 focus:outline-none">
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Способ оплаты</label>
+                <div class="space-y-1.5">
+                    <div onclick="processDeposit('CryptoBot')" class="p-3 rounded-xl surface-input hover:border-emerald-500/40 cursor-pointer flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                            <span class="font-medium text-zinc-200">CryptoBot (USDT, TON, BTC)</span>
+                        </div>
+                        <span class="text-[10px] text-emerald-400">0% ком.</span>
+                    </div>
+                    <div onclick="processDeposit('xRocket')" class="p-3 rounded-xl surface-input hover:border-emerald-500/40 cursor-pointer flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                            <span class="font-medium text-zinc-200">xRocket Pay</span>
+                        </div>
+                        <span class="text-[10px] text-emerald-400">0% ком.</span>
+                    </div>
+                    <div onclick="processDeposit('Card')" class="p-3 rounded-xl surface-input hover:border-emerald-500/40 cursor-pointer flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span class="font-medium text-zinc-200">Банковская карта / СБП</span>
+                        </div>
+                        <span class="text-[10px] text-zinc-500">Авто</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <main class="w-full max-w-md mx-auto p-4 flex-1">
 
         <!-- ================= ЭКРАН 1: КАТАЛОГ СЕТЕЙ ================= -->
         <section id="view-providers" class="fade-in space-y-3">
-            <header class="pt-1 pb-1">
+            <header class="pt-2 pb-1">
                 <h1 class="text-xl font-bold tracking-tight text-zinc-100">Каталог сетей</h1>
                 <p class="text-xs text-zinc-400">Выберите подходящую серверную подсеть</p>
             </header>
@@ -182,20 +226,15 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <h3 class="text-sm font-semibold text-zinc-100 group-hover:text-emerald-400 transition">Standard Pool</h3>
-                            <span class="text-[9px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span class="text-[9px] font-medium px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-white/5">
                                 Базовый
                             </span>
                         </div>
                         <p class="text-xs text-zinc-400 mt-1">IPv6 / IPv4 адреса высокой доступности</p>
-                        <div class="flex items-center gap-2 mt-2 text-[10px] text-zinc-500 font-mono">
-                            <span>HTTP/SOCKS5</span>
-                            <span>•</span>
-                            <span>до 100 Мбит/с</span>
-                        </div>
                     </div>
                     <div class="text-right">
                         <span class="text-xs font-semibold mono text-emerald-400">от 15 ₽</span>
-                        <span class="block text-[10px] text-zinc-400">в месяц</span>
+                        <span class="block text-[10px] text-zinc-500">в месяц</span>
                     </div>
                 </div>
             </div>
@@ -205,21 +244,16 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="flex items-center gap-2">
-                            <h3 class="text-sm font-semibold text-zinc-100 group-hover:text-cyan-400 transition">Prime Pool</h3>
-                            <span class="text-[9px] font-medium px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                            <h3 class="text-sm font-semibold text-zinc-100 group-hover:text-emerald-400 transition">Prime Pool</h3>
+                            <span class="text-[9px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                                 Приоритет
                             </span>
                         </div>
                         <p class="text-xs text-zinc-400 mt-1">Высокий IP-траст для критичных задач</p>
-                        <div class="flex items-center gap-2 mt-2 text-[10px] text-zinc-500 font-mono">
-                            <span>Чистые подсети</span>
-                            <span>•</span>
-                            <span>до 1 Гбит/с</span>
-                        </div>
                     </div>
                     <div class="text-right">
-                        <span class="text-xs font-semibold mono text-cyan-400">от 65 ₽</span>
-                        <span class="block text-[10px] text-zinc-400">в месяц</span>
+                        <span class="text-xs font-semibold mono text-emerald-400">от 65 ₽</span>
+                        <span class="block text-[10px] text-zinc-500">в месяц</span>
                     </div>
                 </div>
             </div>
@@ -244,25 +278,20 @@
                 </div>
             </div>
 
-            <!-- Выбор страны (Дропдаун с поиском и прокруткой) -->
+            <!-- Выбор страны (Дропдаун со скроллом и поиском) -->
             <div class="space-y-1.5 relative">
                 <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Локация</label>
                 <div onclick="toggleDropdown(event, 'dropdown-country')" class="w-full p-2.5 rounded-xl surface-input text-xs text-zinc-200 flex items-center justify-between cursor-pointer active:scale-[0.99] transition">
                     <div class="flex items-center gap-2.5">
-                        <img id="selected-country-flag" src="https://flagcdn.com/24x18/ru.png" class="w-4 h-3 object-cover rounded-sm shadow-sm" alt="Flag">
+                        <img id="selected-country-flag" src="https://flagcdn.com/24x18/ru.png" class="w-4 h-3 object-cover rounded-sm" alt="Flag">
                         <span id="selected-country-name" class="font-medium">Россия (RU)</span>
                     </div>
                     <span class="text-[10px] text-zinc-400">▼</span>
                 </div>
 
-                <div id="dropdown-country" class="dropdown-menu absolute left-0 right-0 top-[62px] z-30 p-2 bg-[#10131c]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl space-y-2">
-                    <!-- Поле живого поиска -->
-                    <div class="relative" onclick="event.stopPropagation()">
-                        <input type="text" id="country-search-input" oninput="filterCountries(this.value)" placeholder="Поиск страны..." class="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50">
-                    </div>
-
-                    <!-- Скроллируемый список стран -->
-                    <div id="countries-scroll-list" class="max-h-56 overflow-y-auto space-y-0.5 custom-scroll pr-1">
+                <div id="dropdown-country" class="dropdown-menu absolute left-0 right-0 top-[62px] z-30 p-2 bg-[#10131c] border border-white/10 rounded-2xl shadow-2xl space-y-2">
+                    <input type="text" id="country-search-input" oninput="filterCountries(this.value)" onclick="event.stopPropagation()" placeholder="Поиск локации..." class="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs text-zinc-200 focus:outline-none focus:border-emerald-500/50">
+                    <div id="countries-scroll-list" class="max-h-52 overflow-y-auto space-y-0.5 custom-scroll pr-1">
                         <!-- Динамический список стран -->
                     </div>
                 </div>
@@ -278,28 +307,13 @@
                         <span class="text-[10px] text-zinc-400">▼</span>
                     </div>
 
-                    <div id="dropdown-period" class="dropdown-menu absolute left-0 right-0 top-[62px] z-30 p-1.5 bg-[#10131c]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl space-y-0.5 max-h-52 overflow-y-auto custom-scroll">
-                        <div onclick="selectPeriod(3, '3 дня')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
-                            <span>3 дня</span><span class="text-[10px] text-zinc-500">тест</span>
-                        </div>
-                        <div onclick="selectPeriod(7, '7 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
-                            <span>7 дней</span><span class="text-[10px] text-zinc-500">1 нед.</span>
-                        </div>
-                        <div onclick="selectPeriod(14, '14 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
-                            <span>14 дней</span><span class="text-[10px] text-zinc-500">2 нед.</span>
-                        </div>
-                        <div onclick="selectPeriod(30, '30 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between text-emerald-400 font-medium">
-                            <span>30 дней</span><span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/10 border border-emerald-500/20">Хит</span>
-                        </div>
-                        <div onclick="selectPeriod(60, '60 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
-                            <span>60 дней</span><span class="text-[10px] text-cyan-400">-5%</span>
-                        </div>
-                        <div onclick="selectPeriod(90, '90 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
-                            <span>90 дней</span><span class="text-[10px] text-cyan-400">-10%</span>
-                        </div>
-                        <div onclick="selectPeriod(180, '180 дней')" class="p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs flex justify-between">
-                            <span>180 дней</span><span class="text-[10px] text-cyan-400">-15%</span>
-                        </div>
+                    <div id="dropdown-period" class="dropdown-menu absolute left-0 right-0 top-[62px] z-30 p-1.5 bg-[#10131c] border border-white/10 rounded-2xl shadow-2xl space-y-0.5 max-h-48 overflow-y-auto custom-scroll">
+                        <div onclick="selectPeriod(3, '3 дня')" class="p-2 rounded-xl hover:bg-zinc-800 cursor-pointer text-xs">3 дня</div>
+                        <div onclick="selectPeriod(7, '7 дней')" class="p-2 rounded-xl hover:bg-zinc-800 cursor-pointer text-xs">7 дней</div>
+                        <div onclick="selectPeriod(14, '14 дней')" class="p-2 rounded-xl hover:bg-zinc-800 cursor-pointer text-xs">14 дней</div>
+                        <div onclick="selectPeriod(30, '30 дней')" class="p-2 rounded-xl hover:bg-zinc-800 cursor-pointer text-xs text-emerald-400 font-medium">30 дней</div>
+                        <div onclick="selectPeriod(60, '60 дней')" class="p-2 rounded-xl hover:bg-zinc-800 cursor-pointer text-xs">60 дней</div>
+                        <div onclick="selectPeriod(90, '90 дней')" class="p-2 rounded-xl hover:bg-zinc-800 cursor-pointer text-xs">90 дней</div>
                     </div>
                 </div>
 
@@ -307,34 +321,34 @@
                 <div class="space-y-1.5">
                     <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Количество</label>
                     <div class="flex items-center rounded-xl surface-input overflow-hidden h-[41px]">
-                        <button onclick="changeCount(-1)" class="w-9 h-full text-zinc-400 hover:text-emerald-400 hover:bg-white/5 active:bg-white/10 transition">-</button>
-                        <input id="conf-count" type="number" value="1" min="1" max="500" oninput="onCountManualInput(this.value)" onblur="onCountBlur(this.value)" class="w-full bg-transparent text-center text-xs font-semibold mono text-zinc-100 focus:outline-none focus:text-emerald-400 transition">
-                        <button onclick="changeCount(1)" class="w-9 h-full text-zinc-400 hover:text-emerald-400 hover:bg-white/5 active:bg-white/10 transition">+</button>
+                        <button onclick="changeCount(-1)" class="w-9 h-full text-zinc-400 hover:text-white hover:bg-white/5 active:bg-white/10 transition">-</button>
+                        <input id="conf-count" type="number" value="1" min="1" max="500" oninput="onCountManualInput(this.value)" onblur="onCountBlur(this.value)" class="w-full bg-transparent text-center text-xs font-semibold mono text-zinc-100 focus:outline-none">
+                        <button onclick="changeCount(1)" class="w-9 h-full text-zinc-400 hover:text-white hover:bg-white/5 active:bg-white/10 transition">+</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Быстрые чипсы количества -->
-            <div class="flex items-center justify-between gap-1.5 pt-0.5">
-                <span class="text-[10px] text-zinc-500">Быстро:</span>
-                <div class="flex gap-1">
-                    <button onclick="setExactCount(1)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100 hover:border-emerald-500/40">1</button>
-                    <button onclick="setExactCount(5)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100 hover:border-emerald-500/40">+5</button>
-                    <button onclick="setExactCount(10)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100 hover:border-emerald-500/40">+10</button>
-                    <button onclick="setExactCount(25)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100 hover:border-emerald-500/40">+25</button>
+            <!-- Быстрый выбор количества -->
+            <div class="flex items-center justify-between gap-1">
+                <span class="text-[10px] text-zinc-500">Пресеты:</span>
+                <div class="flex gap-1.5">
+                    <button onclick="setExactCount(1)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100">1</button>
+                    <button onclick="setExactCount(5)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100">+5</button>
+                    <button onclick="setExactCount(10)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100">+10</button>
+                    <button onclick="setExactCount(25)" class="px-2 py-0.5 rounded-lg surface-input text-[10px] text-zinc-400 hover:text-zinc-100">+25</button>
                 </div>
             </div>
 
             <!-- Итоговая стоимость позиции -->
-            <div class="surface-card rounded-2xl p-3.5 flex items-center justify-between border-emerald-500/20">
+            <div class="surface-card rounded-2xl p-3.5 flex items-center justify-between">
                 <span class="text-xs text-zinc-400">Стоимость позиции:</span>
                 <span class="text-base font-bold mono text-emerald-400" id="conf-total-display">0 ₽</span>
             </div>
 
-            <!-- Кнопки действий -->
+            <!-- Действия -->
             <div class="space-y-2 pt-1">
-                <button onclick="addToCart()" class="w-full py-3.5 rounded-xl btn-neon text-zinc-950 font-bold text-xs active:scale-[0.99] transition flex items-center justify-center gap-1.5">
-                    <span>+</span> Добавить в корзину
+                <button onclick="addToCart()" class="w-full py-3.5 rounded-xl btn-neon text-xs active:scale-[0.99] transition">
+                    + Добавить в корзину
                 </button>
                 <button onclick="navigate('cart')" class="w-full py-2.5 rounded-xl btn-secondary text-xs text-zinc-300 font-medium active:scale-[0.99] transition">
                     Перейти к оформлению (<span id="btn-cart-count">0</span>)
@@ -361,13 +375,13 @@
                     <span class="text-xs text-zinc-400">Итого к списанию:</span>
                     <span class="text-base font-bold mono text-emerald-400" id="cart-total-amount">0 ₽</span>
                 </div>
-                <button onclick="checkoutCart()" class="w-full py-3.5 rounded-xl btn-neon text-zinc-950 font-bold text-xs active:scale-[0.99] transition">
+                <button onclick="checkoutCart()" class="w-full py-3.5 rounded-xl btn-neon text-xs active:scale-[0.99] transition">
                     Оплатить заказ
                 </button>
             </div>
         </section>
 
-        <!-- ================= ЭКРАН 4: ЗАКАЗЫ ================= -->
+        <!-- ================= ЭКРАН 4: ЗАКАЗЫ И ПРОДЛЕНИЕ ================= -->
         <section id="view-orders" class="hidden space-y-3">
             <header class="pt-2 flex justify-between items-center relative">
                 <div>
@@ -381,11 +395,9 @@
                         <span class="text-[9px] text-zinc-400">▼</span>
                     </div>
 
-                    <div id="dropdown-orders-sort" class="dropdown-menu absolute right-0 top-9 z-30 w-44 p-1 bg-[#10131c]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl space-y-0.5">
+                    <div id="dropdown-orders-sort" class="dropdown-menu absolute right-0 top-9 z-30 w-44 p-1 bg-[#10131c] border border-white/10 rounded-2xl shadow-2xl space-y-0.5">
                         <div onclick="setOrdersSort('date_desc', 'Сначала новые')" class="p-2 rounded-xl hover:bg-zinc-800 text-[11px] cursor-pointer">Сначала новые</div>
                         <div onclick="setOrdersSort('date_asc', 'Сначала старые')" class="p-2 rounded-xl hover:bg-zinc-800 text-[11px] cursor-pointer">Сначала старые</div>
-                        <div onclick="setOrdersSort('price_desc', 'По сумме (макс)')" class="p-2 rounded-xl hover:bg-zinc-800 text-[11px] cursor-pointer">По сумме (макс)</div>
-                        <div onclick="setOrdersSort('price_asc', 'По сумме (мин)')" class="p-2 rounded-xl hover:bg-zinc-800 text-[11px] cursor-pointer">По сумме (мин)</div>
                     </div>
                 </div>
             </header>
@@ -399,241 +411,173 @@
         <section id="view-profile" class="hidden space-y-4">
             <header class="pt-2">
                 <h2 class="text-xl font-bold tracking-tight text-zinc-100">Учетная запись</h2>
-                <p class="text-xs text-zinc-400">Синхронизация баланса и параметров</p>
+                <p class="text-xs text-zinc-400">Параметры и управление балансом</p>
             </header>
 
             <!-- Основная карточка пользователя -->
             <div class="surface-card rounded-2xl p-4 space-y-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 flex items-center justify-center text-sm font-bold text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]" id="prof-avatar">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-zinc-800 to-zinc-700 border border-white/10 flex items-center justify-center text-sm font-bold text-zinc-100" id="prof-avatar">
                             U
                         </div>
                         <div>
-                            <div class="flex items-center gap-1.5">
-                                <h3 class="text-sm font-semibold text-zinc-100" id="prof-username">Пользователь</h3>
-                                <span class="px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] font-semibold">Active</span>
-                            </div>
+                            <h3 class="text-sm font-semibold text-zinc-100" id="prof-username">Пользователь</h3>
                             <div class="flex items-center gap-1.5 text-zinc-400 text-[11px] mono mt-0.5 cursor-pointer hover:text-emerald-400 transition" onclick="copyString(state.user.id, 'ID скопирован')">
                                 <span id="prof-user-id">ID: —</span>
                                 <svg class="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                             </div>
                         </div>
                     </div>
-                    <span class="text-[10px] font-mono px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                        Tier 1 Client
-                    </span>
+                    <button onclick="openDepositModal()" class="px-3 py-1.5 rounded-xl btn-neon text-xs font-semibold">
+                        Пополнить
+                    </button>
                 </div>
 
-                <!-- Баланс и быстрое пополнение -->
                 <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
                     <div>
                         <span class="text-[11px] text-zinc-400 block font-medium">Основной баланс</span>
                         <span class="text-xl font-bold mono text-zinc-100" id="prof-balance-val">0.00 ₽</span>
                     </div>
-                    <button onclick="topUpBalance(1500)" class="px-3.5 py-2 rounded-xl btn-secondary text-xs font-semibold text-emerald-400 border-emerald-500/20 hover:border-emerald-500/40 active:scale-95 transition">
-                        +1,500 ₽ (Тест)
-                    </button>
+                    <span class="text-[10px] text-zinc-500 mono">CryptoBot / xRocket / СБП</span>
                 </div>
             </div>
 
-            <!-- Синхронизированная аналитика (4 плитки) -->
+            <!-- Аналитика (4 плитки) -->
             <div class="grid grid-cols-2 gap-2 text-xs">
                 <div class="surface-card rounded-2xl p-3">
                     <span class="text-zinc-400 text-[11px] font-medium">Всего заказов</span>
                     <span class="text-base font-semibold mono text-zinc-100 mt-1 block" id="prof-stat-orders">0</span>
-                    <span class="text-[10px] text-zinc-500 mt-0.5 block">За все время</span>
                 </div>
                 <div class="surface-card rounded-2xl p-3">
                     <span class="text-zinc-400 text-[11px] font-medium">Активных прокси</span>
                     <span class="text-base font-semibold mono text-emerald-400 mt-1 block" id="prof-stat-proxies">0</span>
-                    <span class="text-[10px] text-zinc-500 mt-0.5 block">На серверах</span>
                 </div>
                 <div class="surface-card rounded-2xl p-3">
                     <span class="text-zinc-400 text-[11px] font-medium">Потрачено</span>
                     <span class="text-base font-semibold mono text-zinc-100 mt-1 block" id="prof-stat-spent">0 ₽</span>
-                    <span class="text-[10px] text-zinc-500 mt-0.5 block">Списания в боте</span>
                 </div>
                 <div class="surface-card rounded-2xl p-3">
                     <span class="text-zinc-400 text-[11px] font-medium">В корзине сейчас</span>
                     <span class="text-base font-semibold mono text-zinc-100 mt-1 block" id="prof-stat-cart">0 шт.</span>
-                    <span class="text-[10px] text-zinc-500 mt-0.5 block" id="prof-stat-cart-sum">на 0 ₽</span>
                 </div>
             </div>
 
-            <!-- Сервисные настройки -->
+            <!-- Настройки -->
             <div class="surface-card rounded-2xl p-3.5 space-y-3 text-xs">
                 <div class="flex items-center justify-between">
                     <div>
                         <span class="text-zinc-200 font-medium block">Автоматическое продление</span>
-                        <span class="text-zinc-400 text-[10px]">Продлевать при наличии баланса</span>
+                        <span class="text-zinc-400 text-[10px]">Продлевать активные прокси с баланса</span>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" checked class="sr-only peer">
                         <div class="w-9 h-5 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
                     </label>
                 </div>
-
-                <div class="pt-2 border-t border-white/[0.06] flex items-center justify-between">
-                    <div>
-                        <span class="text-zinc-200 font-medium block">API Token (Реселлинг)</span>
-                        <span class="text-zinc-400 text-[10px] mono">px_sec_91823...</span>
-                    </div>
-                    <button onclick="copyString('px_sec_91823abf8921cd', 'API токен скопирован')" class="px-2.5 py-1.5 rounded-lg btn-secondary text-[11px] text-zinc-300 hover:text-emerald-400">
-                        Копия
-                    </button>
-                </div>
             </div>
         </section>
 
-        <!-- ================= ЭКРАН 6: АДМИН-ПАНЕЛЬ (PROXY6 & PROXYLINE) ================= -->
+        <!-- ================= ЭКРАН 6: АДМИН-ПАНЕЛЬ (ВКЛАДКА 5) ================= -->
         <section id="view-admin" class="hidden space-y-4">
-            <header class="pt-1 flex items-center justify-between">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">ADMIN v2.4</span>
-                        <span class="text-xs text-zinc-500 mono">API Gateways</span>
+            
+            <!-- Экран ввода PIN / Пароля (по умолчанию: 1234) -->
+            <div id="admin-auth-screen" class="space-y-4 py-8">
+                <div class="text-center space-y-1">
+                    <div class="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center mx-auto text-emerald-400 text-lg">
+                        🔒
                     </div>
-                    <h2 class="text-lg font-bold tracking-tight text-zinc-100 mt-0.5">Управление API Складом</h2>
-                </div>
-                <button onclick="syncAllApi()" class="px-2.5 py-1.5 rounded-xl btn-secondary text-[10px] text-zinc-300 flex items-center gap-1.5 hover:text-emerald-400 transition">
-                    <span id="sync-icon">🔄</span> Синхронизация
-                </button>
-            </header>
-
-            <!-- Провайдеры API: Балансы и Шлюзы -->
-            <div class="grid grid-cols-2 gap-2 text-xs">
-                <!-- Proxy6 Gateway -->
-                <div class="surface-card rounded-2xl p-3 border-emerald-500/20 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-zinc-100">Proxy6.net</span>
-                        <span class="text-[9px] font-mono text-emerald-400 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 42ms
-                        </span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-zinc-400 block">Баланс API (Ключ #1)</span>
-                        <span class="text-base font-bold mono text-emerald-400" id="admin-p6-balance">14,280.50 ₽</span>
-                    </div>
-                    <div class="pt-1 border-t border-white/[0.06] text-[10px] text-zinc-400 flex justify-between">
-                        <span>Активно: <b class="text-zinc-200">128 шт.</b></span>
-                        <span class="text-emerald-400 cursor-pointer" onclick="testApiPing('Proxy6')">Ping</span>
-                    </div>
+                    <h2 class="text-lg font-bold text-zinc-100">Вход в панель управления</h2>
+                    <p class="text-xs text-zinc-400">Введите PIN администратора для доступа</p>
                 </div>
 
-                <!-- ProxyLine Gateway -->
-                <div class="surface-card rounded-2xl p-3 border-cyan-500/20 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-zinc-100">ProxyLine</span>
-                        <span class="text-[9px] font-mono text-cyan-400 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> 38ms
-                        </span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-zinc-400 block">Баланс API (Ключ #2)</span>
-                        <span class="text-base font-bold mono text-cyan-400" id="admin-pl-balance">$ 184.20</span>
-                    </div>
-                    <div class="pt-1 border-t border-white/[0.06] text-[10px] text-zinc-400 flex justify-between">
-                        <span>Активно: <b class="text-zinc-200">45 шт.</b></span>
-                        <span class="text-cyan-400 cursor-pointer" onclick="testApiPing('ProxyLine')">Ping</span>
-                    </div>
+                <div class="max-w-xs mx-auto space-y-3">
+                    <input type="password" id="admin-pin-input" placeholder="Пароль (по умолч. 1234)" maxlength="16" class="w-full text-center tracking-widest text-base font-bold mono p-3 rounded-xl surface-input focus:outline-none focus:border-emerald-500/50">
+                    <button onclick="verifyAdminPin()" class="w-full py-3 rounded-xl btn-neon text-xs">Подтвердить вход</button>
+                    <p id="admin-pin-error" class="text-center text-xs text-rose-400 hidden">Неверный пароль</p>
                 </div>
             </div>
 
-            <!-- Управление наценкой (Pricing Engine) -->
-            <div class="surface-card rounded-2xl p-3.5 space-y-2.5">
-                <div class="flex items-center justify-between">
+            <!-- Основной интерфейс администратора -->
+            <div id="admin-panel-content" class="hidden space-y-4">
+                <header class="pt-2 flex justify-between items-center">
                     <div>
-                        <span class="text-xs font-semibold text-zinc-100 block">Розничная наценка (Маржа)</span>
-                        <span class="text-[10px] text-zinc-400">Коэффициент поверх себестоимости API</span>
+                        <h2 class="text-xl font-bold tracking-tight text-zinc-100">Админ-панель</h2>
+                        <p class="text-xs text-zinc-400">Управление пользователями, балансами и прокси</p>
                     </div>
-                    <span class="text-sm font-bold mono text-emerald-400" id="admin-margin-label">+45%</span>
-                </div>
-                <input type="range" min="10" max="150" step="5" value="45" oninput="updateMargin(this.value)" class="w-full accent-emerald-500 cursor-pointer bg-zinc-800 h-1.5 rounded-lg">
-                <div class="flex justify-between text-[10px] text-zinc-500 font-mono">
-                    <span>Мин: +10%</span>
-                    <span>Рекомендуется: +40-50%</span>
-                    <span>Макс: +150%</span>
-                </div>
-            </div>
+                    <button onclick="lockAdminSession()" class="text-xs text-zinc-400 hover:text-rose-400 p-1">Выйти</button>
+                </header>
 
-            <!-- Живые остатки на складах (API getcount / getAvailableCount) -->
-            <div class="surface-card rounded-2xl p-3.5 space-y-2.5">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-zinc-100">Склад провайдеров (Live Rest)</span>
-                    <span class="text-[10px] text-zinc-400 mono">API: getcount</span>
+                <!-- 1. Поиск клиентов -->
+                <div class="space-y-1.5">
+                    <label class="text-[11px] font-medium uppercase tracking-wider text-zinc-400">Поиск клиента (ID / @username)</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="admin-search-user-input" placeholder="Например: 8401928" class="w-full px-3 py-2.5 rounded-xl surface-input text-xs font-mono text-zinc-100 focus:outline-none">
+                        <button onclick="adminSearchUser()" class="px-4 rounded-xl btn-neon text-xs">Найти</button>
+                    </div>
                 </div>
 
-                <div class="space-y-1.5 text-xs">
-                    <div class="p-2 rounded-xl bg-zinc-900/80 border border-white/[0.05] flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <img src="https://flagcdn.com/24x18/ru.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="RU">
-                            <span class="text-zinc-300 font-medium">Россия IPv4 Индивид.</span>
+                <!-- 2. Карточка найденного клиента -->
+                <div id="admin-user-card" class="surface-card rounded-2xl p-4 space-y-3">
+                    <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                        <div>
+                            <span class="text-sm font-bold text-zinc-100" id="adm-user-name">Alexey</span>
+                            <span class="block text-[11px] font-mono text-zinc-400" id="adm-user-id">TG ID: 8401928</span>
                         </div>
-                        <div class="flex items-center gap-2 font-mono text-[11px]">
-                            <span class="text-emerald-400">940 шт.</span>
-                            <span class="text-zinc-500 text-[10px]">(Proxy6)</span>
+                        <div class="text-right">
+                            <span class="text-xs text-zinc-400 block">Баланс:</span>
+                            <span class="text-base font-bold mono text-emerald-400" id="adm-user-balance">2000.00 ₽</span>
                         </div>
                     </div>
 
-                    <div class="p-2 rounded-xl bg-zinc-900/80 border border-white/[0.05] flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <img src="https://flagcdn.com/24x18/de.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="DE">
-                            <span class="text-zinc-300 font-medium">Германия Prime Shared</span>
-                        </div>
-                        <div class="flex items-center gap-2 font-mono text-[11px]">
-                            <span class="text-cyan-400">210 шт.</span>
-                            <span class="text-zinc-500 text-[10px]">(ProxyLine)</span>
+                    <!-- Быстрое изменение баланса клиента -->
+                    <div class="space-y-2">
+                        <span class="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold">Операции с балансом:</span>
+                        <div class="flex items-center gap-1.5">
+                            <input type="number" id="adm-balance-amount" placeholder="Сумма ₽" class="w-1/2 p-2 rounded-xl surface-input text-xs mono text-zinc-100">
+                            <button onclick="adminChangeBalance('add')" class="w-1/6 py-2 rounded-xl surface-input hover:border-emerald-500/50 text-emerald-400 font-bold text-xs" title="Начислить">+</button>
+                            <button onclick="adminChangeBalance('sub')" class="w-1/6 py-2 rounded-xl surface-input hover:border-rose-500/50 text-rose-400 font-bold text-xs" title="Списать">-</button>
+                            <button onclick="adminChangeBalance('set')" class="w-1/6 py-2 rounded-xl surface-input hover:border-sky-500/50 text-sky-400 font-bold text-xs" title="Установить">=</button>
                         </div>
                     </div>
 
-                    <div class="p-2 rounded-xl bg-zinc-900/80 border border-white/[0.05] flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <img src="https://flagcdn.com/24x18/us.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="US">
-                            <span class="text-zinc-300 font-medium">США IPv6 Пул</span>
+                    <!-- Прокси найденного пользователя -->
+                    <div class="pt-2 space-y-2">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-semibold text-zinc-300">Активные прокси клиента (<span id="adm-user-proxy-count">0</span>)</span>
                         </div>
-                        <div class="flex items-center gap-2 font-mono text-[11px]">
-                            <span class="text-emerald-400">1,500+ шт.</span>
-                            <span class="text-zinc-500 text-[10px]">(Proxy6)</span>
+                        <div id="adm-user-proxy-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scroll pr-1">
+                            <!-- Прокси пользователя в админке -->
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Лог последних событий API шлюза -->
-            <div class="surface-card rounded-2xl p-3.5 space-y-2">
-                <span class="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider block">Лог шлюза (Webhook & REST)</span>
-                <div class="space-y-1 font-mono text-[10px] text-zinc-400" id="admin-logs-container">
-                    <div class="flex items-center justify-between py-0.5 border-b border-white/[0.03]">
-                        <span class="text-emerald-400">[200 OK] Proxy6 /api/buy</span>
-                        <span class="text-zinc-600">1 мин назад</span>
-                    </div>
-                    <div class="flex items-center justify-between py-0.5 border-b border-white/[0.03]">
-                        <span class="text-cyan-400">[200 OK] ProxyLine /api/getcount</span>
-                        <span class="text-zinc-600">3 мин назад</span>
-                    </div>
-                    <div class="flex items-center justify-between py-0.5">
-                        <span class="text-zinc-300">[SYNC] Балансы обновлены</span>
-                        <span class="text-zinc-600">5 мин назад</span>
+                <!-- 3. Глобальный поиск прокси по всей базе -->
+                <div class="surface-card rounded-2xl p-4 space-y-3">
+                    <span class="text-xs font-semibold text-zinc-100 block">Глобальный поиск прокси в системе</span>
+                    <input type="text" id="adm-global-proxy-search" oninput="adminFilterGlobalProxies(this.value)" placeholder="Поиск по IP / порту / логину..." class="w-full px-3 py-2 rounded-xl surface-input text-xs font-mono text-zinc-100 focus:outline-none">
+                    <div id="adm-global-proxies-list" class="space-y-1.5 max-h-48 overflow-y-auto custom-scroll text-xs">
+                        <!-- Все прокси системы -->
                     </div>
                 </div>
+
             </div>
         </section>
 
     </main>
 
-    <!-- ================= НАВИГАЦИОННАЯ ПАНЕЛЬ ================= -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#07080b]/90 backdrop-blur-2xl border-t border-white/[0.08]">
-        <div class="max-w-md mx-auto grid grid-cols-4 p-1.5 pb-2">
+    <!-- ================= НАВИГАЦИОННАЯ ПАНЕЛЬ (5 ВКЛАДОК С АДМИНКОЙ) ================= -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#08090c]/90 backdrop-blur-2xl border-t border-white/[0.08]">
+        <div class="max-w-md mx-auto grid grid-cols-5 p-1 pb-2" id="bottom-navbar">
 
             <!-- 1. Каталог -->
-            <button onclick="navigate('providers')" id="nav-btn-providers" class="flex flex-col items-center gap-1 py-1.5 text-emerald-400 text-[11px] font-medium transition">
+            <button onclick="navigate('providers')" id="nav-btn-providers" class="flex flex-col items-center gap-1 py-1.5 text-emerald-400 text-[10px] font-medium transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 Каталог
             </button>
 
             <!-- 2. Корзина -->
-            <button onclick="navigate('cart')" id="nav-btn-cart" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[11px] font-medium transition hover:text-white">
+            <button onclick="navigate('cart')" id="nav-btn-cart" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[10px] font-medium transition hover:text-white">
                 <div class="relative inline-flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     <span id="nav-cart-badge" class="hidden absolute -top-1.5 -right-3 min-w-[16px] h-4 px-1 rounded-full bg-emerald-500 text-zinc-950 font-black text-[9px] flex items-center justify-center shadow-[0_0_8px_rgba(16,185,129,0.5)]">0</span>
@@ -642,15 +586,21 @@
             </button>
 
             <!-- 3. Заказы -->
-            <button onclick="navigate('orders')" id="nav-btn-orders" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[11px] font-medium transition hover:text-white">
+            <button onclick="navigate('orders')" id="nav-btn-orders" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[10px] font-medium transition hover:text-white">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                 Заказы
             </button>
 
             <!-- 4. Профиль -->
-            <button onclick="navigate('profile')" id="nav-btn-profile" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[11px] font-medium transition hover:text-white">
+            <button onclick="navigate('profile')" id="nav-btn-profile" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[10px] font-medium transition hover:text-white">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 Профиль
+            </button>
+
+            <!-- 5. Админ (Вкладка для администраторов) -->
+            <button onclick="navigate('admin')" id="nav-btn-admin" class="flex flex-col items-center gap-1 py-1.5 text-zinc-400 text-[10px] font-medium transition hover:text-white">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                Админ
             </button>
 
         </div>
@@ -663,8 +613,8 @@
             tg.ready();
             tg.expand();
             try {
-                tg.setHeaderColor('#07080b');
-                tg.setBackgroundColor('#07080b');
+                tg.setHeaderColor('#08090c');
+                tg.setBackgroundColor('#08090c');
             } catch (e) {}
 
             if (tg.BackButton) {
@@ -678,27 +628,27 @@
             if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred(style);
         }
 
-        // База доступных стран
-        const countriesDatabase = [
-            { code: 'ru', name: 'Россия (RU)', stock: '940+ шт.' },
-            { code: 'de', name: 'Германия (DE)', stock: '480+ шт.' },
-            { code: 'nl', name: 'Нидерланды (NL)', stock: '320+ шт.' },
-            { code: 'us', name: 'США (US)', stock: '1200+ шт.' },
-            { code: 'gb', name: 'Великобритания (GB)', stock: '260+ шт.' },
-            { code: 'fr', name: 'Франция (FR)', stock: '190+ шт.' },
-            { code: 'pl', name: 'Польша (PL)', stock: '140+ шт.' },
-            { code: 'kz', name: 'Казахстан (KZ)', stock: '310+ шт.' },
-            { code: 'tr', name: 'Турция (TR)', stock: '95+ шт.' },
-            { code: 'fi', name: 'Финляндия (FI)', stock: '80+ шт.' }
+        // Страны для селектора
+        const countriesList = [
+            { code: 'ru', name: 'Россия (RU)' },
+            { code: 'de', name: 'Германия (DE)' },
+            { code: 'nl', name: 'Нидерланды (NL)' },
+            { code: 'us', name: 'США (US)' },
+            { code: 'gb', name: 'Великобритания (GB)' },
+            { code: 'fr', name: 'Франция (FR)' },
+            { code: 'pl', name: 'Польша (PL)' },
+            { code: 'kz', name: 'Казахстан (KZ)' },
+            { code: 'tr', name: 'Турция (TR)' },
+            { code: 'fi', name: 'Финляндия (FI)' }
         ];
 
-        // Состояние приложения
+        // Глобальное состояние
         const state = {
             balance: 2000.00,
             spent: 0.00,
             user: {
                 name: tg?.initDataUnsafe?.user?.first_name || "Alexey",
-                id: tg?.initDataUnsafe?.user?.id || "8401928"
+                id: String(tg?.initDataUnsafe?.user?.id || "8401928")
             },
             currentPool: 'pool1',
             tariffIndex: 0,
@@ -710,10 +660,11 @@
             cart: [],
             ordersSort: 'date_desc',
             openOrderIds: new Set(),
-            orderItemSorts: {},
             orders: [],
-            isAdminActive: false,
-            adminMargin: 45
+            adminPin: "1234",
+            isAdminAuthed: false,
+            adminFoundUser: null,
+            prolongTargetProxy: null
         };
 
         const pools = {
@@ -740,33 +691,25 @@
         document.getElementById('prof-username').innerText = state.user.name;
         document.getElementById('prof-avatar').innerText = state.user.name[0].toUpperCase();
         document.getElementById('prof-user-id').innerText = `ID: ${state.user.id}`;
-        renderCountriesList(countriesDatabase);
+        renderCountries(countriesList);
         refreshProfileDisplay();
         updateCartBadge();
 
-        // Рендер стран со скроллом
-        function renderCountriesList(list) {
+        function renderCountries(list) {
             const container = document.getElementById('countries-scroll-list');
             if (!container) return;
-            if (list.length === 0) {
-                container.innerHTML = `<div class="p-3 text-center text-zinc-500 text-xs">Ничего не найдено</div>`;
-                return;
-            }
             container.innerHTML = list.map(c => `
-                <div onclick="selectCountry('${c.code}', '${c.name}')" class="flex items-center justify-between p-2 rounded-xl hover:bg-zinc-800/80 cursor-pointer text-xs transition">
-                    <div class="flex items-center gap-2">
-                        <img src="https://flagcdn.com/24x18/${c.code}.png" class="w-4 h-3 object-cover rounded-sm shadow-sm" alt="${c.code}">
-                        <span class="text-zinc-200">${c.name}</span>
-                    </div>
-                    <span class="text-[10px] font-mono text-zinc-500">${c.stock}</span>
+                <div onclick="selectCountry('${c.code}', '${c.name}')" class="flex items-center gap-2 p-2 rounded-xl hover:bg-zinc-800 cursor-pointer text-xs transition">
+                    <img src="https://flagcdn.com/24x18/${c.code}.png" class="w-4 h-3 object-cover rounded-sm" alt="${c.code}">
+                    <span class="text-zinc-200">${c.name}</span>
                 </div>
             `).join('');
         }
 
         function filterCountries(query) {
             const q = query.trim().toLowerCase();
-            const filtered = countriesDatabase.filter(c => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q));
-            renderCountriesList(filtered);
+            const filtered = countriesList.filter(c => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q));
+            renderCountries(filtered);
         }
 
         // Дропдауны
@@ -803,11 +746,10 @@
             closeAllDropdowns();
         }
 
-        // Ввод количества с клавиатуры и кнопок
+        // Количество прокси с клавиатуры и пресетов
         function changeCount(delta) {
             triggerHaptic();
-            let c = state.count + delta;
-            setValidatedCount(c);
+            setValidatedCount(state.count + delta);
         }
 
         function setExactCount(val) {
@@ -840,12 +782,7 @@
 
         function calcTotal() {
             const tariff = pools[state.currentPool].tariffs[state.tariffIndex];
-            let discount = 1.0;
-            if (state.selectedPeriod === 60) discount = 0.95;
-            if (state.selectedPeriod === 90) discount = 0.90;
-            if (state.selectedPeriod === 180) discount = 0.85;
-
-            const total = Math.round(tariff.price * (state.selectedPeriod / 30) * state.count * discount);
+            const total = Math.round(tariff.price * (state.selectedPeriod / 30) * state.count);
             document.getElementById('conf-total-display').innerText = `${total} ₽`;
             return total;
         }
@@ -856,11 +793,8 @@
             closeAllDropdowns();
 
             if (tg?.BackButton) {
-                if (view === 'config' || view === 'admin') {
-                    tg.BackButton.show();
-                } else {
-                    tg.BackButton.hide();
-                }
+                if (view === 'config') tg.BackButton.show();
+                else tg.BackButton.hide();
             }
 
             ['providers', 'config', 'cart', 'orders', 'profile', 'admin'].forEach(v => {
@@ -874,29 +808,17 @@
                 target.classList.add('fade-in');
             }
 
-            // Подсветка навбара
-            ['providers', 'cart', 'orders', 'profile'].forEach(btn => {
+            // Активная вкладка в навигации
+            ['providers', 'cart', 'orders', 'profile', 'admin'].forEach(btn => {
                 const nav = document.getElementById(`nav-btn-${btn}`);
                 const isActive = (btn === view) || (view === 'config' && btn === 'providers');
-                nav.className = `flex flex-col items-center gap-1 py-1.5 text-[11px] font-medium transition ${isActive ? 'text-emerald-400' : 'text-zinc-400 hover:text-white'}`;
+                nav.className = `flex flex-col items-center gap-1 py-1.5 text-[10px] font-medium transition ${isActive ? 'text-emerald-400' : 'text-zinc-400 hover:text-white'}`;
             });
 
             if (view === 'cart') renderCart();
             if (view === 'orders') renderOrders();
             if (view === 'profile') refreshProfileDisplay();
-        }
-
-        function toggleAdminView() {
-            triggerHaptic();
-            state.isAdminActive = !state.isAdminActive;
-            const btnText = document.getElementById('admin-switch-text');
-            if (state.isAdminActive) {
-                btnText.innerText = "Клиентский вид";
-                navigate('admin');
-            } else {
-                btnText.innerText = "Админ-панель";
-                navigate('providers');
-            }
+            if (view === 'admin') checkAdminViewStatus();
         }
 
         function selectProvider(poolId) {
@@ -921,7 +843,7 @@
             tariffs.forEach((t, i) => {
                 const isSelected = state.tariffIndex === i;
                 container.innerHTML += `
-                    <div onclick="selectTariff(${i})" class="p-3 rounded-xl border cursor-pointer transition flex items-center justify-between ${isSelected ? 'border-emerald-500/50 bg-emerald-500/10 shadow-[0_0_12px_rgba(16,185,129,0.12)]' : 'border-white/[0.07] surface-card'}">
+                    <div onclick="selectTariff(${i})" class="p-3 rounded-xl border cursor-pointer transition flex items-center justify-between ${isSelected ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-white/[0.07] surface-card'}">
                         <span class="text-xs font-semibold ${isSelected ? 'text-emerald-300' : 'text-zinc-200'}">${t.label}</span>
                         <span class="text-xs font-semibold mono ${isSelected ? 'text-emerald-400' : 'text-zinc-400'}">${t.price} ₽/мес</span>
                     </div>
@@ -1063,6 +985,7 @@
                         country: item.country,
                         tariffTitle: item.tariffTitle,
                         daysLeft: item.periodDays,
+                        price: Math.round(item.total / item.count),
                         full: `${ip}:${port}:${user}:${pass}`
                     });
                 }
@@ -1085,7 +1008,7 @@
             navigate('orders');
         }
 
-        // ================= ЗАКАЗЫ =================
+        // ================= ЗАКАЗЫ И ПРОДЛЕНИЕ =================
 
         function setOrdersSort(sortType, label) {
             triggerHaptic();
@@ -1109,15 +1032,7 @@
                 return;
             }
 
-            const sortedOrders = [...state.orders].sort((a, b) => {
-                if (state.ordersSort === 'date_desc') return b.createdAt - a.createdAt;
-                if (state.ordersSort === 'date_asc') return a.createdAt - b.createdAt;
-                if (state.ordersSort === 'price_desc') return b.total - a.total;
-                if (state.ordersSort === 'price_asc') return a.total - b.total;
-                return 0;
-            });
-
-            container.innerHTML = sortedOrders.map(order => {
+            container.innerHTML = state.orders.map(order => {
                 const isOpen = state.openOrderIds.has(order.id);
                 const dateStr = order.createdAt.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 
@@ -1130,7 +1045,7 @@
                                     <span class="text-[10px] text-zinc-500 mono">${dateStr}</span>
                                 </div>
                                 <div class="text-[11px] text-zinc-400">
-                                    <span>Пакет из ${order.count} адресов</span>
+                                    <span>Пакет из ${order.proxies.length} адресов</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3">
@@ -1143,8 +1058,8 @@
                             <div class="accordion-inner">
                                 <div class="p-3 pt-2.5 border-t border-white/[0.06] space-y-2 bg-[#090b10]">
                                     <div class="flex justify-between items-center text-[10px] text-zinc-400 pb-1">
-                                        <button onclick="downloadTxt(${order.id})" class="text-cyan-400 hover:underline flex items-center gap-1">
-                                            <span>💾</span> Экспорт .txt
+                                        <button onclick="downloadTxt(${order.id})" class="text-emerald-400 hover:underline flex items-center gap-1">
+                                            <span>💾</span> Скачать .txt
                                         </button>
                                         <button onclick="copyAllInOrder(${order.id})" class="text-zinc-300 hover:text-white underline">
                                             Копировать всё (${order.proxies.length})
@@ -1153,21 +1068,26 @@
 
                                     <div class="space-y-1.5">
                                         ${order.proxies.map(p => `
-                                            <div class="p-2 rounded-xl bg-zinc-900/90 border border-white/[0.05] flex items-center justify-between text-xs hover:border-emerald-500/20 transition">
+                                            <div class="p-2.5 rounded-xl bg-zinc-900/90 border border-white/[0.05] flex items-center justify-between text-xs hover:border-emerald-500/20 transition">
                                                 <div class="space-y-0.5">
                                                     <div class="flex items-center gap-2">
-                                                        <img src="https://flagcdn.com/24x18/${p.country}.png" class="w-3.5 h-2.5 object-cover rounded-sm shadow-sm" alt="Flag">
+                                                        <img src="https://flagcdn.com/24x18/${p.country}.png" class="w-3.5 h-2.5 object-cover rounded-sm" alt="Flag">
                                                         <span class="mono text-[11px] text-zinc-200 select-all">${p.full}</span>
                                                     </div>
                                                     <div class="flex items-center gap-2 text-[10px] text-zinc-500">
-                                                        <span>Тариф: ${p.tariffTitle}</span>
+                                                        <span>${p.tariffTitle}</span>
                                                         <span>•</span>
-                                                        <span class="text-emerald-400 font-medium">${p.daysLeft} дн.</span>
+                                                        <span class="text-emerald-400 font-medium">${p.daysLeft} дн. осталось</span>
                                                     </div>
                                                 </div>
-                                                <button onclick="copyString('${p.full}', 'Прокси скопирован')" class="px-2.5 py-1.5 rounded-lg btn-secondary text-[10px] font-semibold text-zinc-200 active:scale-95 transition">
-                                                    Копия
-                                                </button>
+                                                <div class="flex items-center gap-1.5">
+                                                    <button onclick="openModalProlong('${p.id}', '${p.full}')" class="px-2 py-1 rounded-lg surface-input text-emerald-400 text-[10px] font-medium hover:border-emerald-500/40">
+                                                        Продлить
+                                                    </button>
+                                                    <button onclick="copyString('${p.full}', 'Прокси скопирован')" class="px-2 py-1 rounded-lg btn-secondary text-[10px] font-semibold text-zinc-200">
+                                                        Копия
+                                                    </button>
+                                                </div>
                                             </div>
                                         `).join('')}
                                     </div>
@@ -1188,6 +1108,44 @@
                 state.openOrderIds.add(id);
             }
             renderOrders();
+        }
+
+        function openModalProlong(proxyId, fullStr) {
+            triggerHaptic();
+            state.prolongTargetProxy = proxyId;
+            document.getElementById('prolong-proxy-str').innerText = fullStr;
+            document.getElementById('modal-prolong').classList.remove('hidden');
+        }
+
+        function closeModalProlong() {
+            document.getElementById('modal-prolong').classList.add('hidden');
+        }
+
+        let selectedProlongCost = 40;
+        let selectedProlongDaysCount = 30;
+        function selectProlongDays(days, cost) {
+            triggerHaptic();
+            selectedProlongDaysCount = days;
+            selectedProlongCost = cost;
+        }
+
+        function confirmProlong() {
+            triggerHaptic('medium');
+            if (state.balance < selectedProlongCost) {
+                showToast("Недостаточно средств на балансе", true);
+                return;
+            }
+
+            state.balance -= selectedProlongCost;
+            state.orders.forEach(o => {
+                const pr = o.proxies.find(p => String(p.id) === String(state.prolongTargetProxy));
+                if (pr) pr.daysLeft += selectedProlongDaysCount;
+            });
+
+            closeModalProlong();
+            refreshProfileDisplay();
+            renderOrders();
+            showToast(`Прокси продлен на +${selectedProlongDaysCount} дн.`);
         }
 
         function copyString(str, msg = "Скопировано в буфер") {
@@ -1215,52 +1173,229 @@
             const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `proxies_order_${order.id}.txt`;
+            link.download = `proxies_${order.id}.txt`;
             link.click();
             showToast("Файл .txt сгенерирован");
         }
 
-        function topUpBalance(amount) {
+        // Пополнение баланса
+        function openDepositModal() {
+            triggerHaptic();
+            document.getElementById('modal-deposit').classList.remove('hidden');
+        }
+        function closeDepositModal() {
+            document.getElementById('modal-deposit').classList.add('hidden');
+        }
+        function processDeposit(method) {
             triggerHaptic('medium');
+            const amount = parseFloat(document.getElementById('deposit-amount').value) || 500;
             state.balance += amount;
+            closeDepositModal();
             refreshProfileDisplay();
-            showToast(`Баланс пополнен на +${amount} ₽`);
+            showToast(`Баланс пополнен через ${method} на +${amount} ₽`);
         }
 
         function refreshProfileDisplay() {
             document.getElementById('prof-balance-val').innerText = `${state.balance.toFixed(2)} ₽`;
             document.getElementById('prof-stat-orders').innerText = state.orders.length;
 
-            const totalProxies = state.orders.reduce((acc, o) => acc + o.count, 0);
+            const totalProxies = state.orders.reduce((acc, o) => acc + o.proxies.length, 0);
             document.getElementById('prof-stat-proxies').innerText = totalProxies;
             document.getElementById('prof-stat-spent').innerText = `${state.spent.toFixed(0)} ₽`;
 
             const cartCount = state.cart.reduce((sum, item) => sum + item.count, 0);
-            const cartSum = state.cart.reduce((sum, item) => sum + item.total, 0);
             document.getElementById('prof-stat-cart').innerText = `${cartCount} шт.`;
-            document.getElementById('prof-stat-cart-sum').innerText = `на ${cartSum} ₽`;
         }
 
-        // ================= АДМИН-ФУНКЦИИ (PROXY6 & PROXYLINE) =================
+        // ================= АДМИН-ПАНЕЛЬ (ВКЛАДКА 5 С ПАРОЛЕМ) =================
 
-        function updateMargin(val) {
-            state.adminMargin = val;
-            document.getElementById('admin-margin-label').innerText = `+${val}%`;
+        function checkAdminViewStatus() {
+            const authScreen = document.getElementById('admin-auth-screen');
+            const panelContent = document.getElementById('admin-panel-content');
+
+            if (state.isAdminAuthed) {
+                authScreen.classList.add('hidden');
+                panelContent.classList.remove('hidden');
+                // По умолчанию открываем текущего юзера
+                adminLoadUser(state.user.id);
+                adminRenderGlobalProxies();
+            } else {
+                authScreen.classList.remove('hidden');
+                panelContent.classList.add('hidden');
+            }
         }
 
-        function syncAllApi() {
-            triggerHaptic('medium');
-            const icon = document.getElementById('sync-icon');
-            icon.classList.add('animate-spin');
-            setTimeout(() => {
-                icon.classList.remove('animate-spin');
-                showToast("Шлюзы Proxy6 и ProxyLine синхронизированы");
-            }, 700);
-        }
-
-        function testApiPing(provider) {
+        function verifyAdminPin() {
             triggerHaptic();
-            showToast(`${provider} API активен (отклик 35ms)`);
+            const input = document.getElementById('admin-pin-input').value;
+            const err = document.getElementById('admin-pin-error');
+
+            if (input === state.adminPin) {
+                state.isAdminAuthed = true;
+                err.classList.add('hidden');
+                showToast("Доступ администратора подтвержден");
+                checkAdminViewStatus();
+            } else {
+                triggerHaptic('heavy');
+                err.classList.remove('hidden');
+            }
+        }
+
+        function lockAdminSession() {
+            triggerHaptic();
+            state.isAdminAuthed = false;
+            document.getElementById('admin-pin-input').value = "";
+            checkAdminViewStatus();
+            showToast("Сессия админа закрыта");
+        }
+
+        function adminSearchUser() {
+            triggerHaptic();
+            const query = document.getElementById('admin-search-user-input').value.trim();
+            if (!query) return;
+            adminLoadUser(query);
+        }
+
+        function adminLoadUser(userId) {
+            // Для демо мы используем state.user или создаем профиль
+            document.getElementById('adm-user-name').innerText = state.user.name;
+            document.getElementById('adm-user-id').innerText = `TG ID: ${userId}`;
+            document.getElementById('adm-user-balance').innerText = `${state.balance.toFixed(2)} ₽`;
+
+            renderAdminUserProxies();
+        }
+
+        function renderAdminUserProxies() {
+            const container = document.getElementById('adm-user-proxy-list');
+            const countLabel = document.getElementById('adm-user-proxy-count');
+
+            let allUserProxies = [];
+            state.orders.forEach(o => {
+                o.proxies.forEach(p => {
+                    allUserProxies.push({ ...p, orderId: o.id });
+                });
+            });
+
+            countLabel.innerText = allUserProxies.length;
+
+            if (allUserProxies.length === 0) {
+                container.innerHTML = `<div class="p-3 text-center text-zinc-500 text-xs">У клиента нет активных прокси</div>`;
+                return;
+            }
+
+            container.innerHTML = allUserProxies.map(p => `
+                <div class="p-2.5 rounded-xl bg-zinc-900/90 border border-white/[0.05] flex items-center justify-between text-xs">
+                    <div class="space-y-0.5">
+                        <span class="mono text-[11px] text-zinc-200 block">${p.full}</span>
+                        <div class="text-[10px] text-zinc-400 flex gap-2">
+                            <span>#${p.orderId}</span>
+                            <span>•</span>
+                            <span class="text-emerald-400">${p.daysLeft} дн.</span>
+                            <span>•</span>
+                            <span>${p.price || 40} ₽</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="adminRefundProxy('${p.id}', ${p.orderId}, ${p.price || 40})" class="px-2 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-medium" title="Возврат стоимости на баланс">
+                            Возврат
+                        </button>
+                        <button onclick="adminRevokeProxy('${p.id}', ${p.orderId})" class="px-2 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-[10px] font-medium" title="Отозвать прокси без возврата">
+                            Забрать
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Возврат денег за конкретный прокси
+        function adminRefundProxy(proxyId, orderId, refundAmount) {
+            triggerHaptic('heavy');
+            const order = state.orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            order.proxies = order.proxies.filter(p => String(p.id) !== String(proxyId));
+            state.balance += refundAmount;
+
+            refreshProfileDisplay();
+            renderAdminUserProxies();
+            renderOrders();
+            adminRenderGlobalProxies();
+            showToast(`Возврат ${refundAmount} ₽ зачислен на баланс клиента`);
+        }
+
+        // Забрать прокси у клиента без возврата средств
+        function adminRevokeProxy(proxyId, orderId) {
+            triggerHaptic('heavy');
+            const order = state.orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            order.proxies = order.proxies.filter(p => String(p.id) !== String(proxyId));
+
+            refreshProfileDisplay();
+            renderAdminUserProxies();
+            renderOrders();
+            adminRenderGlobalProxies();
+            showToast("Прокси отозван у пользователя");
+        }
+
+        // Изменение баланса клиента
+        function adminChangeBalance(action) {
+            triggerHaptic('medium');
+            const input = document.getElementById('adm-balance-amount');
+            const val = parseFloat(input.value);
+            if (isNaN(val) || val <= 0) {
+                showToast("Введите корректную сумму", true);
+                return;
+            }
+
+            if (action === 'add') {
+                state.balance += val;
+                showToast(`Начислено +${val} ₽`);
+            } else if (action === 'sub') {
+                state.balance = Math.max(0, state.balance - val);
+                showToast(`Списано -${val} ₽`);
+            } else if (action === 'set') {
+                state.balance = val;
+                showToast(`Баланс установлен на ${val} ₽`);
+            }
+
+            input.value = "";
+            document.getElementById('adm-user-balance').innerText = `${state.balance.toFixed(2)} ₽`;
+            refreshProfileDisplay();
+        }
+
+        // Глобальный список всех прокси
+        function adminRenderGlobalProxies(filter = "") {
+            const container = document.getElementById('adm-global-proxies-list');
+            let list = [];
+            state.orders.forEach(o => {
+                o.proxies.forEach(p => {
+                    list.push({ ...p, orderId: o.id });
+                });
+            });
+
+            if (filter) {
+                list = list.filter(p => p.full.includes(filter) || String(p.orderId).includes(filter));
+            }
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="p-2 text-center text-zinc-500 text-xs">Прокси не найдены</div>`;
+                return;
+            }
+
+            container.innerHTML = list.map(p => `
+                <div class="p-2 rounded-xl bg-zinc-900 border border-white/5 flex items-center justify-between">
+                    <div>
+                        <span class="mono text-zinc-300 block">${p.full}</span>
+                        <span class="text-[10px] text-zinc-500">Заказ #${p.orderId} • Клиент: ${state.user.id}</span>
+                    </div>
+                    <button onclick="copyString('${p.full}', 'Скопировано')" class="px-2 py-1 rounded-lg btn-secondary text-[10px]">Копия</button>
+                </div>
+            `).join('');
+        }
+
+        function adminFilterGlobalProxies(val) {
+            adminRenderGlobalProxies(val.trim());
         }
 
         // Надежный Toast
