@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<title>Proxy Terminal — Orders Redesign Preview</title>
+<title>Proxy Terminal</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,6 @@
     .mono, .mono * { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
     .hidden { display: none !important; }
 
-    /* Глубокий фон */
     body {
         background-color: #06120e;
         color: #f1f5f9; min-height: 100vh; overscroll-behavior-y: none;
@@ -28,7 +27,7 @@
     /* Карточки */
     .card { background: rgba(12, 16, 17, 0.84); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.07); box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
-            transition: border-color .24s, background .24s, transform .24s cubic-bezier(.22,1,.36,1), box-shadow .24s; }
+            transition: border-color .22s, background .22s, transform .22s cubic-bezier(.22,1,.36,1); }
     @media (hover: hover) { .card-hover:hover { border-color: rgba(255,255,255,.14); background: rgba(18,22,31,.84); } }
     .pressable:active { transform: scale(.985); }
 
@@ -55,9 +54,9 @@
 
     /* Сегменты и чипы */
     .seg { display: flex; padding: 3px; border-radius: .85rem; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); }
-    .seg button { flex: 1; padding: .48rem .4rem; font-size: 11px; font-weight: 600; color: #8b8b94; border-radius: .65rem; transition: all .22s cubic-bezier(.22,1,.36,1); white-space: nowrap; }
+    .seg button { flex: 1; padding: .46rem .35rem; font-size: 11px; font-weight: 600; color: #8b8b94; border-radius: .65rem; transition: all .22s cubic-bezier(.22,1,.36,1); white-space: nowrap; }
     .seg button.on { background: rgba(255,255,255,.1); color: #34d399; box-shadow: inset 0 1px 0 rgba(255,255,255,.07); }
-    .chip { flex-shrink: 0; padding: .32rem .75rem; font-size: 11px; font-weight: 500; color: #a1a1aa; border-radius: 99px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.025); transition: all .2s cubic-bezier(.22,1,.36,1); cursor: pointer; white-space: nowrap; }
+    .chip { flex-shrink: 0; padding: .34rem .72rem; font-size: 11px; font-weight: 500; color: #a1a1aa; border-radius: 99px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.025); transition: all .2s cubic-bezier(.22,1,.36,1); cursor: pointer; white-space: nowrap; }
     .chip.on { color: #34d399; border-color: rgba(16,185,129,.4); background: rgba(16,185,129,.08); }
     .chip:disabled { opacity: .35; cursor: not-allowed; }
     .opt { border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.03); border-radius: .8rem; padding: .6rem .25rem; text-align: center; transition: all .2s cubic-bezier(.22,1,.36,1); cursor: pointer; }
@@ -68,48 +67,36 @@
     .pill-ok { color: #34d399; background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.22); }
     .pill-warn { color: #fbbf24; background: rgba(251,191,36,.07); border-color: rgba(251,191,36,.22); }
     .pill-mute { color: #a1a1aa; background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.1); }
-    .pill-info { color: #38bdf8; background: rgba(56,189,248,.07); border-color: rgba(56,189,248,.22); }
-    .pill-bad { color: #fb7185; background: rgba(244,63,94,.07); border-color: rgba(244,63,94,.22); }
 
-    /* Переключатель (Клик срабатывает ТОЛЬКО по самому слайдеру .switch) */
+    /* Переключатель (клик работает ТОЛЬКО по самому слайдеру .switch) */
     .switch { position: relative; width: 38px; height: 22px; flex-shrink: 0; display: inline-block; cursor: pointer; }
     .switch.sm { width: 34px; height: 20px; }
     .switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 2; }
     .switch input:disabled { cursor: not-allowed; }
-    .switch i { position: absolute; inset: 0; border-radius: 99px; background: #27272a; border: 1px solid rgba(255,255,255,.08); transition: background .26s cubic-bezier(.22,1,.36,1), box-shadow .26s, border-color .26s; }
-    .switch i::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #e4e4e7; transition: transform .28s cubic-bezier(.22,1,.36,1), background .22s; }
+    .switch i { position: absolute; inset: 0; border-radius: 99px; background: #27272a; border: 1px solid rgba(255,255,255,.08); transition: background .24s cubic-bezier(.22,1,.36,1), box-shadow .24s, border-color .24s; }
+    .switch i::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #e4e4e7; transition: transform .26s cubic-bezier(.22,1,.36,1), background .2s, border-radius .2s; }
     .switch.sm i::after { width: 14px; height: 14px; }
-    .switch input:checked + i { background: #10b981; border-color: rgba(52,211,153,.6); box-shadow: 0 0 14px rgba(16,185,129,.38); }
+    .switch input:checked + i { background: #10b981; border-color: rgba(52,211,153,.6); box-shadow: 0 0 12px rgba(16,185,129,.35); }
     .switch input:checked + i::after { transform: translateX(16px); background: #fff; }
     .switch.sm input:checked + i::after { transform: translateX(14px); }
     .switch.partial input:not(:checked) + i { background: rgba(245,158,11,.22); border-color: rgba(245,158,11,.45); }
-    .switch.partial input:not(:checked) + i::after { transform: translateX(8px); background: #fbbf24; border-radius: 5px; }
+    .switch.partial input:not(:checked) + i::after { transform: translateX(7px); background: #fbbf24; border-radius: 5px; }
     .switch input:disabled + i { opacity: .38; }
 
     /* Плавный аккордеон заказов */
-    .accordion { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .38s cubic-bezier(.22,1,.36,1); }
+    .accordion { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .36s cubic-bezier(.22,1,.36,1); }
     .accordion.open { grid-template-rows: 1fr; }
-    .accordion-inner { overflow: hidden; min-height: 0; opacity: 0; transform: translateY(-6px); transition: opacity .3s cubic-bezier(.22,1,.36,1), transform .36s cubic-bezier(.22,1,.36,1); }
+    .accordion-inner { overflow: hidden; min-height: 0; opacity: 0; transform: translateY(-4px); transition: opacity .28s cubic-bezier(.22,1,.36,1), transform .34s cubic-bezier(.22,1,.36,1); }
     .accordion.open > .accordion-inner { opacity: 1; transform: translateY(0); }
-    .chev { transition: transform .34s cubic-bezier(.22,1,.36,1); }
+    .chev { transition: transform .32s cubic-bezier(.22,1,.36,1); }
     .chev.rot { transform: rotate(180deg); }
-
-    @keyframes cardSlideIn {
-        from { opacity: 0; transform: translateY(10px) scale(.985); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .proxy-item-anim { animation: cardSlideIn .32s cubic-bezier(.22,1,.36,1) both; }
-
-    /* Прогресс-бар срока действия */
-    .prog-track { height: 3px; border-radius: 99px; background: rgba(255,255,255,.07); overflow: hidden; }
-    .prog-fill { height: 100%; border-radius: 99px; transition: width .4s cubic-bezier(.22,1,.36,1); }
 
     /* Выпадающие списки */
     .dd-wrap { position: relative; }
     .dd-wrap.dd-open { z-index: 50 !important; }
     .dropdown { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 55; background: #10131c; border: 1px solid rgba(255,255,255,.12);
                 border-radius: 1rem; box-shadow: 0 24px 50px -12px rgba(0,0,0,.95); opacity: 0; transform: scale(.97) translateY(-4px); pointer-events: none;
-                transition: opacity .2s, transform .22s cubic-bezier(.22,1,.36,1); transform-origin: top; scroll-margin-bottom: 110px; }
+                transition: opacity .18s, transform .2s cubic-bezier(.22,1,.36,1); transform-origin: top; scroll-margin-bottom: 110px; }
     .dropdown.active { opacity: 1; transform: none; pointer-events: auto; }
     .dd-item { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .55rem .6rem; border-radius: .65rem; font-size: 12px; cursor: pointer; transition: background .15s; }
     @media (hover: hover) { .dd-item:hover:not(.disabled) { background: rgba(255,255,255,.06); } }
@@ -124,10 +111,10 @@
 
     /* Нижняя шторка */
     .overlay { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.66); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-               opacity: 0; visibility: hidden; transition: opacity .26s ease, visibility .26s; display: flex; align-items: flex-end; justify-content: center; }
+               opacity: 0; visibility: hidden; transition: opacity .24s ease, visibility .24s; display: flex; align-items: flex-end; justify-content: center; }
     .overlay.open { opacity: 1; visibility: visible; }
     .sheet { width: 100%; max-width: 28rem; background: #0d1017; border: 1px solid rgba(255,255,255,.08); border-bottom: none; border-radius: 1.5rem 1.5rem 0 0;
-             padding: .6rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px)); transform: translateY(34px); transition: transform .36s cubic-bezier(.22,1,.36,1);
+             padding: .6rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px)); transform: translateY(30px); transition: transform .34s cubic-bezier(.22,1,.36,1);
              max-height: 90vh; overflow-y: auto; box-shadow: 0 -20px 60px -20px rgba(16,185,129,.12); }
     .overlay.open .sheet { transform: none; }
     .grip { width: 36px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.14); margin: 0 auto .9rem; }
@@ -144,12 +131,12 @@
     /* Тост */
     .toast { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 12px); transform: translate(-50%, -14px); z-index: 90; display: flex; align-items: center; gap: .55rem;
              width: max-content; padding: .6rem .9rem; border-radius: .95rem; background: rgba(18,20,27,.97); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 14px 40px -8px rgba(0,0,0,.75);
-             font-size: 12px; color: #f4f4f5; opacity: 0; pointer-events: none; max-width: calc(100vw - 32px); transition: opacity .25s, transform .34s cubic-bezier(.22,1,.36,1); }
+             font-size: 12px; color: #f4f4f5; opacity: 0; pointer-events: none; max-width: calc(100vw - 32px); transition: opacity .25s, transform .32s cubic-bezier(.22,1,.36,1); }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
     .toast.show.actionable { pointer-events: auto; }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn .28s cubic-bezier(.22,1,.36,1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn .24s cubic-bezier(.22,1,.36,1); }
     @keyframes tick { 0% { transform: scale(1); } 40% { transform: scale(1.07); } 100% { transform: scale(1); } }
     .tick { display: inline-block; animation: tick .3s ease; }
 
@@ -247,7 +234,6 @@
             </div>
         </div>
 
-        <!-- Баланс и кнопка пополнения -->
         <div class="flex items-center gap-1.5 bg-zinc-900/90 border border-white/[0.08] rounded-xl px-2.5 py-1.5 shrink-0">
             <div class="text-right">
                 <span class="text-[9px] text-zinc-500 block leading-none font-medium">Баланс</span>
@@ -367,19 +353,16 @@
         <div id="cart-footer" class="card rounded-2xl p-4 space-y-3"></div>
     </section>
 
-    <!-- ============ ЗАКАЗЫ (ПЕРЕРАБОТАННЫЙ РАЗДЕЛ) ============ -->
+    <!-- ============ ЗАКАЗЫ ============ -->
     <section id="view-orders" class="hidden space-y-3">
-        <!-- Заголовочная карточка с общей статистикой и переключателем протокола -->
+        <!-- Шапка заказов -->
         <div class="card rounded-2xl p-3.5 space-y-3">
-            <div class="flex items-start justify-between gap-2">
-                <div class="min-w-0">
-                    <h2 class="text-base font-bold tracking-tight text-zinc-50">Мои заказы и прокси</h2>
-                    <p class="text-[11px] text-zinc-400 mt-0.5">Выборочное автопродление на весь заказ или каждый IP отдельно</p>
-                </div>
-                <span id="orders-sub" class="mono text-[10.5px] font-semibold px-2 py-1 rounded-lg bg-white/[0.05] border border-white/[0.08] text-zinc-300 shrink-0">0 заказов</span>
+            <div class="flex items-center justify-between gap-2">
+                <h2 class="text-base font-bold tracking-tight text-zinc-50">Мои заказы и прокси</h2>
+                <span id="orders-sub" class="mono text-[10.5px] font-semibold px-2 py-0.5 rounded-lg bg-white/[0.05] border border-white/[0.08] text-zinc-300 shrink-0">0 заказов</span>
             </div>
 
-            <!-- 3 метрики сводки -->
+            <!-- 3 метрики -->
             <div class="grid grid-cols-3 gap-2">
                 <div class="rounded-xl bg-black/35 border border-white/[0.06] px-2.5 py-2">
                     <span class="text-[10px] text-zinc-500 block leading-tight">Активных IP</span>
@@ -395,51 +378,61 @@
                 </div>
             </div>
 
-            <!-- Предупреждение если на автопродление не хватает баланса -->
+            <!-- Предупреждение о нехватке баланса на цикл -->
             <div id="ord-bal-warn" class="hidden px-2.5 py-2 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between gap-2 text-[11px] text-amber-200">
-                <div class="flex items-center gap-2 min-w-0">
-                    <svg class="w-4 h-4 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <span id="ord-bal-warn-text" class="truncate">Баланса не хватает на все автопродления</span>
-                </div>
+                <span id="ord-bal-warn-text" class="truncate">Баланса не хватает на продление</span>
                 <button type="button" onclick="openDeposit()" class="px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-100 font-semibold text-[10.5px] shrink-0 transition">Пополнить</button>
             </div>
 
-            <!-- Переключение отображения протокола (HTTP / HTTPS / SOCKS5) прямо в шапке заказов -->
-            <div class="flex items-center justify-between gap-2 pt-0.5">
-                <span class="text-[11px] font-medium text-zinc-400 shrink-0">Отображение:</span>
-                <div class="seg flex-1 max-w-[230px]" id="orders-proto-seg">
+            <!-- Протокол (HTTP / HTTPS / SOCKS5) + выбор формата строки прямо в шапке заказов -->
+            <div class="flex items-center gap-2">
+                <div class="seg flex-1" id="orders-proto-seg">
                     <button type="button" class="mono !py-1 !text-[10.5px]" data-p="http" onclick="setProto('http')">HTTP</button>
                     <button type="button" class="mono !py-1 !text-[10.5px]" data-p="https" onclick="setProto('https')">HTTPS</button>
                     <button type="button" class="mono !py-1 !text-[10.5px]" data-p="socks5" onclick="setProto('socks5')">SOCKS5</button>
                 </div>
+
+                <div class="dd-wrap shrink-0">
+                    <button type="button" onclick="toggleDropdown(event,'dd-ofmt')" class="input h-[34px] px-2.5 flex items-center gap-1.5 text-[10.5px] mono text-zinc-200">
+                        <span id="ofmt-label" class="max-w-[96px] truncate">ip:port:log:pass</span>
+                        <svg class="w-3 h-3 text-zinc-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div id="dd-ofmt" class="dropdown p-1.5" style="left:auto;right:0;width:13.5rem" onclick="event.stopPropagation()">
+                        <div class="dd-item mono text-[11px]" data-f="colon" onclick="setFormatFromDropdown('colon')">ip:port:login:pass</div>
+                        <div class="dd-item mono text-[11px]" data-f="at" onclick="setFormatFromDropdown('at')">login:pass@ip:port</div>
+                        <div class="dd-item mono text-[11px]" data-f="url" onclick="setFormatFromDropdown('url')" id="dd-ofmt-url">http://login:pass@ip:port</div>
+                        <div class="dd-item mono text-[11px]" data-f="ip_at" onclick="setFormatFromDropdown('ip_at')">ip:port@login:pass</div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Поиск по IP, кодам стран, номеру заказа -->
-            <div class="input flex items-center gap-2 px-2.5 h-9">
-                <svg class="w-3.5 h-3.5 text-zinc-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M21 21l-4.3-4.3"/></svg>
-                <input id="orders-search" type="text" autocomplete="off" value="" oninput="onOrdersSearchInput(this.value)" placeholder="Поиск по IP, порту, стране (DE, US), #заказу..." class="w-full text-xs">
-                <button type="button" id="orders-search-clear" onclick="clearOrdersSearch()" class="hidden text-zinc-500 hover:text-zinc-200 p-0.5 transition" aria-label="Сбросить поиск">
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-            </div>
-        </div>
+            <!-- Поиск + Сортировка на одной аккуратной строке (ничего не съезжает) -->
+            <div class="flex items-center gap-2">
+                <div class="input flex-1 min-w-0 flex items-center gap-2 px-2.5 h-9">
+                    <svg class="w-3.5 h-3.5 text-zinc-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M21 21l-4.3-4.3"/></svg>
+                    <input id="orders-search" type="text" autocomplete="off" value="" oninput="onOrdersSearchInput(this.value)" placeholder="IP, код страны, номер заказа..." class="w-full min-w-0 text-xs">
+                    <button type="button" id="orders-search-clear" onclick="clearOrdersSearch()" class="hidden text-zinc-500 hover:text-zinc-200 p-0.5 transition shrink-0" aria-label="Сбросить поиск">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
 
-        <!-- Фильтры + Сортировка -->
-        <div class="flex items-center justify-between gap-2">
-            <div id="orders-chips" class="flex gap-1.5 overflow-x-auto no-scrollbar py-0.5"></div>
-            <div class="dd-wrap shrink-0">
-                <button type="button" onclick="toggleDropdown(event,'dd-osort')" class="input h-[32px] px-2.5 flex items-center gap-1.5 text-[11px] text-zinc-300">
-                    <span id="osort-label">Новые</span>
-                    <svg class="w-3 h-3 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-                </button>
-                <div id="dd-osort" class="dropdown p-1" style="left:auto;right:0;width:9.5rem" onclick="event.stopPropagation()">
-                    <div class="dd-item" onclick="setOrdersSort('new')">Сначала новые</div>
-                    <div class="dd-item" onclick="setOrdersSort('old')">Сначала старые</div>
-                    <div class="dd-item" onclick="setOrdersSort('sum_desc')">Дороже</div>
-                    <div class="dd-item" onclick="setOrdersSort('sum_asc')">Дешевле</div>
+                <div class="dd-wrap shrink-0">
+                    <button type="button" onclick="toggleDropdown(event,'dd-osort')" class="input h-9 px-2.5 flex items-center gap-1.5 text-[11px] text-zinc-300">
+                        <span id="osort-label">Новые</span>
+                        <svg class="w-3 h-3 text-zinc-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div id="dd-osort" class="dropdown p-1" style="left:auto;right:0;width:9.5rem" onclick="event.stopPropagation()">
+                        <div class="dd-item" onclick="setOrdersSort('new')">Сначала новые</div>
+                        <div class="dd-item" onclick="setOrdersSort('old')">Сначала старые</div>
+                        <div class="dd-item" onclick="setOrdersSort('sum_desc')">Дороже</div>
+                        <div class="dd-item" onclick="setOrdersSort('sum_asc')">Дешевле</div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Фильтры отдельным рядом без наезда на сортировку -->
+        <div id="orders-chips" class="flex flex-wrap gap-1.5"></div>
 
         <!-- Список карточек заказов -->
         <div id="orders-list" class="space-y-2.5"></div>
@@ -451,7 +444,6 @@
             <h2 class="text-xl font-bold tracking-tight text-zinc-50">Профиль</h2>
         </header>
 
-        <!-- Шапка профиля -->
         <div class="card rounded-2xl p-4 space-y-4">
             <div class="flex items-center gap-3">
                 <div id="prof-avatar" class="w-12 h-12 rounded-2xl bg-zinc-800/80 border border-white/[0.08] flex items-center justify-center text-emerald-400 shrink-0">
@@ -476,7 +468,6 @@
                 </div>
             </div>
 
-            <!-- Баланс и кнопка пополнения -->
             <div class="pt-3 border-t border-white/[0.06] flex items-end justify-between gap-3">
                 <div>
                     <span class="text-[11px] text-zinc-500 block font-medium">Баланс аккаунта</span>
@@ -494,27 +485,6 @@
             <div class="card rounded-2xl p-3.5"><span class="text-[11px] text-zinc-500">Активных прокси</span><span id="ps-live" class="mono text-base font-semibold text-emerald-400 mt-1 block">0</span></div>
             <div class="card rounded-2xl p-3.5"><span class="text-[11px] text-zinc-500">Потрачено</span><span id="ps-spent" class="mono text-base font-semibold text-zinc-100 mt-1 block">0 ₽</span></div>
             <div class="card rounded-2xl p-3.5"><span class="text-[11px] text-zinc-500">В корзине</span><span id="ps-cart" class="mono text-base font-semibold text-zinc-100 mt-1 block">0 шт.</span></div>
-        </div>
-
-        <!-- Настройки формата (общий тумблер автопродления убран, протокол в Заказах) -->
-        <div class="card rounded-2xl p-4 space-y-4">
-            <div class="flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <span class="text-xs font-medium text-zinc-200 block">Автопродление прокси</span>
-                    <span class="text-[11px] text-zinc-500">Настраивается по заказам или отдельным IP</span>
-                </div>
-                <button type="button" onclick="navigate('orders')" class="btn btn-soft btn-xs shrink-0">Открыть заказы</button>
-            </div>
-
-            <div class="pt-4 border-t border-white/[0.06] space-y-2">
-                <span class="text-xs font-medium text-zinc-200 block">Формат выдачи</span>
-                <div class="grid grid-cols-2 gap-1.5" id="set-format">
-                    <button type="button" class="opt mono text-[11px] font-medium !py-2.5 !px-2 truncate" data-f="colon" onclick="setFormat('colon')">ip:port:login:pass</button>
-                    <button type="button" class="opt mono text-[11px] font-medium !py-2.5 !px-2 truncate" data-f="ip_at" onclick="setFormat('ip_at')">ip:port@login:pass</button>
-                    <button type="button" class="opt mono text-[11px] font-medium !py-2.5 !px-2 truncate" data-f="at" onclick="setFormat('at')">login:pass@ip:port</button>
-                    <button type="button" class="opt mono text-[11px] font-medium !py-2.5 !px-2 truncate" data-f="url" onclick="setFormat('url')" id="btn-fmt-url">http://login:pass@ip:port</button>
-                </div>
-            </div>
         </div>
 
         <div class="card rounded-2xl px-4 py-3">
@@ -552,7 +522,7 @@
 <script>
 'use strict';
 
-const STORAGE_KEY = 'rovex_orders_redesign_v2';
+const STORAGE_KEY = 'rovex_orders_redesign_v3';
 const DAY = 864e5;
 
 /* ---------- Иконки SVG ---------- */
@@ -583,7 +553,7 @@ const flag = (code, cls = 'w-4 h-3') => {
     return `<img src="https://flagcdn.com/24x18/${esc(raw)}.png" class="${cls} object-cover rounded-[3px] shrink-0 inline-block align-middle border border-white/10" alt="${esc(raw).toUpperCase()}" referrerpolicy="no-referrer" onerror="this.style.display='none'">`;
 };
 
-/* ---------- Каталог, страны (реальные из API) и остатки ---------- */
+/* ---------- Каталог и страны из API ---------- */
 const COUNTRY_META = {
     ru:{name:'Россия',ping:14}, us:{name:'США',ping:108}, de:{name:'Германия',ping:31}, nl:{name:'Нидерланды',ping:36},
     gb:{name:'Великобритания',ping:42}, fr:{name:'Франция',ping:40}, ua:{name:'Украина',ping:29}, kz:{name:'Казахстан',ping:38},
@@ -637,112 +607,52 @@ const POOLS = {
     }
 };
 
-/* ---------- Настройки отображения (протокол + формат) ---------- */
+/* ---------- Настройки отображения ---------- */
 const VALID_FORMATS = ['colon', 'ip_at', 'at', 'url'];
 const VALID_PROTOS = ['http', 'https', 'socks5'];
-const savedCfg = (() => { try { return JSON.parse(localStorage.getItem('pt_cfg_v2') || '{}'); } catch (e) { return {}; } })();
+const FORMAT_SHORT = { colon: 'ip:port:log:pass', at: 'log:pass@ip:port', url: 'proto://log:pass', ip_at: 'ip:port@log:pass' };
+const savedCfg = (() => { try { return JSON.parse(localStorage.getItem('pt_cfg_v3') || '{}'); } catch (e) { return {}; } })();
 const cfg = {
     proto: VALID_PROTOS.includes(savedCfg.proto) ? savedCfg.proto : 'http',
     format: VALID_FORMATS.includes(savedCfg.format) ? savedCfg.format : 'colon'
 };
-function saveCfg() { try { localStorage.setItem('pt_cfg_v2', JSON.stringify(cfg)); } catch (e) {} }
+function saveCfg() { try { localStorage.setItem('pt_cfg_v3', JSON.stringify(cfg)); } catch (e) {} }
 
-/* ---------- Демо-данные пользователя (4 заказа, 18 активных IP) ---------- */
+/* ---------- Демо-данные ---------- */
 function createSeedData() {
-    const now = Date.now();
-    const HR = 36e5;
-
-    // Заказ #4085: Пачка под парсинг — 12 активных IPv6 (NL + DE), на автопродлении 2 шт.
+    const now = Date.now(), HR = 36e5;
     const o1Proxies = [];
     for (let i = 1; i <= 12; i++) {
-        const isNL = i <= 8;
-        const basePort = 8100 + i;
+        const isNL = i <= 8, basePort = 8100 + i;
         o1Proxies.push({
-            id: 5000 + i,
-            orderId: 4085,
-            poolId: 'pool1',
-            tariffId: 'ipv6',
-            tariffTitle: 'IPv6',
-            isV6: false,
+            id: 5000 + i, orderId: 4085, poolId: 'pool1', tariffId: 'ipv6', tariffTitle: 'IPv6', isV6: false,
             country: isNL ? 'nl' : 'de',
             ip: isNL ? `185.199.104.${20 + i}` : `45.142.82.${40 + i}`,
-            httpPort: basePort,
-            httpsPort: basePort + 300,
-            socksPort: basePort + 1000,
-            port: basePort,
-            login: `rvx_${4085}${i}`,
-            pass: `kP9mX${10 + i}qR`,
-            status: 'active',
+            httpPort: basePort, httpsPort: basePort + 300, socksPort: basePort + 1000, port: basePort,
+            login: `rvx_${4085}${i}`, pass: `kP9mX${10 + i}qR`, status: 'active',
             createdAt: now - 14 * DAY,
             expiresAt: i <= 2 ? (now + 15 * HR + i * 2400000) : (now + (6 + (i % 10)) * DAY),
-            periodDays: 30,
-            autoRenew: i <= 2,
-            autoRenewDays: i === 1 ? 30 : 14
+            periodDays: 30, autoRenew: i <= 2, autoRenewDays: i === 1 ? 30 : 14
         });
     }
-
-    // Заказ #4081: 3x IPv4 Private (US, GB, DE), на автопродлении 1 шт.
     const o2Proxies = [
-        {
-            id: 5101, orderId: 4081, poolId: 'pool1', tariffId: 'ipv4_custom', tariffTitle: 'IPv4 Индивидуальный', isV6: false,
-            country: 'us', ip: '198.51.100.42', httpPort: 8000, httpsPort: 8443, socksPort: 9080, port: 8000,
-            login: 'us_priv42', pass: 'Tr8vxM92p', status: 'active',
-            createdAt: now - 25 * DAY, expiresAt: now + 2 * DAY + 4 * HR, periodDays: 30, autoRenew: true, autoRenewDays: 30
-        },
-        {
-            id: 5102, orderId: 4081, poolId: 'pool1', tariffId: 'ipv4_custom', tariffTitle: 'IPv4 Индивидуальный', isV6: false,
-            country: 'gb', ip: '185.14.233.19', httpPort: 8000, httpsPort: 8443, socksPort: 9080, port: 8000,
-            login: 'gb_priv19', pass: 'Lm4qZ8wR7', status: 'active',
-            createdAt: now - 19 * DAY, expiresAt: now + 11 * DAY, periodDays: 30, autoRenew: false, autoRenewDays: 7
-        },
-        {
-            id: 5103, orderId: 4081, poolId: 'pool1', tariffId: 'ipv4_custom', tariffTitle: 'IPv4 Индивидуальный', isV6: false,
-            country: 'de', ip: '172.104.140.88', httpPort: 8000, httpsPort: 8443, socksPort: 9080, port: 8000,
-            login: 'de_priv88', pass: 'Qw9nK3tY6', status: 'active',
-            createdAt: now - 35 * DAY, expiresAt: now - 4 * DAY, periodDays: 30, autoRenew: false, autoRenewDays: 30
-        }
+        { id: 5101, orderId: 4081, poolId: 'pool1', tariffId: 'ipv4_custom', tariffTitle: 'IPv4 Индивидуальный', isV6: false, country: 'us', ip: '198.51.100.42', httpPort: 8000, httpsPort: 8443, socksPort: 9080, port: 8000, login: 'us_priv42', pass: 'Tr8vxM92p', status: 'active', createdAt: now - 25 * DAY, expiresAt: now + 2 * DAY + 4 * HR, periodDays: 30, autoRenew: true, autoRenewDays: 30 },
+        { id: 5102, orderId: 4081, poolId: 'pool1', tariffId: 'ipv4_custom', tariffTitle: 'IPv4 Индивидуальный', isV6: false, country: 'gb', ip: '185.14.233.19', httpPort: 8000, httpsPort: 8443, socksPort: 9080, port: 8000, login: 'gb_priv19', pass: 'Lm4qZ8wR7', status: 'active', createdAt: now - 19 * DAY, expiresAt: now + 11 * DAY, periodDays: 30, autoRenew: false, autoRenewDays: 7 },
+        { id: 5103, orderId: 4081, poolId: 'pool1', tariffId: 'ipv4_custom', tariffTitle: 'IPv4 Индивидуальный', isV6: false, country: 'de', ip: '172.104.140.88', httpPort: 8000, httpsPort: 8443, socksPort: 9080, port: 8000, login: 'de_priv88', pass: 'Qw9nK3tY6', status: 'active', createdAt: now - 35 * DAY, expiresAt: now - 4 * DAY, periodDays: 30, autoRenew: false, autoRenewDays: 30 }
     ];
-
-    // Заказ #4076: 2x IPv4 Shared (RU, KZ), на автопродлении 1 шт.
     const o3Proxies = [
-        {
-            id: 5201, orderId: 4076, poolId: 'pool1', tariffId: 'ipv4_shared', tariffTitle: 'IPv4 Shared', isV6: false,
-            country: 'ru', ip: '91.210.174.11', httpPort: 8080, httpsPort: 8443, socksPort: 1080, port: 8080,
-            login: 'sh_ru11', pass: 'Pq2wZ8mX5', status: 'active',
-            createdAt: now - 6 * DAY, expiresAt: now + 24 * DAY, periodDays: 30, autoRenew: true, autoRenewDays: 90
-        },
-        {
-            id: 5202, orderId: 4076, poolId: 'pool1', tariffId: 'ipv4_shared', tariffTitle: 'IPv4 Shared', isV6: false,
-            country: 'kz', ip: '194.36.88.204', httpPort: 8080, httpsPort: 8443, socksPort: 1080, port: 8080,
-            login: 'sh_kz204', pass: 'Hx7bC4vN9', status: 'active',
-            createdAt: now - 6 * DAY, expiresAt: now + 24 * DAY, periodDays: 30, autoRenew: false, autoRenewDays: 30
-        }
+        { id: 5201, orderId: 4076, poolId: 'pool1', tariffId: 'ipv4_shared', tariffTitle: 'IPv4 Shared', isV6: false, country: 'ru', ip: '91.210.174.11', httpPort: 8080, httpsPort: 8443, socksPort: 1080, port: 8080, login: 'sh_ru11', pass: 'Pq2wZ8mX5', status: 'active', createdAt: now - 6 * DAY, expiresAt: now + 24 * DAY, periodDays: 30, autoRenew: true, autoRenewDays: 90 },
+        { id: 5202, orderId: 4076, poolId: 'pool1', tariffId: 'ipv4_shared', tariffTitle: 'IPv4 Shared', isV6: false, country: 'kz', ip: '194.36.88.204', httpPort: 8080, httpsPort: 8443, socksPort: 1080, port: 8080, login: 'sh_kz204', pass: 'Hx7bC4vN9', status: 'active', createdAt: now - 6 * DAY, expiresAt: now + 24 * DAY, periodDays: 30, autoRenew: false, autoRenewDays: 30 }
     ];
-
-    // Заказ #4069: 2x IPv4 Private (FR, PL), авто выкл
     const o4Proxies = [
-        {
-            id: 5301, orderId: 4069, poolId: 'pool1', tariffId: 'ipv4_custom', tariffTitle: 'IPv4 Индивидуальный', isV6: false,
-            country: 'fr', ip: '51.91.112.64', httpPort: 8000, httpsPort: 8443, socksPort: 9080, port: 8000,
-            login: 'fr_acc64', pass: 'Nv8pL2xK4', status: 'active',
-            createdAt: now - 10 * DAY, expiresAt: now + 20 * DAY, periodDays: 30, autoRenew: false, autoRenewDays: 30
-        },
-        {
-            id: 5302, orderId: 4069, poolId: 'pool1', tariffId: 'ipv4_custom', tariffTitle: 'IPv4 Индивидуальный', isV6: false,
-            country: 'pl', ip: '145.239.88.15', httpPort: 8000, httpsPort: 8443, socksPort: 9080, port: 8000,
-            login: 'pl_acc15', pass: 'Zx4mT7vW2', status: 'active',
-            createdAt: now - 10 * DAY, expiresAt: now + 20 * DAY, periodDays: 30, autoRenew: false, autoRenewDays: 30
-        }
+        { id: 5301, orderId: 4069, poolId: 'pool1', tariffId: 'ipv4_custom', tariffTitle: 'IPv4 Индивидуальный', isV6: false, country: 'fr', ip: '51.91.112.64', httpPort: 8000, httpsPort: 8443, socksPort: 9080, port: 8000, login: 'fr_acc64', pass: 'Nv8pL2xK4', status: 'active', createdAt: now - 10 * DAY, expiresAt: now + 20 * DAY, periodDays: 30, autoRenew: false, autoRenewDays: 30 },
+        { id: 5302, orderId: 4069, poolId: 'pool1', tariffId: 'ipv4_custom', tariffTitle: 'IPv4 Индивидуальный', isV6: false, country: 'pl', ip: '145.239.88.15', httpPort: 8000, httpsPort: 8443, socksPort: 9080, port: 8000, login: 'pl_acc15', pass: 'Zx4mT7vW2', status: 'active', createdAt: now - 10 * DAY, expiresAt: now + 20 * DAY, periodDays: 30, autoRenew: false, autoRenewDays: 30 }
     ];
 
     return {
         stock: JSON.parse(JSON.stringify(INITIAL_STOCK)),
         me: {
-            id: 78492014,
-            name: 'Алексей',
-            username: 'rovex_user',
-            balance: 1850.00,
-            blocked: false,
+            id: 78492014, name: 'Алексей', username: 'rovex_user', balance: 1850.00, blocked: false,
             orders: [
                 { id: 4085, total: 384.00, createdAt: now - 14 * DAY, proxies: o1Proxies },
                 { id: 4081, total: 525.00, createdAt: now - 25 * DAY, proxies: o2Proxies },
@@ -751,11 +661,11 @@ function createSeedData() {
             ],
             tx: [
                 { id: 905, type: 'deposit', service: 'sbp', amount: 2500, balanceAfter: 2500, at: now - 26 * DAY, ref: 'PH_884120', note: 'СБП' },
-                { id: 904, type: 'purchase', service: 'proxy', amount: -525, balanceAfter: 1975, at: now - 25 * DAY, ref: '4081', note: 'Заказ #4081 · 3 шт. IPv4 Индивидуальный' },
-                { id: 903, type: 'purchase', service: 'proxy', amount: -384, balanceAfter: 1591, at: now - 14 * DAY, ref: '4085', note: 'Заказ #4085 · 12 шт. IPv6' },
-                { id: 902, type: 'purchase', service: 'proxy', amount: -350, balanceAfter: 1241, at: now - 10 * DAY, ref: '4069', note: 'Заказ #4069 · 2 шт. IPv4 Индивидуальный' },
+                { id: 904, type: 'purchase', service: 'proxy', amount: -525, balanceAfter: 1975, at: now - 25 * DAY, ref: '4081', note: 'Заказ #4081 · 3 шт.' },
+                { id: 903, type: 'purchase', service: 'proxy', amount: -384, balanceAfter: 1591, at: now - 14 * DAY, ref: '4085', note: 'Заказ #4085 · 12 шт.' },
+                { id: 902, type: 'purchase', service: 'proxy', amount: -350, balanceAfter: 1241, at: now - 10 * DAY, ref: '4069', note: 'Заказ #4069 · 2 шт.' },
                 { id: 901, type: 'deposit', service: 'cryptobot', amount: 713, balanceAfter: 1954, at: now - 7 * DAY, ref: 'CB_44109', note: 'CryptoBot' },
-                { id: 900, type: 'purchase', service: 'proxy', amount: -104, balanceAfter: 1850, at: now - 6 * DAY, ref: '4076', note: 'Заказ #4076 · 2 шт. IPv4 Shared' }
+                { id: 900, type: 'purchase', service: 'proxy', amount: -104, balanceAfter: 1850, at: now - 6 * DAY, ref: '4076', note: 'Заказ #4076 · 2 шт.' }
             ]
         }
     };
@@ -772,18 +682,15 @@ function loadDbState() {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
-            const parsed = JSON.parse(raw);
-            if (parsed?.me?.orders && parsed?.stock) return parsed;
+            const p = JSON.parse(raw);
+            if (p?.me?.orders && p?.stock) return p;
         }
     } catch (e) {}
     return createSeedData();
 }
-function saveDbState() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ me, stock: stockByTariff })); } catch (e) {}
-}
+function saveDbState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ me, stock: stockByTariff })); } catch (e) {} }
 function rebuildFromMe() {
-    ordersById.clear();
-    proxiesById.clear();
+    ordersById.clear(); proxiesById.clear();
     if (Array.isArray(me?.orders)) {
         me.orders.forEach(o => {
             ordersById.set(o.id, o);
@@ -792,46 +699,26 @@ function rebuildFromMe() {
     }
 }
 
-/* ---------- Состояние интерфейса ---------- */
-const state = {
-    pool: 'pool1', tariffIdx: 0, country: 'ru', period: 30, count: 1,
-    cart: [], ordersSort: 'new', ordersFilter: 'all', ordersQuery: '', historyAll: false
-};
-const ui = {
-    view: 'providers',
-    open: new Set([4085]),
-    orderVisible: {},
-    prolong: { pid: null, oid: null, days: 30 },
-    autoRenew: { mode: 'proxy', oid: null, pid: null, days: 30 },
-    exp: { oid: null, proto: 'http', fmt: 'colon', prefix: false, tag: false }
-};
+/* ---------- Состояние UI ---------- */
+const state = { pool: 'pool1', tariffIdx: 0, country: 'ru', period: 30, count: 1, cart: [], ordersSort: 'new', ordersFilter: 'all', ordersQuery: '', historyAll: false };
+const ui = { view: 'providers', open: new Set([4085]), prolong: { pid: null, oid: null, days: 30 }, autoRenew: { mode: 'proxy', oid: null, pid: null, days: 30 }, exp: { oid: null, proto: 'http', fmt: 'colon', prefix: false, tag: false } };
 
 function currentPool() { return POOLS?.[state.pool]; }
 function currentTariff() { return POOLS?.[state.pool]?.tariffs?.[state.tariffIdx]; }
-
 function getTariffObj(tariffId, poolId = 'pool1') {
     const p = POOLS[poolId] || POOLS.pool1;
     return p.tariffs.find(t => t.id === tariffId) || p.tariffs[0];
 }
-function getCountryStock(tariffId, country) {
-    return Math.max(0, Number(stockByTariff?.[tariffId]?.[country] ?? 0));
-}
+function getCountryStock(tariffId, country) { return Math.max(0, Number(stockByTariff?.[tariffId]?.[country] ?? 0)); }
 function getCartReserved(poolId, tariffId, country, excludeCid = -1) {
-    return state.cart.reduce((s, it) => {
-        if (it.cid !== excludeCid && it.poolId === poolId && it.tariffId === tariffId && it.country === country) {
-            return s + (Number(it.count) || 0);
-        }
-        return s;
-    }, 0);
+    return state.cart.reduce((s, it) => (it.cid !== excludeCid && it.poolId === poolId && it.tariffId === tariffId && it.country === country) ? s + (Number(it.count) || 0) : s, 0);
 }
 function getAvailableForConfig() {
     const t = currentTariff();
-    if (!t) return 0;
-    return Math.max(0, getCountryStock(t.id, state.country) - getCartReserved(state.pool, t.id, state.country));
+    return t ? Math.max(0, getCountryStock(t.id, state.country) - getCartReserved(state.pool, t.id, state.country)) : 0;
 }
 function getActiveCountries() {
-    const t = currentTariff();
-    const map = stockByTariff[t?.id || 'ipv6'] || {};
+    const t = currentTariff(), map = stockByTariff[t?.id || 'ipv6'] || {};
     return Object.keys(map).map(code => {
         const meta = COUNTRY_META[code] || { name: code.toUpperCase(), ping: 60 };
         return { code, name: meta.name, ping: meta.ping, stock: map[code] };
@@ -841,10 +728,7 @@ function syncCountryForCurrentTariff() {
     const list = getActiveCountries();
     if (!list.length) return;
     const found = list.find(c => c.code === state.country);
-    if (!found || found.stock === 0) {
-        const firstAvail = list.find(c => c.stock > 0) || list[0];
-        state.country = firstAvail.code;
-    }
+    if (!found || found.stock === 0) state.country = (list.find(c => c.stock > 0) || list[0]).code;
 }
 const cname = c => COUNTRY_META[c]?.name || (c || '').toUpperCase();
 function ceilTenth(v) { return Math.ceil((v || 0) * 10) / 10; }
@@ -857,7 +741,7 @@ function unitPrice(tOrProxy, days) {
     return ceilTenth((tOrProxy || 0) * (days || 30) / 30);
 }
 
-/* ---------- Производные прокси и форматирование (HTTP / HTTPS / SOCKS5) ---------- */
+/* ---------- Статусы и форматирование прокси ---------- */
 function pState(p) {
     if (p.status !== 'active') return p.status;
     const left = p.expiresAt - Date.now();
@@ -889,13 +773,12 @@ function proxyPort(p, proto = cfg.proto) {
     return p.httpPort || p.port;
 }
 function proxyHost(p, proto = cfg.proto) {
-    const rawHost = proto === 'socks5' && p.socksHost ? p.socksHost : (proto === 'https' && p.httpsHost ? p.httpsHost : (p.httpHost || p.ip));
-    return p.isV6 || String(rawHost).includes(':') ? `[${rawHost}]` : rawHost;
+    const raw = proto === 'socks5' && p.socksHost ? p.socksHost : (proto === 'https' && p.httpsHost ? p.httpsHost : (p.httpHost || p.ip));
+    return p.isV6 || String(raw).includes(':') ? `[${raw}]` : raw;
 }
 function fmtProxy(p, fmt = cfg.format, proto = cfg.proto, { prefix = false, tag = false } = {}) {
     if (!p) return '';
-    const host = proxyHost(p, proto);
-    const port = proxyPort(p, proto);
+    const host = proxyHost(p, proto), port = proxyPort(p, proto);
     const pr = proto === 'socks5' ? 'socks5' : (proto === 'https' ? 'https' : 'http');
     let s = '';
     switch (fmt) {
@@ -907,9 +790,7 @@ function fmtProxy(p, fmt = cfg.format, proto = cfg.proto, { prefix = false, tag 
         case 'colon':
         default:          s = `${host}:${port}:${p.login}:${p.pass}`; break;
     }
-    if (prefix && !s.startsWith('http://') && !s.startsWith('https://') && !s.startsWith('socks5://') && fmt !== 'proxifier') {
-        s = `${pr}://${s}`;
-    }
+    if (prefix && !s.startsWith('http://') && !s.startsWith('https://') && !s.startsWith('socks5://') && fmt !== 'proxifier') s = `${pr}://${s}`;
     if (tag) s += ` #${p.country.toUpperCase()}-${p.id}`;
     return s;
 }
@@ -1009,25 +890,20 @@ function rerenderCurrent() {
 }
 
 /* =====================================================================
-   КАТАЛОГ И КОНФИГУРАТОР (с учётом наличия провайдера)
+   КАТАЛОГ И КОНФИГУРАТОР
    ===================================================================== */
 function renderCatalog() {
     updateAllBalanceDisplays();
     $('cat-hello').textContent = `${me?.name || 'Пользователь'}, выберите подходящую сеть`;
     $('catalog-list').innerHTML = Object.entries(POOLS).map(([id, p]) => {
-        const isAvailable = p.available !== false;
-        const tariffsList = Array.isArray(p.tariffs) ? p.tariffs : [];
+        const isAvailable = p.available !== false, tariffsList = Array.isArray(p.tariffs) ? p.tariffs : [];
         const min = tariffsList.length ? Math.min(...tariffsList.map(t => Number(t.price) || 0)) : 0;
         if (!isAvailable) {
             return `<div onclick="selectProvider('${id}')" class="card rounded-2xl p-4 opacity-60 border border-white/[0.06] bg-zinc-950/40 cursor-pointer select-none transition hover:border-amber-500/30">
                 <div class="flex items-center justify-between gap-3">
-                    <div class="min-w-0">
-                        <h3 class="text-sm font-semibold text-zinc-400">${esc(p.name)}</h3>
-                        <p class="text-xs text-zinc-500 mt-1">${esc(p.desc)}</p>
-                    </div>
+                    <div class="min-w-0"><h3 class="text-sm font-semibold text-zinc-400">${esc(p.name)}</h3><p class="text-xs text-zinc-500 mt-1">${esc(p.desc)}</p></div>
                     <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30 shrink-0">${esc(p.disabled_reason || 'В разработке')}</span>
-                </div>
-            </div>`;
+                </div></div>`;
         }
         return `<div onclick="selectProvider('${id}')" class="card card-hover pressable rounded-2xl p-4 cursor-pointer">
             <div class="flex items-center justify-between gap-3">
@@ -1048,9 +924,7 @@ function selectProvider(id) {
     updateCartBadge();
     navigate('config');
 }
-function renderConfigAll() {
-    renderTariffs(); renderPeriods(); renderSelectedCountry(); renderCountries($('country-q')?.value || ''); calcTotal();
-}
+function renderConfigAll() { renderTariffs(); renderPeriods(); renderSelectedCountry(); renderCountries($('country-q')?.value || ''); calcTotal(); }
 function renderTariffs() {
     const p = POOLS[state.pool];
     $('conf-tariff-list').innerHTML = p.tariffs.map((t, i) => {
@@ -1070,9 +944,7 @@ function selectTariff(i) {
     renderConfigAll();
 }
 function renderSelectedCountry() {
-    const t = currentTariff();
-    const totalStock = getCountryStock(t.id, state.country);
-    const inCart = getCartReserved(state.pool, t.id, state.country);
+    const t = currentTariff(), totalStock = getCountryStock(t.id, state.country), inCart = getCartReserved(state.pool, t.id, state.country);
     const rem = Math.max(0, totalStock - inCart);
     $('sel-country-flag').innerHTML = flag(state.country);
     $('sel-country-name').textContent = cname(state.country);
@@ -1081,27 +953,16 @@ function renderSelectedCountry() {
         : 'Нет в наличии';
 }
 function renderCountries(q = '') {
-    const s = (q || '').trim().toLowerCase();
-    const activeList = getActiveCountries();
-    const list = activeList.filter(c => !s || c.name.toLowerCase().includes(s) || c.code.toLowerCase().includes(s));
+    const s = (q || '').trim().toLowerCase(), list = getActiveCountries().filter(c => !s || c.name.toLowerCase().includes(s) || c.code.toLowerCase().includes(s));
     $('country-list').innerHTML = list.length ? list.map(c => {
-        const out = c.stock <= 0;
-        const stLabel = out ? '<span class="text-rose-400">Нет</span>' : `<span class="${c.stock < 20 ? 'text-amber-300' : 'text-emerald-400/80'}">${fmtInt(c.stock)} шт.</span>`;
+        const out = c.stock <= 0, stLabel = out ? '<span class="text-rose-400">Нет</span>' : `<span class="${c.stock < 20 ? 'text-amber-300' : 'text-emerald-400/80'}">${fmtInt(c.stock)} шт.</span>`;
         return `<div class="dd-item ${c.code === state.country ? 'sel' : ''} ${out ? 'disabled' : ''}" onclick="${out ? "toast('Нет в наличии',{error:true})" : `selectCountry('${c.code}')`}">
             <span class="flex items-center gap-2.5 min-w-0">${flag(c.code)}<span class="truncate">${esc(c.name)}</span><span class="mono text-[9.5px] text-zinc-500 uppercase">${c.code}</span></span>
             <span class="mono text-[10px] shrink-0 flex items-center gap-2">${stLabel}<span class="text-zinc-600">${c.ping}ms</span></span>
         </div>`;
     }).join('') : '<div class="p-4 text-center text-xs text-zinc-500">Ничего не найдено</div>';
 }
-function selectCountry(code) {
-    state.country = code;
-    clampStateCount();
-    renderSelectedCountry();
-    closeAllDropdowns();
-    $('country-q').value = '';
-    renderCountries();
-    calcTotal();
-}
+function selectCountry(code) { state.country = code; clampStateCount(); renderSelectedCountry(); closeAllDropdowns(); $('country-q').value = ''; renderCountries(); calcTotal(); }
 function renderPeriods() {
     const t = currentTariff(), allowed = getTariffPeriods(t);
     if (!allowed.includes(state.period)) state.period = allowed.includes(30) ? 30 : allowed[0];
@@ -1109,42 +970,29 @@ function renderPeriods() {
     $('dd-period').innerHTML = allowed.map(d => `<div class="dd-item ${d === state.period ? 'sel' : ''}" onclick="selectPeriod(${d})"><span>${daysWord(d)}</span><span class="mono text-[10px] text-zinc-400">${unitPrice(t, d)} ₽</span></div>`).join('');
 }
 function selectPeriod(d) { state.period = d; renderPeriods(); closeAllDropdowns(); calcTotal(); }
-
 function clampStateCount() {
     const rem = getAvailableForConfig();
-    if (rem <= 0) state.count = 0;
-    else state.count = Math.max(1, Math.min(rem, state.count || 1));
+    state.count = rem <= 0 ? 0 : Math.max(1, Math.min(rem, state.count || 1));
     if ($('conf-count')) $('conf-count').value = state.count > 0 ? String(state.count) : '0';
 }
 function onCountInput(el) {
     const rem = getAvailableForConfig();
     let raw = el.value.replace(/\D/g, ''), n = raw === '' ? 0 : parseInt(raw, 10);
-    if (rem > 0 && n > rem) { n = rem; flashHint(); }
-    else if (rem <= 0) n = 0;
-    el.value = raw === '' ? '' : String(n);
-    state.count = n;
-    calcTotal();
+    if (rem > 0 && n > rem) { n = rem; flashHint(); } else if (rem <= 0) n = 0;
+    el.value = raw === '' ? '' : String(n); state.count = n; calcTotal();
 }
-function onCountBlur() {
-    const rem = getAvailableForConfig();
-    setCount(rem <= 0 ? 0 : (state.count < 1 ? 1 : state.count), true);
-}
-function setCount(n, silent) {
+function onCountBlur() { const rem = getAvailableForConfig(); setCount(rem <= 0 ? 0 : (state.count < 1 ? 1 : state.count), true); }
+function setCount(n) {
     const rem = getAvailableForConfig();
     if (rem <= 0) { state.count = 0; $('conf-count').value = '0'; calcTotal(); return; }
     if (n > rem) { n = rem; flashHint(); }
-    state.count = Math.max(1, n);
-    $('conf-count').value = String(state.count);
-    calcTotal();
+    state.count = Math.max(1, n); $('conf-count').value = String(state.count); calcTotal();
 }
-function changeCount(d) { setCount((state.count || 0) + d, true); }
+function changeCount(d) { setCount((state.count || 0) + d); }
 function flashHint() { const h = $('count-hint'); h.classList.add('text-rose-400'); setTimeout(() => h.classList.remove('text-rose-400'), 900); }
 function calcTotal() {
-    const t = currentTariff();
-    if (!t) return;
-    const rem = getAvailableForConfig();
-    const unit = unitPrice(t, state.period);
-    const n = rem <= 0 ? 0 : Math.max(1, Math.min(rem, state.count || 1));
+    const t = currentTariff(); if (!t) return;
+    const rem = getAvailableForConfig(), unit = unitPrice(t, state.period), n = rem <= 0 ? 0 : Math.max(1, Math.min(rem, state.count || 1));
     $('conf-unit').textContent = fmtMoney(unit);
     $('conf-qty').textContent = String(n);
     $('count-hint').textContent = rem > 0 ? `От 1 до ${fmtInt(rem)} шт.` : 'Нет доступного остатка';
@@ -1172,10 +1020,7 @@ function addToCart() {
     const added = Math.min(rem, state.count);
     if (ex) ex.count += added;
     else state.cart.push({ cid: ++cartSeq, poolId: state.pool, poolName: pool.name, tariffId: t.id, tariffTitle: t.label, monthly: t.price, prices: t.prices, country: state.country, days: state.period, count: added });
-    saveDbState();
-    clampStateCount();
-    renderConfigAll();
-    updateCartBadge();
+    saveDbState(); clampStateCount(); renderConfigAll(); updateCartBadge();
     const b = $('btn-add'); b.textContent = 'Добавлено'; setTimeout(() => { b.textContent = 'В корзину'; }, 1000);
     toast(`${t.label} × ${added} добавлено`, { action: { label: 'Корзина', fn: () => navigate('cart') } });
 }
@@ -1195,10 +1040,8 @@ function renderCart() {
     }
     foot.classList.remove('hidden');
     list.innerHTML = state.cart.map(i => {
-        const unit = unitPrice(i, i.days);
-        const totalStock = getCountryStock(i.tariffId, i.country);
-        const reservedOther = getCartReserved(i.poolId, i.tariffId, i.country, i.cid);
-        const maxRow = Math.max(0, totalStock - reservedOther);
+        const unit = unitPrice(i, i.days), totalStock = getCountryStock(i.tariffId, i.country);
+        const maxRow = Math.max(0, totalStock - getCartReserved(i.poolId, i.tariffId, i.country, i.cid));
         return `<div class="card rounded-2xl p-3.5 space-y-3">
             <div class="flex items-start justify-between gap-2">
                 <div class="min-w-0"><div class="flex items-center gap-2">${flag(i.country, 'w-3.5 h-2.5')}<span class="text-xs font-semibold text-zinc-100 truncate">${esc(i.poolName)} · ${esc(i.tariffTitle)}</span></div>
@@ -1220,15 +1063,11 @@ function renderCart() {
 }
 function changeCartQty(cid, d) {
     const i = state.cart.find(x => x.cid === cid); if (!i) return;
-    const totalStock = getCountryStock(i.tariffId, i.country);
-    const other = getCartReserved(i.poolId, i.tariffId, i.country, cid);
-    const maxRow = Math.max(0, totalStock - other);
+    const totalStock = getCountryStock(i.tariffId, i.country), maxRow = Math.max(0, totalStock - getCartReserved(i.poolId, i.tariffId, i.country, cid));
     const n = i.count + d;
     if (n < 1) return;
     if (n > maxRow) { toast(`Доступно максимум ${fmtInt(totalStock)} шт.`, { error: true }); return; }
-    i.count = n;
-    updateCartBadge();
-    renderCart();
+    i.count = n; updateCartBadge(); renderCart();
 }
 function removeCartItem(cid) {
     const idx = state.cart.findIndex(x => x.cid === cid); if (idx < 0) return;
@@ -1259,7 +1098,6 @@ function checkoutCart() {
             const newOrderId = me.orders.reduce((m, o) => Math.max(m, o.id), 4085) + 1;
             let maxPid = [...proxiesById.keys()].reduce((m, id) => Math.max(m, id), 5300);
             const boughtProxies = [];
-
             for (const it of state.cart) {
                 stockByTariff[it.tariffId][it.country] = Math.max(0, getCountryStock(it.tariffId, it.country) - it.count);
                 for (let k = 0; k < it.count; k++) {
@@ -1275,22 +1113,17 @@ function checkoutCart() {
                 }
             }
             me.balance = round2(me.balance - sum);
-            const newOrder = { id: newOrderId, total: round2(sum), createdAt: now, proxies: boughtProxies };
-            me.orders.unshift(newOrder);
+            me.orders.unshift({ id: newOrderId, total: round2(sum), createdAt: now, proxies: boughtProxies });
             me.tx.unshift({ id: Date.now(), type: 'purchase', service: 'proxy', amount: -round2(sum), balanceAfter: me.balance, at: now, ref: String(newOrderId), note: `Заказ #${newOrderId} · ${count} шт.` });
-            rebuildFromMe();
-            state.cart = [];
-            saveDbState();
-            updateCartBadge();
-            ui.open.add(newOrderId);
-            navigate('orders');
+            rebuildFromMe(); state.cart = []; saveDbState(); updateCartBadge();
+            ui.open.add(newOrderId); navigate('orders');
             toast(`Заказ #${newOrderId} оплачен`);
         }
     });
 }
 
 /* =====================================================================
-   ЗАКАЗЫ: СВОДКА + ПЛАВНЫЕ КАРТОЧКИ + АВТОПРОДЛЕНИЕ НА ЗАКАЗ / IP
+   ЗАКАЗЫ: СВОДКА + ПЛАВНОЕ ОБНОВЛЕНИЕ БЕЗ ДЕРГАНИЯ
    ===================================================================== */
 const SORT_LABELS = { new: 'Новые', old: 'Старые', sum_desc: 'Дороже', sum_asc: 'Дешевле' };
 function setOrdersFilter(f) { state.ordersFilter = f; renderOrders(); }
@@ -1306,22 +1139,43 @@ function clearOrdersSearch() {
     $('orders-search-clear')?.classList.add('hidden');
     renderOrders();
 }
+
+function syncOrdersFormatUI() {
+    $('orders-proto-seg')?.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.p === cfg.proto));
+    if ($('ofmt-label')) $('ofmt-label').textContent = FORMAT_SHORT[cfg.format] || 'ip:port:log:pass';
+    if ($('dd-ofmt-url')) $('dd-ofmt-url').textContent = `${cfg.proto}://login:pass@ip:port`;
+    $('dd-ofmt')?.querySelectorAll('.dd-item').forEach(el => el.classList.toggle('sel', el.dataset.f === cfg.format));
+}
+function refreshDisplayedProxyStringsInPlace() {
+    syncOrdersFormatUI();
+    document.querySelectorAll('[data-proxy-id]').forEach(el => {
+        const pid = Number(el.getAttribute('data-proxy-id'));
+        const p = proxiesById.get(pid);
+        if (!p) return;
+        const formatted = fmtProxy(p);
+        el.setAttribute('data-copy', formatted);
+        const textNode = el.querySelector('.proxy-str-val');
+        const protoNode = el.querySelector('.proxy-proto-val');
+        if (textNode) textNode.textContent = formatted;
+        if (protoNode) protoNode.textContent = cfg.proto;
+    });
+}
 function setProto(p) {
     if (cfg.proto === p) return;
     cfg.proto = p; saveCfg();
-    rerenderCurrent();
+    refreshDisplayedProxyStringsInPlace();
     toast(`Отображение: ${p.toUpperCase()}`);
 }
-function setFormat(f) {
+function setFormatFromDropdown(f) {
     cfg.format = f; saveCfg();
-    rerenderCurrent();
-    toast('Формат изменён');
+    closeAllDropdowns();
+    refreshDisplayedProxyStringsInPlace();
+    toast('Формат обновлён');
 }
 
 function proxyMatchesQuery(p, q) {
     if (!q) return true;
-    const cName = cname(p.country).toLowerCase();
-    const formatted = fmtProxy(p).toLowerCase();
+    const cName = cname(p.country).toLowerCase(), formatted = fmtProxy(p).toLowerCase();
     return String(p.ip).toLowerCase().includes(q)
         || String(proxyPort(p)).includes(q)
         || String(p.country).toLowerCase().includes(q)
@@ -1348,14 +1202,14 @@ function renderOrdersStats() {
 
     const low = autoList.length > 0 && cycle > me.balance;
     $('ord-bal-warn').classList.toggle('hidden', !low);
-    if (low) $('ord-bal-warn-text').textContent = `На цикл нужно ${fmtMoney(cycle)}, на балансе ${fmtMoney(me.balance)}`;
+    if (low) $('ord-bal-warn-text').textContent = `На продление нужно ${fmtMoney(cycle)}, доступно ${fmtMoney(me.balance)}`;
 }
 
 function renderOrders() {
     renderOrdersStats();
+    syncOrdersFormatUI();
     const f = state.ordersFilter, q = state.ordersQuery;
     $('osort-label').textContent = SORT_LABELS[state.ordersSort];
-    $('orders-proto-seg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.p === cfg.proto));
     $('orders-chips').innerHTML = [
         ['all', 'Все'],
         ['live', 'Активные'],
@@ -1369,7 +1223,7 @@ function renderOrders() {
     list = [...list].sort(by);
 
     $('orders-list').innerHTML = list.length ? list.map(orderCardHtml).join('')
-        : me.orders.length ? empty('По заданному поиску или фильтру ничего не найдено')
+        : me.orders.length ? empty('По заданному запросу ничего не найдено')
         : `<div class="card rounded-2xl p-8 text-center"><p class="text-xs text-zinc-500">Заказов пока нет</p><button type="button" onclick="navigate('providers')" class="btn btn-ghost mt-4 px-5 py-2.5">Выбрать прокси</button></div>`;
 }
 
@@ -1379,31 +1233,35 @@ function getOrderVisibleProxies(o) {
     return o.proxies.filter(p => matchF(p, f) && (!q || orderIdMatch || proxyMatchesQuery(p, q)));
 }
 
+function computeOrderAutoMeta(o) {
+    const active = o.proxies.filter(isLive);
+    const autoList = active.filter(p => p.autoRenew);
+    const isAll = active.length > 0 && autoList.length === active.length;
+    const isPartial = autoList.length > 0 && autoList.length < active.length;
+    const periods = [...new Set(autoList.map(p => p.autoRenewDays || p.periodDays || 30))];
+    const cost = round2(autoList.reduce((s, p) => s + unitPrice(p, p.autoRenewDays || p.periodDays || 30), 0));
+    const periodLabel = autoList.length === 0 ? 'Срок' : (periods.length === 1 ? `${periods[0]} дн.` : 'Разные');
+    const hdrText = autoList.length ? `Авто ${autoList.length}/${active.length}` : 'Авто выкл.';
+    const subText = autoList.length ? `${autoList.length} из ${active.length} · ${cost} ₽` : 'Выключено';
+    return { active, autoList, isAll, isPartial, periodLabel, cost, hdrText, subText };
+}
+
 function orderCardHtml(o) {
     const forceOpenMatch = Boolean(state.ordersQuery && o.proxies.some(p => proxyMatchesQuery(p, state.ordersQuery)));
     const open = ui.open.has(o.id) || forceOpenMatch;
-
-    const active = o.proxies.filter(isLive);
-    const autoList = active.filter(p => p.autoRenew);
-    const isAllAuto = active.length > 0 && autoList.length === active.length;
-    const isPartialAuto = autoList.length > 0 && autoList.length < active.length;
-    const autoPeriods = [...new Set(autoList.map(p => p.autoRenewDays || p.periodDays || 30))];
-    const periodLabel = autoList.length === 0
-        ? 'Задать срок'
-        : (autoPeriods.length === 1 ? `${autoPeriods[0]} дн.` : 'Разные сроки');
-    const orderAutoCost = round2(autoList.reduce((s, p) => s + unitPrice(p, p.autoRenewDays || p.periodDays || 30), 0));
+    const meta = computeOrderAutoMeta(o);
 
     const countries = [...new Set(o.proxies.map(p => p.country))];
     const tariffs = [...new Set(o.proxies.map(p => p.tariffTitle))];
-    const minExp = active.length ? Math.min(...active.map(p => p.expiresAt)) : 0;
+    const minExp = meta.active.length ? Math.min(...meta.active.map(p => p.expiresAt)) : 0;
     const minLeft = minExp ? (minExp - Date.now()) : 0;
 
-    let statusPill = `<span class="pill pill-ok">Активных ${active.length}/${o.proxies.length}</span>`;
-    if (!active.length) statusPill = `<span class="pill pill-mute">Истёк</span>`;
+    let statusPill = `<span class="pill pill-ok">Активных ${meta.active.length}/${o.proxies.length}</span>`;
+    if (!meta.active.length) statusPill = `<span class="pill pill-mute">Истёк</span>`;
     else if (minLeft < DAY) statusPill = `<span class="pill pill-warn">Истекает · ${leftText(minLeft)}</span>`;
 
     return `<div id="ord-card-${o.id}" class="oc card rounded-2xl overflow-hidden">
-        <!-- Кликабельная шапка заказа для раскрытия аккордеона -->
+        <!-- Кликабельная шапка заказа -->
         <div class="p-3.5 cursor-pointer select-none transition hover:bg-white/[0.015]" onclick="toggleOrder(${o.id})">
             <div class="flex items-start justify-between gap-2">
                 <div class="min-w-0 space-y-1">
@@ -1420,38 +1278,33 @@ function orderCardHtml(o) {
                 <div class="flex items-center gap-2.5 shrink-0">
                     <div class="text-right">
                         <div class="mono text-xs font-semibold text-zinc-100">${fmtMoney(o.total)}</div>
-                        <div class="mono text-[10px] ${autoList.length ? 'text-emerald-400' : 'text-zinc-500'}">${autoList.length ? `Авто: ${autoList.length}/${active.length}` : 'Авто выкл.'}</div>
+                        <div id="ord-hdr-auto-${o.id}" class="mono text-[10px] ${meta.autoList.length ? 'text-emerald-400' : 'text-zinc-500'}">${meta.hdrText}</div>
                     </div>
                     ${SVG_CHEV.replace('class="chev', `class="chev ${open ? 'rot' : ''}`)}
                 </div>
             </div>
         </div>
 
-        <!-- Панель автопродления всего заказа (переключение ТОЛЬКО по самому слайдеру) -->
-        <div onclick="event.stopPropagation()" class="mx-3 mb-3 px-3 py-2 rounded-xl bg-black/35 border border-white/[0.06] flex items-center justify-between gap-2.5">
+        <!-- Управление автопродлением всего заказа (клик ТОЛЬКО по самому слайдеру .switch) -->
+        <div onclick="event.stopPropagation()" class="mx-3 mb-3 px-3 py-2 rounded-xl bg-black/35 border border-white/[0.06] flex items-center justify-between gap-2">
             <div class="flex items-center gap-2.5 min-w-0">
-                <label class="switch sm ${isPartialAuto ? 'partial' : ''}" title="Автопродление всего заказа">
-                    <input type="checkbox" ${isAllAuto ? 'checked' : ''} ${!active.length ? 'disabled' : ''} onchange="toggleOrderAutoRenew(${o.id}, this.checked)">
+                <label id="ord-auto-sw-${o.id}" class="switch sm ${meta.isPartial ? 'partial' : ''}" title="Автопродление всего заказа">
+                    <input id="ord-auto-chk-${o.id}" type="checkbox" ${meta.isAll ? 'checked' : ''} ${!meta.active.length ? 'disabled' : ''} onchange="toggleOrderAutoRenew(${o.id}, this.checked)">
                     <i></i>
                 </label>
                 <div class="min-w-0">
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-[11.5px] font-semibold text-zinc-200 truncate">Весь заказ на автопродление</span>
-                        ${isPartialAuto ? '<span class="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 border border-amber-500/25 shrink-0">Частично</span>' : ''}
-                    </div>
-                    <div class="text-[10px] text-zinc-500 truncate">
-                        ${autoList.length ? `Включено для ${autoList.length} IP · ~${fmtMoney(orderAutoCost)}` : 'Одной кнопкой для всех IP заказа'}
-                    </div>
+                    <span class="text-[11.5px] font-semibold text-zinc-200 block truncate">Автопродление заказа</span>
+                    <span id="ord-auto-sub-${o.id}" class="mono text-[10px] ${meta.autoList.length ? 'text-zinc-400' : 'text-zinc-500'} block truncate">${meta.subText}</span>
                 </div>
             </div>
 
-            <button type="button" ${!active.length ? 'disabled' : ''} onclick="openAutoRenewSheet('order', ${o.id})" class="px-2.5 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-[10.5px] font-semibold text-emerald-300 flex items-center gap-1.5 shrink-0 transition disabled:opacity-35">
+            <button id="ord-auto-btn-${o.id}" type="button" ${!meta.active.length ? 'disabled' : ''} onclick="openAutoRenewSheet('order', ${o.id})" class="px-2.5 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-[10.5px] font-semibold text-emerald-300 flex items-center gap-1.5 shrink-0 transition disabled:opacity-35">
                 ${SVG_CAL}
-                <span>${esc(periodLabel)}</span>
+                <span id="ord-auto-per-${o.id}">${esc(meta.periodLabel)}</span>
             </button>
         </div>
 
-        <!-- Плавный аккордеон со списком прокси -->
+        <!-- Плавный аккордеон со ВСЕМИ прокси заказа (без обрезки/подгрузки) -->
         <div class="accordion ${open ? 'open' : ''}">
             <div class="accordion-inner">
                 <div class="oc-body p-3 pt-2.5 border-t border-white/[0.06] space-y-2.5 bg-black/20">${open ? orderBodyHtml(o) : ''}</div>
@@ -1481,36 +1334,47 @@ function toggleOrder(oid) {
     }
 }
 
-function refreshOrderCardInPlace(oid) {
+/* Обновляет DOM состояния автопродления ТОЧЕЧНО без пересборки DOM-карточек (ничего не моргает и не исчезает) */
+function syncOrderAutoUIInPlace(oid) {
     renderOrdersStats();
-    const oldCard = $('ord-card-' + oid), o = ordersById.get(oid);
-    if (!oldCard || !o) { renderOrders(); return; }
-    const wasOpen = ui.open.has(oid);
-    const wrap = document.createElement('div');
-    wrap.innerHTML = orderCardHtml(o);
-    const newCard = wrap.firstElementChild;
-    oldCard.replaceWith(newCard);
-    if (wasOpen) {
-        newCard.querySelector('.accordion')?.classList.add('open');
-        newCard.querySelector('.chev')?.classList.add('rot');
-    }
-}
+    const o = ordersById.get(oid);
+    if (!o) return;
+    const meta = computeOrderAutoMeta(o);
 
-function showMoreInOrder(oid) {
-    ui.orderVisible[oid] = (ui.orderVisible[oid] || 8) + 12;
-    refreshOrderCardInPlace(oid);
+    const hdrAuto = $('ord-hdr-auto-' + oid);
+    if (hdrAuto) {
+        hdrAuto.textContent = meta.hdrText;
+        hdrAuto.className = `mono text-[10px] ${meta.autoList.length ? 'text-emerald-400' : 'text-zinc-500'}`;
+    }
+    const sw = $('ord-auto-sw-' + oid), chk = $('ord-auto-chk-' + oid);
+    if (sw) sw.classList.toggle('partial', meta.isPartial);
+    if (chk) chk.checked = meta.isAll;
+
+    const sub = $('ord-auto-sub-' + oid), per = $('ord-auto-per-' + oid);
+    if (sub) {
+        sub.textContent = meta.subText;
+        sub.className = `mono text-[10px] ${meta.autoList.length ? 'text-zinc-400' : 'text-zinc-500'} block truncate`;
+    }
+    if (per) per.textContent = meta.periodLabel;
+
+    o.proxies.forEach(p => syncProxyAutoUIInPlace(p));
+}
+function syncProxyAutoUIInPlace(p) {
+    const chk = $('px-auto-chk-' + p.id), lbl = $('px-auto-lbl-' + p.id), btn = $('px-auto-btn-' + p.id);
+    const live = isLive(p), on = Boolean(p.autoRenew) && live;
+    const days = p.autoRenewDays || p.periodDays || 30, price = unitPrice(p, days);
+    if (chk) chk.checked = on;
+    if (lbl) lbl.className = `text-[11px] font-medium transition-colors ${on ? 'text-emerald-300' : 'text-zinc-400'}`;
+    if (btn) {
+        btn.className = `px-2 py-1 rounded-lg border text-[10.5px] font-semibold flex items-center gap-1 transition disabled:opacity-35 ${on ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-200 hover:bg-emerald-500/20' : 'bg-white/[0.04] border-white/[0.07] text-zinc-400 hover:text-zinc-200'}`;
+        btn.innerHTML = `<span>${days} дн.</span><span class="text-zinc-500">·</span><span class="mono">${price} ₽</span>`;
+    }
 }
 
 const copyable = (p, f) => f === 'expired' ? pState(p) === 'expired' : isLive(p);
 function orderBodyHtml(o) {
-    const f = state.ordersFilter;
-    const shown = getOrderVisibleProxies(o);
-    const n = shown.filter(p => copyable(p, f)).length;
+    const f = state.ordersFilter, shown = getOrderVisibleProxies(o), n = shown.filter(p => copyable(p, f)).length;
     const actCount = o.proxies.filter(isLive).length;
-    const limit = ui.orderVisible[o.id] || 8;
-    const slice = shown.slice(0, limit);
-    const hiddenCount = Math.max(0, shown.length - slice.length);
-
     return `${n ? `<div class="flex items-center justify-between gap-2 pb-0.5">
             <div class="flex items-center gap-1.5">
                 <button type="button" onclick="openExport(${o.id})" class="btn btn-soft btn-xs">Экспорт</button>
@@ -1518,65 +1382,44 @@ function orderBodyHtml(o) {
             </div>
             <button type="button" onclick="copyOrder(${o.id})" class="text-[11px] font-semibold text-emerald-400 hover:underline">Копировать (${n})</button>
         </div>` : ''}
-        <div class="space-y-2">${slice.map((p, idx) => clientProxyRow(p, idx)).join('')}</div>
-        ${hiddenCount > 0 ? `<button type="button" onclick="showMoreInOrder(${o.id})" class="btn btn-ghost w-full py-2 text-[11px]">Показать ещё (${hiddenCount} из ${shown.length})</button>` : ''}`;
+        <div class="space-y-2">${shown.map(clientProxyRow).join('')}</div>`;
 }
 
-function clientProxyRow(p, idx) {
+function clientProxyRow(p) {
     const s = pState(p), m = STATE_META[s], left = Math.max(0, p.expiresAt - Date.now());
-    const meta = s === 'expired' ? 'Истёк' : `Осталось ${leftText(left)}`;
-    const totalLife = Math.max(1, p.expiresAt - p.createdAt);
-    const pct = s === 'expired' ? 0 : Math.max(5, Math.min(100, Math.round((left / totalLife) * 100)));
-    const barCls = s === 'expired' ? 'bg-rose-500' : (left < DAY ? 'bg-amber-400' : (left < 3 * DAY ? 'bg-amber-400/80' : 'bg-emerald-400'));
-
-    const renewDays = p.autoRenewDays || p.periodDays || 30;
-    const renewCost = unitPrice(p, renewDays);
+    const timeText = s === 'expired' ? 'Истёк' : `Осталось ${leftText(left)}`;
+    const live = isLive(p), on = Boolean(p.autoRenew) && live;
+    const renewDays = p.autoRenewDays || p.periodDays || 30, renewCost = unitPrice(p, renewDays);
     const formatted = fmtProxy(p);
-    const delay = Math.min(idx * 24, 160);
 
-    return `<div class="proxy-item-anim rounded-xl bg-[#0b1011]/90 border border-white/[0.065] hover:border-white/[0.12] p-2.5 space-y-2 transition ${s === 'expired' ? 'opacity-75' : ''}" style="animation-delay:${delay}ms">
-        <!-- Верхняя строка: страна, тариф, статус -->
+    return `<div id="px-row-${p.id}" class="rounded-xl bg-[#0b1011]/90 border border-white/[0.065] hover:border-white/[0.12] p-2.5 space-y-2 transition ${s === 'expired' ? 'opacity-75' : ''}">
         <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-1.5 min-w-0">
-                <span class="mono text-[10px] text-zinc-500">#${idx + 1}</span>
+            <div class="flex items-center gap-2 min-w-0">
                 ${flag(p.country, 'w-4 h-3')}
                 <span class="text-[11.5px] font-semibold text-zinc-100 truncate">${esc(cname(p.country))}</span>
                 <span class="text-[9.5px] px-1.5 py-0.5 rounded bg-white/[0.05] text-zinc-400 shrink-0">${esc(p.tariffTitle)}</span>
             </div>
-            <span class="pill ${m.pill} shrink-0">${meta}</span>
+            <span class="pill ${m.pill} shrink-0">${timeText}</span>
         </div>
 
-        <!-- Строка подключения (нажатие копирует прокси) -->
-        <div data-copy="${esc(formatted)}" data-toast="Прокси скопирован" class="cursor-pointer rounded-lg bg-black/50 hover:bg-black/70 border border-white/[0.06] hover:border-emerald-500/30 px-2.5 py-1.5 flex items-center justify-between gap-2 group transition">
-            <span class="mono text-[11px] text-zinc-200 group-hover:text-emerald-200 select-all truncate">${esc(formatted)}</span>
+        <div data-proxy-id="${p.id}" data-copy="${esc(formatted)}" data-toast="Прокси скопирован" class="cursor-pointer rounded-lg bg-black/50 hover:bg-black/70 border border-white/[0.06] hover:border-emerald-500/30 px-2.5 py-1.5 flex items-center justify-between gap-2 group transition">
+            <span class="proxy-str-val mono text-[11px] text-zinc-200 group-hover:text-emerald-200 select-all truncate">${esc(formatted)}</span>
             <span class="flex items-center gap-1.5 shrink-0">
-                <span class="mono text-[9.5px] text-zinc-500 uppercase">${cfg.proto}</span>
+                <span class="proxy-proto-val mono text-[9.5px] text-zinc-500 uppercase">${cfg.proto}</span>
                 <span class="text-zinc-500 group-hover:text-emerald-400 transition">${SVG_COPY}</span>
             </span>
         </div>
 
-        <!-- Индикатор оставшегося срока -->
-        <div class="space-y-1">
-            <div class="prog-track"><div class="prog-fill ${barCls}" style="width:${pct}%"></div></div>
-            <div class="flex items-center justify-between text-[9.5px] mono text-zinc-500">
-                <span>Порт ${proxyPort(p)}</span>
-                <span>до ${fmtDT(p.expiresAt)}</span>
-            </div>
-        </div>
-
-        <!-- Нижняя панель: индивидуальный слайдер (клик ТОЛЬКО по слайдеру) + срок + продлить -->
         <div class="pt-1.5 border-t border-white/[0.05] flex items-center justify-between gap-2">
             <div class="flex items-center gap-2 min-w-0">
-                <label class="switch sm" onclick="event.stopPropagation()" title="Автопродление этого IP">
-                    <input type="checkbox" ${p.autoRenew && isLive(p) ? 'checked' : ''} ${!isLive(p) ? 'disabled' : ''} onchange="toggleProxyAutoRenew(${p.id}, this.checked)">
+                <label class="switch sm" onclick="event.stopPropagation()" title="Автопродление">
+                    <input id="px-auto-chk-${p.id}" type="checkbox" ${on ? 'checked' : ''} ${!live ? 'disabled' : ''} onchange="toggleProxyAutoRenew(${p.id}, this.checked)">
                     <i></i>
                 </label>
-                <span class="text-[11px] font-medium ${p.autoRenew && isLive(p) ? 'text-emerald-300' : 'text-zinc-400'}">Авто</span>
+                <span id="px-auto-lbl-${p.id}" class="text-[11px] font-medium transition-colors ${on ? 'text-emerald-300' : 'text-zinc-400'}">Автопродление</span>
 
-                <button type="button" ${!isLive(p) ? 'disabled' : ''} onclick="openAutoRenewSheet('proxy', ${p.orderId}, ${p.id})" class="px-2 py-1 rounded-lg border text-[10.5px] font-semibold flex items-center gap-1 transition disabled:opacity-35 ${p.autoRenew && isLive(p) ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-200 hover:bg-emerald-500/20' : 'bg-white/[0.04] border-white/[0.07] text-zinc-400 hover:text-zinc-200'}">
-                    <span>на ${renewDays} дн.</span>
-                    <span class="text-zinc-500">·</span>
-                    <span class="mono">${renewCost} ₽</span>
+                <button id="px-auto-btn-${p.id}" type="button" ${!live ? 'disabled' : ''} onclick="openAutoRenewSheet('proxy', ${p.orderId}, ${p.id})" class="px-2 py-1 rounded-lg border text-[10.5px] font-semibold flex items-center gap-1 transition disabled:opacity-35 ${on ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-200 hover:bg-emerald-500/20' : 'bg-white/[0.04] border-white/[0.07] text-zinc-400 hover:text-zinc-200'}">
+                    <span>${renewDays} дн.</span><span class="text-zinc-500">·</span><span class="mono">${renewCost} ₽</span>
                 </button>
             </div>
 
@@ -1588,28 +1431,28 @@ function clientProxyRow(p, idx) {
 function toggleOrderAutoRenew(oid, turnOn) {
     const o = ordersById.get(oid); if (!o) return;
     const active = o.proxies.filter(isLive);
-    if (!active.length) { toast('Нет активных прокси в заказе', { error: true }); refreshOrderCardInPlace(oid); return; }
+    if (!active.length) { toast('Нет активных прокси в заказе', { error: true }); syncOrderAutoUIInPlace(oid); return; }
     active.forEach(p => {
         p.autoRenew = Boolean(turnOn);
         if (!p.autoRenewDays) p.autoRenewDays = p.periodDays || 30;
     });
     saveDbState();
-    refreshOrderCardInPlace(oid);
-    toast(turnOn ? `Автопродление вкл. для ${active.length} IP в #${oid}` : `Автопродление выкл. для #${oid}`);
+    syncOrderAutoUIInPlace(oid);
+    toast(turnOn ? `Автопродление вкл. для ${active.length} шт.` : `Автопродление выкл. для #${oid}`);
 }
 
 function toggleProxyAutoRenew(pid, turnOn) {
     const p = proxiesById.get(pid); if (!p) return;
-    if (!isLive(p)) { toast('Сначала продлите прокси', { error: true }); refreshOrderCardInPlace(p.orderId); return; }
+    if (!isLive(p)) { toast('Сначала продлите прокси', { error: true }); syncOrderAutoUIInPlace(p.orderId); return; }
     p.autoRenew = Boolean(turnOn);
     if (!p.autoRenewDays) p.autoRenewDays = p.periodDays || 30;
     saveDbState();
-    refreshOrderCardInPlace(p.orderId);
+    syncOrderAutoUIInPlace(p.orderId);
     const days = p.autoRenewDays;
-    toast(turnOn ? `${p.ip}: авто на ${daysWord(days)} (${unitPrice(p, days)} ₽)` : `${p.ip}: автопродление выкл.`);
+    toast(turnOn ? `${p.ip}: автопродление на ${daysWord(days)}` : `${p.ip}: автопродление выкл.`);
 }
 
-/* Шторка выбора реального срока автопродления (на 1 IP или на весь заказ) */
+/* Шторка выбора реального срока автопродления */
 function openAutoRenewSheet(mode, oid, pid = null) {
     const o = ordersById.get(oid); if (!o) return;
     const active = o.proxies.filter(isLive);
@@ -1626,54 +1469,38 @@ function openAutoRenewSheet(mode, oid, pid = null) {
     ui.autoRenew = { mode, oid, pid, days: selectedDays };
     renderAutoRenewSheet();
 }
-function setAutoRenewSheetDays(d) {
-    ui.autoRenew.days = Number(d);
-    renderAutoRenewSheet();
-}
+function setAutoRenewSheetDays(d) { ui.autoRenew.days = Number(d); renderAutoRenewSheet(); }
 function applyAutoRenewSheet(scope) {
-    const { oid, pid, days } = ui.autoRenew;
-    const o = ordersById.get(oid); if (!o) return;
+    const { oid, pid, days } = ui.autoRenew, o = ordersById.get(oid); if (!o) return;
     if (scope === 'proxy' && pid) {
         const p = proxiesById.get(pid);
-        if (p && isLive(p)) {
-            p.autoRenew = true;
-            p.autoRenewDays = days;
-            toast(`${p.ip}: автопродление на ${daysWord(days)}`);
-        }
+        if (p && isLive(p)) { p.autoRenew = true; p.autoRenewDays = days; toast(`${p.ip}: автопродление на ${daysWord(days)}`); }
     } else {
         const active = o.proxies.filter(isLive);
         active.forEach(p => { p.autoRenew = true; p.autoRenewDays = days; });
-        toast(`Заказ #${oid}: авто на ${daysWord(days)} для ${active.length} IP`);
+        toast(`Заказ #${oid}: автопродление на ${daysWord(days)}`);
     }
     saveDbState();
     hideSheet();
-    refreshOrderCardInPlace(oid);
+    syncOrderAutoUIInPlace(oid);
 }
 function renderAutoRenewSheet() {
-    const { mode, oid, pid, days } = ui.autoRenew;
-    const o = ordersById.get(oid); if (!o) return;
-    const active = o.proxies.filter(isLive);
-    const p = pid ? proxiesById.get(pid) : active[0];
-    const tar = getTariffObj(p.tariffId, p.poolId || 'pool1');
-    const periods = getTariffPeriods(tar);
+    const { mode, oid, pid, days } = ui.autoRenew, o = ordersById.get(oid); if (!o) return;
+    const active = o.proxies.filter(isLive), p = pid ? proxiesById.get(pid) : active[0];
+    const tar = getTariffObj(p.tariffId, p.poolId || 'pool1'), periods = getTariffPeriods(tar);
     if (!periods.includes(days)) ui.autoRenew.days = periods.includes(30) ? 30 : periods[0];
     const selD = ui.autoRenew.days;
     const title = mode === 'proxy' ? `${p.ip}:${proxyPort(p)}` : `Автопродление заказа #${oid}`;
-    const sub = mode === 'proxy' ? `${cname(p.country)} · ${tar.label} (периоды API)` : `${active.length} активных IP · единый период из API`;
-    const unit = unitPrice(p, selD);
-    const orderTotal = round2(active.reduce((s, x) => s + unitPrice(x, selD), 0));
+    const sub = mode === 'proxy' ? `${cname(p.country)} · ${tar.label}` : `${active.length} активных шт.`;
+    const unit = unitPrice(p, selD), orderTotal = round2(active.reduce((s, x) => s + unitPrice(x, selD), 0));
 
     sheet.onOk = null;
     showSheet(`<div class="grip"></div>
         <div class="flex items-start justify-between mb-3 gap-2">
-            <div class="min-w-0">
-                <h3 class="text-base font-semibold text-zinc-50 truncate">${esc(title)}</h3>
-                <p class="text-[11px] text-zinc-400 mt-0.5 truncate">${esc(sub)}</p>
-            </div>
+            <div class="min-w-0"><h3 class="text-base font-semibold text-zinc-50 truncate">${esc(title)}</h3><p class="text-[11px] text-zinc-400 mt-0.5 truncate">${esc(sub)}</p></div>
             <button type="button" onclick="hideSheet()" class="text-zinc-500 hover:text-white p-1">${SVG_CLOSE}</button>
         </div>
-
-        <label class="lbl mb-2">Период автопродления</label>
+        <label class="lbl mb-2">Период</label>
         <div class="grid grid-cols-4 gap-1.5 mb-4">
             ${periods.map(d => {
                 const pr = unitPrice(p, d), on = d === selD;
@@ -1683,15 +1510,14 @@ function renderAutoRenewSheet() {
                 </div>`;
             }).join('')}
         </div>
-
         ${mode === 'proxy'
-            ? `<div class="space-y-0.5 mb-4">${kv('Срок', daysWord(selD))}${kv('Списание за этот IP', fmtMoney(unit), 'text-emerald-400')}${kv('Если на весь заказ', fmtMoney(orderTotal), 'text-zinc-300')}</div>
+            ? `<div class="space-y-0.5 mb-4">${kv('Срок', daysWord(selD))}${kv('За этот прокси', fmtMoney(unit), 'text-emerald-400')}${kv('На весь заказ', fmtMoney(orderTotal), 'text-zinc-300')}</div>
                <div class="grid grid-cols-2 gap-2">
                    <button type="button" class="btn btn-primary py-3 text-xs" onclick="applyAutoRenewSheet('proxy')">Только этот IP</button>
                    <button type="button" class="btn btn-soft py-3 text-xs" onclick="applyAutoRenewSheet('order')">Весь заказ (${active.length})</button>
                </div>`
-            : `<div class="space-y-0.5 mb-4">${kv('Выбрано прокси', `${active.length} шт.`)}${kv('Период', daysWord(selD))}${kv('За цикл заказа', fmtMoney(orderTotal), 'text-emerald-400')}</div>
-               <button type="button" class="btn btn-primary w-full py-3" onclick="applyAutoRenewSheet('order')">Применить ко всему заказу (${daysWord(selD)})</button>`}`);
+            : `<div class="space-y-0.5 mb-4">${kv('Прокси', `${active.length} шт.`)}${kv('Период', daysWord(selD))}${kv('Сумма продления', fmtMoney(orderTotal), 'text-emerald-400')}</div>
+               <button type="button" class="btn btn-primary w-full py-3" onclick="applyAutoRenewSheet('order')">Применить ко всему заказу</button>`}`);
 }
 
 const orderCopyableList = o => o.proxies.filter(p => copyable(p, state.ordersFilter));
@@ -1712,34 +1538,24 @@ const EXP_FORMATS = [
     { id: 'url_colon', label: 'proto://ip:port:login:pass', sub: 'Dolphin · Nstbrowser · MoreLogin' },
     { id: 'proxifier', label: 'PROTO ip:port login pass', sub: 'Proxifier · Сетевой софт' }
 ];
-function openExport(oid) {
-    ui.exp.oid = oid; ui.exp.proto = cfg.proto; ui.exp.fmt = cfg.format; ui.exp.prefix = false; ui.exp.tag = false;
-    renderExportSheet();
-}
+function openExport(oid) { ui.exp.oid = oid; ui.exp.proto = cfg.proto; ui.exp.fmt = cfg.format; ui.exp.prefix = false; ui.exp.tag = false; renderExportSheet(); }
 function setExpProto(p) { ui.exp.proto = p; renderExportSheet(); }
 function setExpFmt(f) { ui.exp.fmt = f; renderExportSheet(); }
 function toggleExpOpt(key) { ui.exp[key] = !ui.exp[key]; renderExportSheet(); }
 function buildExportContent(list, mode = 'lines') {
-    const { proto, fmt, prefix, tag } = ui.exp;
-    const pr = proto === 'socks5' ? 'socks5' : (proto === 'https' ? 'https' : 'http');
-    if (mode === 'json') {
-        return JSON.stringify(list.map(p => ({ name: `${p.country.toUpperCase()}-${p.id}`, protocol: pr, host: proxyHost(p, proto), port: proxyPort(p, proto), login: p.login, password: p.pass, country: p.country.toUpperCase() })), null, 2);
-    }
-    if (mode === 'csv') {
-        return ['protocol,host,port,login,password,country,name', ...list.map(p => `${pr},${proxyHost(p, proto)},${proxyPort(p, proto)},${p.login},${p.pass},${p.country.toUpperCase()},${p.country.toUpperCase()}-${p.id}`)].join('\n');
-    }
+    const { proto, fmt, prefix, tag } = ui.exp, pr = proto === 'socks5' ? 'socks5' : (proto === 'https' ? 'https' : 'http');
+    if (mode === 'json') return JSON.stringify(list.map(p => ({ name: `${p.country.toUpperCase()}-${p.id}`, protocol: pr, host: proxyHost(p, proto), port: proxyPort(p, proto), login: p.login, password: p.pass, country: p.country.toUpperCase() })), null, 2);
+    if (mode === 'csv') return ['protocol,host,port,login,password,country,name', ...list.map(p => `${pr},${proxyHost(p, proto)},${proxyPort(p, proto)},${p.login},${p.pass},${p.country.toUpperCase()},${p.country.toUpperCase()}-${p.id}`)].join('\n');
     return list.map(p => fmtProxy(p, fmt, proto, { prefix, tag })).join('\n');
 }
 function renderExportSheet() {
     const o = ordersById.get(ui.exp.oid); if (!o) return;
-    const list = orderCopyableList(o), { proto, fmt, prefix, tag } = ui.exp;
-    const preview = buildExportContent(list, 'lines');
+    const list = orderCopyableList(o), { proto, fmt, prefix, tag } = ui.exp, preview = buildExportContent(list, 'lines');
     const canPrefix = !['url', 'url_colon', 'proxifier'].includes(fmt);
     sheet.onOk = null;
     showSheet(`<div class="grip"></div>
         <div class="flex items-center justify-between mb-3">
-            <div><h3 class="text-base font-semibold text-zinc-50">Экспорт заказа #${o.id}</h3>
-                 <p class="text-[11px] text-zinc-400">${list.length} шт. · Настройка формата и выгрузка</p></div>
+            <div><h3 class="text-base font-semibold text-zinc-50">Экспорт заказа #${o.id}</h3><p class="text-[11px] text-zinc-400">${list.length} шт. · Настройка формата и выгрузка</p></div>
             <button type="button" onclick="hideSheet()" class="text-zinc-500 hover:text-white p-1">${SVG_CLOSE}</button>
         </div>
         <label class="lbl mb-1.5">Протокол</label>
@@ -1751,8 +1567,7 @@ function renderExportSheet() {
         <label class="lbl mb-1.5">Формат (Антидетект / Софт)</label>
         <div class="grid grid-cols-2 gap-1.5 mb-3">
             ${EXP_FORMATS.map(f => {
-                const on = f.id === fmt;
-                const lbl = f.label.replace('proto://', proto + '://').replace('PROTO', proto.toUpperCase());
+                const on = f.id === fmt, lbl = f.label.replace('proto://', proto + '://').replace('PROTO', proto.toUpperCase());
                 return `<div onclick="setExpFmt('${f.id}')" class="opt !text-left !px-2.5 !py-2 ${on ? 'on' : ''}">
                     <div class="mono text-[10.5px] font-semibold truncate ${on ? 'text-emerald-300' : 'text-zinc-200'}">${esc(lbl)}</div>
                     <div class="text-[9.5px] text-zinc-500 truncate mt-0.5">${esc(f.sub)}</div></div>`;
@@ -1770,56 +1585,31 @@ function renderExportSheet() {
         </div>
         <button type="button" class="btn btn-primary w-full py-3 mt-2" onclick="copyExport()">Скопировать список (${list.length})</button>`);
 }
-function copyExport() {
-    const o = ordersById.get(ui.exp.oid); if (!o) return;
-    const list = orderCopyableList(o);
-    copyText(buildExportContent(list, 'lines'), `Скопировано: ${list.length} шт.`);
-}
+function copyExport() { const o = ordersById.get(ui.exp.oid); if (!o) return; const list = orderCopyableList(o); copyText(buildExportContent(list, 'lines'), `Скопировано: ${list.length} шт.`); }
 function downloadExport(ext) {
     const o = ordersById.get(ui.exp.oid); if (!o) return;
-    const list = orderCopyableList(o);
-    const content = buildExportContent(list, ext === 'csv' ? 'csv' : ext === 'json' ? 'json' : 'lines');
+    const list = orderCopyableList(o), content = buildExportContent(list, ext === 'csv' ? 'csv' : ext === 'json' ? 'json' : 'lines');
     if (!content) return;
-    const filename = `proxies_${o.id}_${ui.exp.proto}.${ext}`;
-    const mime = ext === 'json' ? 'application/json;charset=utf-8' : ext === 'csv' ? 'text/csv;charset=utf-8' : 'text/plain;charset=utf-8';
+    const filename = `proxies_${o.id}_${ui.exp.proto}.${ext}`, mime = ext === 'json' ? 'application/json;charset=utf-8' : ext === 'csv' ? 'text/csv;charset=utf-8' : 'text/plain;charset=utf-8';
     const blob = new Blob([content], { type: mime }), url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1500);
-    toast(`Файл ${filename} сформирован`);
+    const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500); toast(`Файл ${filename} сформирован`);
 }
 
 /* =====================================================================
-   РУЧНОЕ ПРОДЛЕНИЕ (1 прокси или весь заказ)
+   РУЧНОЕ ПРОДЛЕНИЕ
    ===================================================================== */
-function openProlong(pid) {
-    ui.prolong.pid = pid; ui.prolong.oid = null;
-    const p = proxiesById.get(pid); if (p?.periodDays) ui.prolong.days = p.periodDays;
-    renderProlongSheet();
-}
-function openProlongOrder(oid) {
-    ui.prolong.oid = oid; ui.prolong.pid = null;
-    const o = ordersById.get(oid), act = o?.proxies?.find(isLive);
-    if (act?.periodDays) ui.prolong.days = act.periodDays;
-    renderProlongSheet();
-}
+function openProlong(pid) { ui.prolong.pid = pid; ui.prolong.oid = null; const p = proxiesById.get(pid); if (p?.periodDays) ui.prolong.days = p.periodDays; renderProlongSheet(); }
+function openProlongOrder(oid) { ui.prolong.oid = oid; ui.prolong.pid = null; const o = ordersById.get(oid), act = o?.proxies?.find(isLive); if (act?.periodDays) ui.prolong.days = act.periodDays; renderProlongSheet(); }
 function setProlongDays(d) { ui.prolong.days = d; renderProlongSheet(); }
 function renderProlongSheet() {
     let list = [], title = 'Продление', sub = '';
-    if (ui.prolong.oid) {
-        const o = ordersById.get(ui.prolong.oid); if (!o) return;
-        list = o.proxies.filter(isLive); title = `Продлить заказ #${o.id}`; sub = `${list.length} шт.`;
-    } else {
-        const p = proxiesById.get(ui.prolong.pid); if (!p) return;
-        list = [p]; sub = `${p.ip}:${proxyPort(p)}`;
-    }
+    if (ui.prolong.oid) { const o = ordersById.get(ui.prolong.oid); if (!o) return; list = o.proxies.filter(isLive); title = `Продлить заказ #${o.id}`; sub = `${list.length} шт.`; }
+    else { const p = proxiesById.get(ui.prolong.pid); if (!p) return; list = [p]; sub = `${p.ip}:${proxyPort(p)}`; }
     if (!list.length) return;
-    const tar = getTariffObj(list[0].tariffId, list[0].poolId || 'pool1');
-    const prolongPeriods = getTariffPeriods(tar);
+    const tar = getTariffObj(list[0].tariffId, list[0].poolId || 'pool1'), prolongPeriods = getTariffPeriods(tar);
     if (!prolongPeriods.includes(ui.prolong.days)) ui.prolong.days = prolongPeriods[0];
-    const days = ui.prolong.days;
-    const cost = round2(list.reduce((s, p) => s + unitPrice(p, days), 0));
-    const after = round2(me.balance - cost), ok = after >= 0;
+    const days = ui.prolong.days, cost = round2(list.reduce((s, p) => s + unitPrice(p, days), 0)), after = round2(me.balance - cost), ok = after >= 0;
     const newExp = Math.max(Date.now(), list[0].expiresAt) + days * DAY;
     sheet.onOk = null;
     showSheet(`<div class="grip"></div>
@@ -1831,46 +1621,32 @@ function renderProlongSheet() {
 }
 function confirmProlong() {
     const days = ui.prolong.days;
-    let list = [];
-    if (ui.prolong.oid) { const o = ordersById.get(ui.prolong.oid); if (o) list = o.proxies.filter(isLive); }
-    else { const p = proxiesById.get(ui.prolong.pid); if (p) list = [p]; }
+    let list = ui.prolong.oid ? (ordersById.get(ui.prolong.oid)?.proxies.filter(isLive) || []) : (proxiesById.get(ui.prolong.pid) ? [proxiesById.get(ui.prolong.pid)] : []);
     if (!list.length) return;
     const cost = round2(list.reduce((s, p) => s + unitPrice(p, days), 0));
     if (me.balance < cost) { toast('Недостаточно средств', { error: true }); return; }
     const now = Date.now();
     me.balance = round2(me.balance - cost);
-    list.forEach(p => {
-        p.expiresAt = Math.max(now, p.expiresAt) + days * DAY;
-        p.periodDays = days;
-        p.status = 'active';
-    });
-    me.tx.unshift({ id: Date.now(), type: 'prolong', service: 'proxy', amount: -cost, balanceAfter: me.balance, at: now, ref: String(list[0].orderId), note: `Продление ${list.length} IP на ${daysWord(days)}` });
-    saveDbState();
-    hideSheet();
-    updateAllBalanceDisplays();
-    rerenderCurrent();
+    list.forEach(p => { p.expiresAt = Math.max(now, p.expiresAt) + days * DAY; p.periodDays = days; p.status = 'active'; });
+    me.tx.unshift({ id: Date.now(), type: 'prolong', service: 'proxy', amount: -cost, balanceAfter: me.balance, at: now, ref: String(list[0].orderId), note: `Продление ${list.length} шт. на ${daysWord(days)}` });
+    saveDbState(); hideSheet(); updateAllBalanceDisplays(); rerenderCurrent();
     toast(list.length > 1 ? `Продлено ${list.length} шт. на ${daysWord(days)}` : `Продлено на ${daysWord(days)}`);
 }
 
 /* =====================================================================
-   ДЕМО ПОПОЛНЕНИЕ (точная копия deposit_modal.html) + ДЕМО ИНСТРУМЕНТЫ
+   ДЕПОЗИТ И ДЕМО-ИНСТРУМЕНТЫ
    ===================================================================== */
 const DepModal = (function () {
     const st = {
-        amount: 500, method: 'SBP', currency: 'USDT',
+        amount: 500, method: 'SBP',
         methods: [
-            { id: 'SBP', title: 'СБП', min: 50, max: 100000, fee: 0, type: 'fiat' },
-            { id: 'CryptoBot', title: 'CryptoBot', min: 10, max: 100000, fee: 3.0, type: 'crypto' },
-            { id: 'xRocket', title: 'xRocket', min: 10, max: 100000, fee: 1.5, type: 'crypto' }
-        ],
-        rates: { usdt_rub: 87.1, gram_rub: 97.66 }
+            { id: 'SBP', title: 'СБП', min: 50, max: 100000, fee: 0 },
+            { id: 'CryptoBot', title: 'CryptoBot', min: 10, max: 100000, fee: 3.0 },
+            { id: 'xRocket', title: 'xRocket', min: 10, max: 100000, fee: 1.5 }
+        ]
     };
     const curM = () => st.methods.find(m => m.id === st.method) || st.methods[0];
-    function open(prefill) {
-        const m = curM();
-        st.amount = prefill ? Math.min(m.max, Math.max(m.min, Math.ceil(prefill))) : Math.max(m.min, st.amount);
-        render();
-    }
+    function open(prefill) { const m = curM(); st.amount = prefill ? Math.min(m.max, Math.max(m.min, Math.ceil(prefill))) : Math.max(m.min, st.amount); render(); }
     function render() {
         sheet.onOk = null;
         const m = curM(), presets = m.id === 'SBP' ? [50, 100, 300, 500, 1000, 5000] : [10, 50, 100, 300, 500, 1000];
@@ -1894,8 +1670,7 @@ const DepModal = (function () {
         $('dep-modal-calc').innerHTML = `<div class="flex justify-between text-zinc-400"><span>К зачислению:</span><span class="mono text-zinc-100 font-semibold">${fmtMoney(a)}</span></div>
             ${m.fee > 0 ? `<div class="flex justify-between text-zinc-500 text-[11px]"><span>Комиссия (+${m.fee}%):</span><span class="mono">${fmtMoney(feeAmt)}</span></div>` : ''}
             <div class="pt-1 border-t border-white/[0.06] flex justify-between font-semibold text-zinc-100"><span>Итого (демо):</span><span class="mono text-emerald-400 font-bold">${fmtMoney(tot)}</span></div>`;
-        const b = $('dep-modal-submit');
-        b.disabled = !ok;
+        const b = $('dep-modal-submit'); b.disabled = !ok;
         b.textContent = ok ? `Зачислить ${fmtMoney(a)} (демо)` : `Минимум ${m.min} ₽ для ${m.title}`;
     }
     return {
@@ -1904,15 +1679,10 @@ const DepModal = (function () {
         setAmount(v) { st.amount = v; if ($('dep-modal-amount')) $('dep-modal-amount').value = v; render(); },
         onInput(el) { st.amount = parseInt(el.value.replace(/\D/g, '') || '0', 10); updateSummary(); },
         submit() {
-            const m = curM(), a = st.amount || 0;
-            if (a < m.min) return;
+            const m = curM(), a = st.amount || 0; if (a < m.min) return;
             me.balance = round2(me.balance + a);
             me.tx.unshift({ id: Date.now(), type: 'deposit', service: m.id.toLowerCase(), amount: a, balanceAfter: me.balance, at: Date.now(), ref: 'DEMO_' + alnum(5).toUpperCase(), note: m.title });
-            saveDbState();
-            hideSheet();
-            updateAllBalanceDisplays();
-            rerenderCurrent();
-            toast(`Баланс пополнен на ${fmtMoney(a)}`);
+            saveDbState(); hideSheet(); updateAllBalanceDisplays(); rerenderCurrent(); toast(`Баланс пополнен на ${fmtMoney(a)}`);
         }
     };
 })();
@@ -1922,30 +1692,28 @@ function openDemoMenu() {
     sheet.onOk = null;
     showSheet(`<div class="grip"></div>
         <div class="flex items-center justify-between mb-3">
-            <div><h3 class="text-base font-semibold text-zinc-50">Демо-инструменты</h3><p class="text-[11px] text-zinc-400">Проверка работы без отправки запросов на сервер</p></div>
+            <div><h3 class="text-base font-semibold text-zinc-50">Демо-режим</h3><p class="text-[11px] text-zinc-400">Проверка сценариев на локальных данных</p></div>
             <button type="button" onclick="hideSheet()" class="text-zinc-500 hover:text-white p-1">${SVG_CLOSE}</button>
         </div>
         <div class="space-y-2">
-            <button type="button" onclick="demoRunAutoRenew()" class="btn btn-soft w-full py-3 justify-between px-3.5"><span>Симулировать цикл автопродления (&lt; 24 ч.)</span><span class="mono text-[10px]">Run</span></button>
+            <button type="button" onclick="demoRunAutoRenew()" class="btn btn-soft w-full py-3 justify-between px-3.5"><span>Запустить автопродление (&lt; 24 ч.)</span><span class="mono text-[10px]">Run</span></button>
             <button type="button" onclick="demoShiftTime()" class="btn btn-ghost w-full py-3 justify-between px-3.5"><span>Промотать время на +24 часа</span><span class="mono text-[10px]">+24h</span></button>
             <button type="button" onclick="demoLowBalance()" class="btn btn-ghost w-full py-3 justify-between px-3.5"><span>Установить баланс 35 ₽</span><span class="mono text-[10px]">35 ₽</span></button>
-            <button type="button" onclick="demoReset()" class="btn btn-danger w-full py-3 justify-between px-3.5"><span>Сбросить демо-состояние</span><span class="mono text-[10px]">Reset</span></button>
+            <button type="button" onclick="demoReset()" class="btn btn-danger w-full py-3 justify-between px-3.5"><span>Сбросить демо</span><span class="mono text-[10px]">Reset</span></button>
         </div>`);
 }
 function demoRunAutoRenew() {
     const now = Date.now(), candidates = me.orders.flatMap(o => o.proxies).filter(p => p.autoRenew && isLive(p) && (p.expiresAt - now) <= DAY);
     hideSheet();
-    if (!candidates.length) { toast('Нет IP с автопродлением, истекающих в ближайшие 24 ч.'); return; }
+    if (!candidates.length) { toast('Нет IP с автопродлением, истекающих < 24 ч.'); return; }
     let okCount = 0, total = 0, fail = 0;
     candidates.forEach(p => {
         const d = p.autoRenewDays || p.periodDays || 30, cost = unitPrice(p, d);
         if (me.balance >= cost) {
-            me.balance = round2(me.balance - cost);
-            p.expiresAt += d * DAY;
-            p.periodDays = d;
+            me.balance = round2(me.balance - cost); p.expiresAt += d * DAY; p.periodDays = d;
             okCount++; total = round2(total + cost);
             me.tx.unshift({ id: Date.now() + okCount, type: 'prolong', service: 'proxy', amount: -cost, balanceAfter: me.balance, at: now, ref: String(p.orderId), note: `Автопродление ${p.ip} (${d} дн.)` });
-        } else { fail++; }
+        } else fail++;
     });
     saveDbState(); updateAllBalanceDisplays(); navigate('orders');
     toast(okCount ? `Продлено ${okCount} IP на ${fmtMoney(total)}` : `Недостаточно баланса для ${fail} IP`, { error: !okCount });
@@ -1981,21 +1749,13 @@ function renderProfile() {
     $('prof-id').textContent = me.id;
     $('prof-balance').textContent = fmtMoney(me.balance);
     $('ps-orders').textContent = s.orders; $('ps-live').textContent = s.live; $('ps-spent').textContent = fmtMoney(s.spent); $('ps-cart').textContent = `${c.count} шт.`;
-    $('btn-fmt-url').textContent = `${cfg.proto}://login:pass@ip:port`;
-    $('set-format').querySelectorAll('button').forEach(b => {
-        const on = b.dataset.f === cfg.format;
-        b.classList.toggle('on', on);
-        b.classList.toggle('text-emerald-300', on);
-        b.classList.toggle('text-zinc-300', !on);
-    });
     const tx = [...me.tx].sort((a, b) => b.at - a.at || b.id - a.id), shown = state.historyAll ? tx : tx.slice(0, 6);
     $('prof-history').innerHTML = shown.length ? shown.map(txRow).join('') : '<div class="py-6 text-center text-xs text-zinc-500">Операций пока нет</div>';
     const more = $('hist-more'); more.classList.toggle('hidden', tx.length <= 6); more.textContent = state.historyAll ? 'Свернуть' : `Показать все (${tx.length})`;
 }
 function toggleHistory() { state.historyAll = !state.historyAll; renderProfile(); }
 function txRow(t) {
-    const isPlus = t.amount > 0;
-    const amtStr = isPlus ? `+${fmtMoney(t.amount)}` : `−${fmtMoney(-t.amount)}`;
+    const isPlus = t.amount > 0, amtStr = isPlus ? `+${fmtMoney(t.amount)}` : `−${fmtMoney(-t.amount)}`;
     const title = t.type === 'deposit' ? 'Пополнение баланса' : (t.type === 'prolong' ? 'Продление прокси' : 'Покупка прокси');
     const badge = t.type === 'deposit' ? esc(t.note || 'Пополнение') : 'Прокси';
     const iconSvg = isPlus
@@ -2007,10 +1767,8 @@ function txRow(t) {
         <div class="flex items-start justify-between gap-2">
             <div class="flex items-center gap-2.5 min-w-0">
                 <div class="w-8 h-8 rounded-xl bg-zinc-800/80 border border-white/[0.06] flex items-center justify-center shrink-0">${iconSvg}</div>
-                <div class="min-w-0">
-                    <div class="text-xs font-bold text-zinc-100 truncate">${title}</div>
-                    <span class="inline-block px-2 py-0.5 rounded-md text-[9.5px] font-semibold border bg-zinc-800 text-zinc-300 border-zinc-700/50 mt-0.5">${badge}</span>
-                </div>
+                <div class="min-w-0"><div class="text-xs font-bold text-zinc-100 truncate">${title}</div>
+                    <span class="inline-block px-2 py-0.5 rounded-md text-[9.5px] font-semibold border bg-zinc-800 text-zinc-300 border-zinc-700/50 mt-0.5">${badge}</span></div>
             </div>
             <div class="text-right shrink-0">
                 <div class="mono text-sm font-black ${isPlus ? 'text-emerald-400' : 'text-zinc-100'}">${amtStr}</div>
